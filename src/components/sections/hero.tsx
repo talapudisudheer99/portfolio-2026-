@@ -37,7 +37,7 @@ export function Hero() {
           {hero.tagline}
         </p>
 
-        <div className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
+        <div className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
           {hero.ctas.map((cta) => {
             if (cta.variant === "primary") {
               return (
@@ -75,7 +75,7 @@ export function Hero() {
 
         <SocialLinks
           links={siteConfig.socialLinks}
-          className="mt-10 justify-center"
+          className="mt-6 justify-center"
         />
       </div>
     </SectionWrapper>
