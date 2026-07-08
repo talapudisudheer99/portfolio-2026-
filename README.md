@@ -1,21 +1,9 @@
-# Next.js template
+# Portfolio 2026
 
-This is a Next.js template with shadcn/ui.
-
-## Adding components
-
-To add components to your app, run the following command:
+Sudheer Talapudi's frontend engineering portfolio — Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ```bash
-npx shadcn@latest add button
+npm install && npm run dev
 ```
 
-This will place the ui components in the `components` directory.
-
-## Using components
-
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button";
-```
+Full documentation: [docs/PORTFOLIO.md](./docs/PORTFOLIO.md)
