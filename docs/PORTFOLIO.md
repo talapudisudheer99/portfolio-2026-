@@ -35,7 +35,7 @@ npm run lint       # ESLint
 | Variable | Required | Purpose | Where to get |
 |----------|----------|---------|--------------|
 | `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | Yes (contact form) | Sends contact form to your email | [web3forms.com](https://web3forms.com) dashboard |
-| `NEXT_PUBLIC_SITE_URL` | After deploy | Canonical URL for SEO, OG tags, social previews | Your Vercel URL (e.g. `https://portfolio-2026.vercel.app`) |
+| `NEXT_PUBLIC_SITE_URL` | After deploy | Canonical URL for SEO, OG tags, social previews | Your Vercel URL (e.g. `https://sudheer-talapudi.vercel.app`) |
 
 **Local `.env.local` example:**
 
@@ -70,7 +70,7 @@ The site links to `/resume.pdf` from the navbar, hero, and footer.
 
 1. Deploy to Vercel first and copy your live URL
 2. **Edit your resume PDF** and set the portfolio URL to your Vercel link, for example:
-   - `https://portfolio-2026.vercel.app`
+   - `https://sudheer-talapudi.vercel.app`
    - or your custom domain later
 3. Export/save the PDF as `resume.pdf`
 4. Place it at `public/resume.pdf` in this repo
@@ -166,15 +166,35 @@ Test at: **375px**, **768px**, **1024px**, **1440px**.
 
 ## 10. Deploy to Vercel
 
+### Recommended project name (URL)
+
+Use a name-based Vercel subdomain — **not** `portfolio-2026` (too generic and may already be taken):
+
+| Option | Vercel URL |
+|--------|------------|
+| **Recommended** | `https://sudheer-talapudi.vercel.app` |
+| Alternative | `https://sudheertalapudi.vercel.app` |
+| Alternative | `https://sudheer-dev.vercel.app` |
+
+### Deploy steps
+
 1. Push repo to GitHub (`Sudheer-webDeveloper/portfolio-2026-`)
 2. [vercel.com](https://vercel.com) → **Add New Project** → import repo
-3. Framework preset: **Next.js** (auto-detected)
-4. Add environment variables:
+3. Set **Project Name** to `sudheer-talapudi` (this becomes your `.vercel.app` URL)
+4. Framework preset: **Next.js** (auto-detected)
+5. Add environment variables:
    - `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`
-   - `NEXT_PUBLIC_SITE_URL` = `https://your-app.vercel.app`
-5. Deploy
-6. Add Vercel domain to Web3Forms allowed domains
-7. Update resume PDF with live URL → add `public/resume.pdf` → push
+   - `NEXT_PUBLIC_SITE_URL` = `https://sudheer-talapudi.vercel.app`
+6. Deploy
+7. Add `sudheer-talapudi.vercel.app` to Web3Forms allowed domains
+8. Update resume PDF with live URL → add `public/resume.pdf` → push
+
+### Already deployed with a bad name?
+
+1. Vercel dashboard → your project → **Settings** → **General**
+2. Change **Project Name** to `sudheer-talapudi`
+3. Your new URL: `https://sudheer-talapudi.vercel.app`
+4. Update `NEXT_PUBLIC_SITE_URL` in Vercel env vars → **Redeploy**
 
 ## 11. Confidentiality Checklist
 

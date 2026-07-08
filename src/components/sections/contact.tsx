@@ -3,6 +3,7 @@
 import { Mail, MapPin, Phone } from "lucide-react"
 import { toast } from "sonner"
 
+import { FadeIn } from "@/components/shared/motion"
 import { SocialLinks } from "@/components/shared/social-links"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
@@ -39,7 +40,7 @@ export function Contact() {
       <SectionHeader title={section.title} description={section.description} />
 
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
-        <div className="space-y-6">
+        <FadeIn className="space-y-6">
           <div className="space-y-4">
             <a
               href={`mailto:${contact.email}`}
@@ -62,8 +63,9 @@ export function Contact() {
           </div>
 
           <SocialLinks links={socialLinks} />
-        </div>
+        </FadeIn>
 
+        <FadeIn delay={0.15}>
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
           className="mx-auto w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8"
@@ -115,6 +117,7 @@ export function Contact() {
             {isSubmitting ? submittingLabel : submitLabel}
           </Button>
         </form>
+        </FadeIn>
       </div>
     </SectionWrapper>
   )

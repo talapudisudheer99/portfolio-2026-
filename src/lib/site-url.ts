@@ -1,6 +1,6 @@
 /**
  * Resolves the public site URL for metadata, OG tags, and canonical links.
- * Set NEXT_PUBLIC_SITE_URL after Vercel deploy (e.g. https://portfolio-2026.vercel.app).
+ * Set NEXT_PUBLIC_SITE_URL after Vercel deploy (e.g. https://sudheer-talapudi.vercel.app).
  */
 export function getSiteUrl(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")

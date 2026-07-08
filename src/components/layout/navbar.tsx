@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Menu } from "lucide-react"
+import { motion } from "framer-motion"
 
 import { ResumeButton } from "@/components/shared/resume-button"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
@@ -19,9 +20,30 @@ import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 16)
+    }
+
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300",
+        scrolled
+          ? "border-border/80 bg-background/90 shadow-sm"
+          : "border-transparent bg-background/70"
+      )}
+    >
       <nav
         aria-label="Main navigation"
         className="mx-auto flex h-18 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8"
@@ -39,9 +61,10 @@ export function Navbar() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="group relative text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {link.label}
+                  <span className="absolute -bottom-1 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
                 </a>
               </li>
             ))}
@@ -94,6 +117,6 @@ export function Navbar() {
           </Sheet>
         </div>
       </nav>
-    </header>
+    </motion.header>
   )
 }

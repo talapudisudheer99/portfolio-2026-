@@ -1,4 +1,7 @@
+"use client"
+
 import { ExternalLink } from "lucide-react"
+import { motion, useReducedMotion } from "framer-motion"
 
 import { GitHubIcon } from "@/components/shared/brand-icons"
 import { Badge } from "@/components/ui/badge"
@@ -12,14 +15,22 @@ import {
 } from "@/components/ui/card"
 import { projectActions } from "@/data/sections"
 import type { Project } from "@/types"
+import { cn } from "@/lib/utils"
 
 interface ProjectCardProps {
   project: Project
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  return (
-    <Card className="flex h-full flex-col rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+  const prefersReducedMotion = useReducedMotion()
+
+  const card = (
+    <Card
+      className={cn(
+        "flex h-full flex-col rounded-2xl border border-border bg-card shadow-sm transition-shadow duration-200",
+        !prefersReducedMotion && "hover:shadow-md"
+      )}
+    >
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-foreground">
           {project.title}
@@ -34,7 +45,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <Badge
               key={tech}
               variant="secondary"
-              className="h-8 rounded-full px-3 text-[13px] font-medium"
+              className="h-8 rounded-full px-3 text-[13px] font-medium transition-colors hover:bg-primary/10 hover:text-primary"
             >
               {tech}
             </Badge>
@@ -82,5 +93,19 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </CardFooter>
       )}
     </Card>
+  )
+
+  if (prefersReducedMotion) {
+    return card
+  }
+
+  return (
+    <motion.div
+      className="h-full"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {card}
+    </motion.div>
   )
 }

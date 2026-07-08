@@ -1,3 +1,4 @@
+import { StaggerContainer, StaggerItem } from "@/components/shared/motion"
 import { ProjectCard } from "@/components/shared/project-card"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
@@ -14,11 +15,13 @@ export function Projects() {
         description={projectsSection.description}
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <StaggerContainer className="grid gap-6 lg:grid-cols-2">
         {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+          <StaggerItem key={project.id} className="h-full">
+            <ProjectCard project={project} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerContainer>
     </SectionWrapper>
   )
 }
