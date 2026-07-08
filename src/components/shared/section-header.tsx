@@ -1,3 +1,6 @@
+"use client"
+
+import { FadeIn } from "@/components/shared/motion"
 import { cn } from "@/lib/utils"
 
 interface SectionHeaderProps {
@@ -14,7 +17,7 @@ export function SectionHeader({
   align = "left",
 }: SectionHeaderProps) {
   return (
-    <div
+    <FadeIn
       className={cn(
         "mb-10 md:mb-12",
         align === "center" && "text-center",
@@ -25,10 +28,15 @@ export function SectionHeader({
         {title}
       </h2>
       {description ? (
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+        <p
+          className={cn(
+            "mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg",
+            align === "center" && "mx-auto"
+          )}
+        >
           {description}
         </p>
       ) : null}
-    </div>
+    </FadeIn>
   )
 }

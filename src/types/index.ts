@@ -49,7 +49,10 @@ export interface ResumeConfig {
 export interface SiteMetadata {
   title: string
   description: string
-  ogImage?: string
+  keywords: string[]
+  siteName: string
+  locale: string
+  ogImage: string
 }
 
 export interface SiteLabels {
@@ -97,4 +100,49 @@ export interface ContactFormValues {
   name: string
   email: string
   message: string
+}
+
+export interface SectionMeta {
+  title: string
+  description?: string
+}
+
+export interface AboutHighlight {
+  label: string
+  value: string
+}
+
+export interface AboutContent {
+  section: SectionMeta
+  paragraphs: string[]
+  highlights: AboutHighlight[]
+}
+
+export interface ContactFormField {
+  name: keyof ContactFormValues
+  label: string
+  placeholder: string
+}
+
+export interface ContactContent {
+  section: SectionMeta
+  fields: ContactFormField[]
+  submitLabel: string
+  submittingLabel: string
+  successMessage: string
+  errorMessage: string
+  missingKeyMessage: string
+}
+
+export interface SectionContent {
+  about: SectionMeta
+  skills: SectionMeta
+  experience: SectionMeta
+  projects: SectionMeta
+  contact: SectionMeta
+}
+
+export interface ProjectActions {
+  liveDemo: string
+  github: string
 }

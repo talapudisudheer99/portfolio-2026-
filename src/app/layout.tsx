@@ -4,7 +4,9 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 import { siteConfig } from "@/data/site"
+import { createSiteMetadata } from "@/lib/metadata"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -21,15 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 })
 
-export const metadata: Metadata = {
-  title: siteConfig.metadata.title,
-  description: siteConfig.metadata.description,
-  openGraph: {
-    title: siteConfig.metadata.title,
-    description: siteConfig.metadata.description,
-    type: "website",
-  },
-}
+export const metadata: Metadata = createSiteMetadata()
 
 export default function RootLayout({
   children,
@@ -53,6 +47,7 @@ export default function RootLayout({
           <Navbar />
           <main id="main-content">{children}</main>
           <Footer />
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
     </html>

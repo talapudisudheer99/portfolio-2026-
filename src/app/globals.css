@@ -137,3 +137,24 @@
     @apply font-semibold tracking-tight text-foreground;
   }
 }
+
+.hero-grid {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--border) 80%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
