@@ -1,7 +1,6 @@
-import { MotionCard, StaggerContainer, StaggerItem } from "@/components/shared/motion"
+import { FadeIn } from "@/components/shared/motion"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
-import { Badge } from "@/components/ui/badge"
 import { sections } from "@/data/sections"
 import { skillGroups } from "@/data/skills"
 
@@ -9,31 +8,42 @@ export function Skills() {
   const { skills } = sections
 
   return (
-    <SectionWrapper id="skills">
+    <SectionWrapper
+      id="skills"
+      className="bg-background-secondary"
+      railClassName="section-space"
+    >
+      <p className="mb-8 font-mono text-[10px] tracking-[0.18em] text-primary uppercase">
+        02 · Capabilities
+      </p>
       <SectionHeader title={skills.title} description={skills.description} />
 
-      <StaggerContainer className="grid gap-6 md:grid-cols-2">
-        {skillGroups.map((group) => (
-          <StaggerItem key={group.id}>
-            <MotionCard className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h3 className="text-base font-semibold text-foreground">
-                {group.title}
-              </h3>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {group.skills.map((skill) => (
-                  <Badge
-                    key={skill}
-                    variant="secondary"
-                    className="h-8 rounded-full px-3 text-[13px] font-medium transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    {skill}
-                  </Badge>
-                ))}
+      <FadeIn>
+        <div className="content-grid gap-y-12">
+          {skillGroups.map((group, index) => (
+            <section
+              key={group.id}
+              aria-labelledby={`capability-${group.id}`}
+              className="col-span-12 sm:col-span-6 lg:col-span-4"
+            >
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-[10px] text-primary">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3
+                  id={`capability-${group.id}`}
+                  className="text-sm font-extrabold tracking-[-0.02em] text-foreground"
+                >
+                  {group.title}
+                </h3>
               </div>
-            </MotionCard>
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
+              <p className="mt-5 text-sm leading-7 text-muted-foreground">
+                {group.skills.join(" · ")}
+              </p>
+            </section>
+          ))}
+        </div>
+      </FadeIn>
     </SectionWrapper>
   )
 }

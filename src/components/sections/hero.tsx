@@ -1,100 +1,84 @@
-"use client"
+import { ArrowDownRight, ArrowUpRight } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  HeroBackground,
-  HeroItem,
-  HeroStagger,
-} from "@/components/shared/hero-effects"
-import { ResumeButton } from "@/components/shared/resume-button"
-import { SectionWrapper } from "@/components/shared/section-wrapper"
+import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { SocialLinks } from "@/components/shared/social-links"
 import { siteConfig } from "@/data/site"
 
 export function Hero() {
   const { hero } = siteConfig
+  const [statement, counterpoint] = hero.greeting.split(". ")
 
   return (
-    <SectionWrapper
-      id="hero"
-      className="relative overflow-hidden pb-20 pt-12 md:pb-28 md:pt-20"
-    >
-      <HeroBackground />
-
-      <HeroStagger className="mx-auto flex max-w-3xl flex-col items-center text-center">
-        <HeroItem>
-          <Badge
-            variant="secondary"
-            className="mb-6 h-8 rounded-full border border-border bg-background-secondary px-4 text-[13px] font-medium tracking-wide uppercase"
-          >
+    <SectionShell id="hero" className="overflow-hidden">
+      <ContentRail className="flex min-h-[calc(100svh-4.5rem)] flex-col border-x border-border/60">
+        <div className="flex items-center justify-between border-b border-border/60 px-4 py-4 sm:px-6 lg:px-8">
+          <p className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase sm:text-xs">
             {hero.badge}
-          </Badge>
-        </HeroItem>
-
-        <HeroItem>
-          <h1 className="text-[2.5rem] font-bold tracking-[-0.04em] text-foreground md:text-[3.5rem] md:leading-[1.05] lg:text-[4rem]">
-            {hero.greeting}
-          </h1>
-        </HeroItem>
-
-        <HeroItem>
-          <p className="mt-4 text-lg font-medium tracking-tight text-primary md:text-xl">
-            {hero.role}
           </p>
-        </HeroItem>
+          <a
+            href="#projects"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          >
+            Selected work
+            <ArrowDownRight className="size-4" aria-hidden="true" />
+          </a>
+        </div>
 
-        <HeroItem>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg md:leading-[1.7]">
+        <div className="content-grid flex-1 items-center px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+          <h1 className="col-span-12 max-w-[11ch] text-[clamp(3.9rem,10.5vw,9.5rem)] leading-[0.82] font-semibold tracking-[-0.075em] text-foreground">
+            {statement}.
+            <span className="editorial-display mt-2 block font-medium text-primary italic">
+              {counterpoint}
+            </span>
+          </h1>
+        </div>
+
+        <div className="content-grid gap-y-8 border-t border-border/60 px-4 py-7 sm:px-6 lg:px-8">
+          <div className="col-span-12 md:col-span-3">
+            <p className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+              Focus
+            </p>
+            <p className="mt-2 text-sm font-semibold text-foreground">
+              {hero.role}
+            </p>
+          </div>
+
+          <p className="col-span-12 max-w-xl text-sm leading-relaxed text-muted-foreground md:col-span-5 md:text-base">
             {hero.tagline}
           </p>
-        </HeroItem>
 
-        <HeroItem className="mt-10 w-full">
-          <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
-            {hero.ctas.map((cta) => {
-              if (cta.variant === "primary") {
+          <div className="col-span-12 flex flex-col gap-4 md:col-span-4 md:items-end">
+            <div className="flex flex-wrap gap-x-5 gap-y-3">
+              {hero.ctas.map((cta) => {
+                const external = cta.external ?? cta.href.startsWith("http")
+                const primary = cta.variant === "primary"
+
                 return (
-                  <ResumeButton
+                  <a
                     key={cta.href}
-                    resume={{ label: cta.label, href: cta.href }}
-                    size="lg"
-                  />
-                )
-              }
-
-              const isExternal = cta.external ?? cta.href.startsWith("http")
-
-              return (
-                <Button
-                  key={cta.href}
-                  variant={cta.variant === "outline" ? "outline" : "ghost"}
-                  size="lg"
-                  className="h-11 rounded-[10px] px-5 text-sm font-medium"
-                  render={
-                    <a
-                      href={cta.href}
-                      {...(isExternal
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
+                    href={cta.href}
+                    {...(external
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className={
+                      primary
+                        ? "group inline-flex items-center gap-2 border-b border-primary pb-1 text-sm font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                        : "group inline-flex items-center gap-2 border-b border-border pb-1 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    }
+                  >
+                    {cta.label}
+                    <ArrowUpRight
+                      className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      aria-hidden="true"
                     />
-                  }
-                  nativeButton={false}
-                >
-                  {cta.label}
-                </Button>
-              )
-            })}
+                  </a>
+                )
+              })}
+            </div>
+            <SocialLinks links={siteConfig.socialLinks} compact />
           </div>
-        </HeroItem>
-
-        <HeroItem>
-          <SocialLinks
-            links={siteConfig.socialLinks}
-            className="mt-6 justify-center"
-          />
-        </HeroItem>
-      </HeroStagger>
-    </SectionWrapper>
+        </div>
+      </ContentRail>
+    </SectionShell>
   )
 }

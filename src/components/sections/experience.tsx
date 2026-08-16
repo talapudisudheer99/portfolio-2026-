@@ -1,35 +1,58 @@
-import { ExperienceCard } from "@/components/shared/experience-card"
-import { StaggerContainer, StaggerItem } from "@/components/shared/motion"
+import { FadeIn } from "@/components/shared/motion"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { experience } from "@/data/experience"
 import { sections } from "@/data/sections"
 
 export function Experience() {
-  const { experience: experienceSection } = sections
+  const { experience: content } = sections
 
   return (
-    <SectionWrapper id="experience" className="bg-background-secondary/50">
-      <SectionHeader
-        title={experienceSection.title}
-        description={experienceSection.description}
-      />
+    <SectionWrapper id="experience" className="section-rule">
+      <p className="mb-8 font-mono text-[10px] tracking-[0.18em] text-primary uppercase">
+        03 · Experience
+      </p>
+      <SectionHeader title={content.title} description={content.description} />
 
-      <StaggerContainer className="relative space-y-6">
-        <div
-          aria-hidden="true"
-          className="absolute top-2 bottom-2 left-4 hidden w-px bg-gradient-to-b from-primary/40 via-border to-transparent md:block"
-        />
-        {experience.map((item) => (
-          <StaggerItem key={item.id} className="relative md:pl-10">
-            <span
-              aria-hidden="true"
-              className="absolute top-8 left-[13px] hidden size-2.5 rounded-full border-2 border-primary bg-background md:block"
-            />
-            <ExperienceCard experience={item} />
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
+      <FadeIn>
+        <ol className="border-t border-border">
+          {experience.map((item, index) => (
+            <li
+              key={item.id}
+              className="content-grid gap-y-5 border-b border-border py-8 md:py-10"
+            >
+              <div className="col-span-12 md:col-span-3">
+                <p className="font-mono text-[10px] text-primary">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
+                <p className="mt-3 text-sm font-bold text-foreground">
+                  {item.company}
+                </p>
+                <p className="mt-1 font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
+                  {item.period}
+                </p>
+              </div>
+
+              <div className="col-span-12 md:col-span-4">
+                <h3 className="text-xl font-extrabold tracking-[-0.035em] text-foreground md:text-2xl">
+                  {item.role}
+                </h3>
+              </div>
+
+              <ul className="col-span-12 space-y-3 md:col-span-5">
+                {item.bullets.slice(0, 3).map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="text-sm leading-relaxed text-muted-foreground"
+                  >
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </FadeIn>
     </SectionWrapper>
   )
 }

@@ -2,28 +2,33 @@ import type { ProjectActions, SectionContent } from "@/types"
 
 export const sections: SectionContent = {
   about: {
-    title: "About",
-    description: "From business foundations to production frontend engineering.",
+    title: "A wider lens",
+    description:
+      "Business foundations, production frontend work, and the curiosity to own the system behind the screen.",
   },
   skills: {
-    title: "Skills",
-    description: "Technologies and practices I use to ship reliable interfaces.",
+    title: "Capabilities",
+    description:
+      "Grouped by how products actually ship — UI, data, realtime, auth, AI, and ops.",
   },
   experience: {
-    title: "Experience",
-    description: "Roles where I grew from fundamentals to enterprise frontend work.",
+    title: "Selected experience",
+    description:
+      "Independent product ownership alongside production frontend roles.",
   },
   projects: {
-    title: "Projects",
-    description: "Selected work focused on architecture, scale, and user experience.",
+    title: "One product, end to end",
+    description:
+      "Sameward is where interface craft, systems thinking, and shipping discipline meet.",
   },
   contact: {
-    title: "Contact",
-    description: "Open to frontend engineering opportunities — let's connect.",
+    title: "Let’s build something clear",
+    description:
+      "Open to frontend engineering opportunities with ambitious product teams.",
   },
 }
 
 export const projectActions: ProjectActions = {
-  liveDemo: "Live Demo",
+  liveDemo: "Visit Sameward",
   github: "GitHub",
 }

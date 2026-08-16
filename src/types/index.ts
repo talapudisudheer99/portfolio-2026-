@@ -85,9 +85,14 @@ export interface Project {
   id: string
   title: string
   description: string
-  stack: string[]
   liveUrl?: string
   githubUrl?: string
+  /** Sole homepage flagship when true */
+  featured?: boolean
+  subtitle?: string
+  problem?: string
+  decisions?: string[]
+  buildList?: string[]
 }
 
 export interface SkillGroup {

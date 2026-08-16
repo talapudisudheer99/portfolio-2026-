@@ -2,18 +2,18 @@ import type { AboutContent } from "@/types"
 
 export const aboutContent: AboutContent = {
   section: {
-    title: "About",
-    description: "From business foundations to production frontend engineering.",
+    title: "A wider lens",
+    description:
+      "Business foundations, production frontend work, and the curiosity to own the system behind the screen.",
   },
   paragraphs: [
-    "I started with a BBA background and transitioned into software through self-directed learning — building fundamentals in HTML, CSS, JavaScript, and React before moving into production frontend roles.",
-    "At Phrontier AI, I've spent 18+ months building frontend systems for an enterprise platform under active development — shipping dual Next.js applications with GraphQL, RTK Query, and real-time UI patterns.",
-    "I'm targeting Frontend Engineer II and Senior Frontend roles where I can contribute to scalable architecture, strong component design, and high-quality user experiences.",
+    "I started with a BBA background and transitioned into software through self-directed learning — HTML, CSS, JavaScript, and React — before moving into production frontend roles.",
+    "Independently, I designed and shipped Sameward: a live team workspace with channels, realtime messaging, auth, storage, email, and Channel AI. Building it expanded my work from interface architecture into backend, infrastructure, and product decisions.",
+    "At Phrontier AI, I build frontend systems for an enterprise platform under active development. I do my best work where architecture judgment, product clarity, and polished interaction all matter.",
   ],
   highlights: [
+    { label: "Flagship", value: "Sameward · Live" },
     { label: "Experience", value: "3 Years" },
-    { label: "Enterprise Platform", value: "18+ Months" },
-    { label: "Next.js Applications", value: "2 Production Apps" },
-    { label: "Location", value: "Hyderabad, India (Open to Remote)" },
+    { label: "Location", value: "Hyderabad · Open to Remote" },
   ],
 }

@@ -2,12 +2,15 @@
 
 > Full documentation for Sudheer Talapudi's portfolio site.
 
+**Redesign v2 (Sameward-first + warm editorial):** execute phases in order — [docs/phases/README.md](./phases/README.md).  
+**Product handoff context:** [docs/CONTEXT-SAMEWARD-HANDOFF.md](./CONTEXT-SAMEWARD-HANDOFF.md).
+
 ## 1. Project Overview
 
 | Item | Detail |
 |------|--------|
 | **Stack** | Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui (Nova / Base UI) |
-| **Purpose** | Single-page portfolio showcasing frontend engineering experience |
+| **Purpose** | Portfolio + Sameward flagship case study, built on the redesign v2 editorial system |
 | **GitHub** | [Sudheer-webDeveloper/portfolio-2026-](https://github.com/Sudheer-webDeveloper/portfolio-2026-) |
 | **Deploy URL** | Set `NEXT_PUBLIC_SITE_URL` in Vercel after first deploy |
 
@@ -144,11 +147,43 @@ src/
 
 **Reusable shared components:**
 
-- `SectionWrapper` — consistent max-width & padding
+- `SectionShell` — full-bleed section background (never constrains width)
+- `ContentRail` — width-constrained content column (`content-rail`)
+- `SectionWrapper` — convenience wrapper combining both
 - `SectionHeader` — title + description
 - `SocialLinks` — GitHub, LinkedIn, email icons
-- `ResumeButton` — resume CTA
-- `ExperienceCard` / `ProjectCard` — data-driven cards
+- `ArchitectureDiagram` — static DOM/SVG Sameward service diagram
+- `FadeIn` — the single site-wide reveal, reduced-motion aware
+
+**Layout rule:** backgrounds belong on `SectionShell`, widths on `ContentRail`.
+Combining both on one element is what produced the rejected "floating slab" look.
+
+### Design system (redesign v2)
+
+Tokens live in `src/app/globals.css`. Never hardcode hex values in components.
+
+| Role | Token | Light | Dark |
+|------|-------|-------|------|
+| Canvas | `--background` | `#f3f0e8` warm paper | `#11100e` warm black |
+| Alt band | `--background-secondary` | `#e9e4da` | `#1a1815` |
+| Ink | `--foreground` | `#171612` | `#f1ece2` |
+| Accent (only one) | `--primary` | `#d94b2b` vermilion | `#f06a47` |
+| Sameward product | `--sameward-ink` | `#0f6076` | `#5cc0da` |
+
+**Colour rules:**
+
+- Vermilion is the *only* portfolio accent.
+- `--sameward-ink` is product identity — allowed only inside Sameward content
+  (live dot, architecture diagram), never as page chrome.
+- Section surfaces stay in the warm family. A cold-hue full-bleed band breaks the
+  scroll and was removed for exactly that reason.
+- The page has **one** dark climax (Profile/About). Adding more flattens it.
+
+**Typography:** Fraunces (`editorial-display`) for large statements, Manrope for
+body/UI, JetBrains Mono for small technical labels only.
+
+**Motion:** `FadeIn` is the only reveal, plus a global `prefers-reduced-motion`
+kill-switch in `globals.css`. No WebGL, no scroll hijacking.
 
 ## 9. Responsive Breakpoints
 
@@ -157,10 +192,10 @@ Mobile-first Tailwind breakpoints used across the site:
 | Breakpoint | Min width | Typical layout changes |
 |------------|-----------|------------------------|
 | `base` | 0px | Single column, stacked hero CTAs, mobile nav sheet |
-| `sm:` | 640px | Hero buttons inline |
-| `md:` | 768px | Desktop navbar links, skills 2-column grid |
-| `lg:` | 1024px | About/contact 2-column split, projects 2-column grid |
-| `xl:` | 1280px | Max content width capped at `max-w-6xl` (1152px) |
+| `sm:` | 640px | Wider content rail gutters, 2-up capability/build lists |
+| `md:` | 768px | Desktop navbar links, 12-column editorial grid engages |
+| `lg:` | 1024px | Architecture diagram splits from its heading |
+| `xl:` | 1280px | Content rail caps at `80rem` (1280px) |
 
 Test at: **375px**, **768px**, **1024px**, **1440px**.
 
@@ -215,13 +250,10 @@ Use a name-based Vercel subdomain — **not** `portfolio-2026` (too generic and 
 | Domain not allowed in Web3Forms | Add `localhost` (dev) or Vercel URL (prod) |
 | Key wrong | Copy fresh key from Web3Forms dashboard |
 
-### Contact form crashes on submit
+### Resume link 404
 
-- Fixed: `theme-provider.tsx` now guards `event.key` being undefined when typing in form fields.
-
-### Resume button 404
-
-- `public/resume.pdf` does not exist yet — add after Vercel deploy (see Section 5).
+- Confirm `public/resume.pdf` exists and the URL inside the PDF matches the live
+  deploy (see Section 5).
 
 ### Wrong favicon / old tab title
 
@@ -253,8 +285,9 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 
 ### Dark mode toggle not working
 
-- Use sun/moon button in navbar, or press `d` (when not typing in a form)
-- Theme stored via `next-themes` in `class` on `<html>`
+- Use the sun/moon button in the navbar
+- Theme follows the system preference by default and is stored via `next-themes`
+  as a `class` on `<html>`
 
 ### Push to GitHub fails (auth)
 
@@ -267,9 +300,10 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 
 ## 13. Known Issues / TODO
 
-- [ ] Deploy to Vercel and set `NEXT_PUBLIC_SITE_URL`
-- [ ] Add `public/resume.pdf` with updated portfolio URL inside PDF
-- [ ] Add Vercel domain to Web3Forms
+- [ ] Deploy redesign v2 to Vercel and set `NEXT_PUBLIC_SITE_URL`
+- [ ] Re-verify `public/resume.pdf` URL matches the live deploy
+- [ ] Add Vercel domain to Web3Forms allowed domains
+- [ ] Replace the Sameward product-surface band with real screenshots when available
 - [ ] Optional: custom domain
 - [ ] Optional: Google Analytics / Vercel Analytics
 
@@ -277,7 +311,7 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 
 | Path | Purpose |
 |------|---------|
-| `public/` | Static files (`favicon.svg`, `resume.pdf` later) |
+| `public/` | Static files (`favicon.svg`, `apple-icon.svg`, `resume.pdf`) |
 | `docs/PORTFOLIO.md` | This file — project & debug documentation |
 | `src/app/` | Next.js App Router entry, layout, global styles |
 | `src/components/layout/` | Navbar, footer |

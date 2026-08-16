@@ -19,19 +19,24 @@ export function SectionHeader({
   return (
     <FadeIn
       className={cn(
-        "mb-10 md:mb-12",
+        "mb-12 grid gap-5 md:mb-16 md:grid-cols-12",
         align === "center" && "text-center",
         className
       )}
     >
-      <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+      <h2
+        className={cn(
+          "editorial-display text-[clamp(3rem,7vw,6.75rem)] leading-[0.88] font-medium text-foreground md:col-span-7",
+          align === "center" && "md:col-span-12"
+        )}
+      >
         {title}
       </h2>
       {description ? (
         <p
           className={cn(
-            "mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg",
-            align === "center" && "mx-auto"
+            "max-w-md self-end text-sm leading-relaxed text-muted-foreground md:col-span-4 md:col-start-9 md:text-base",
+            align === "center" && "mx-auto md:col-span-8 md:col-start-3"
           )}
         >
           {description}

@@ -2,6 +2,18 @@ import type { Experience } from "@/types"
 
 export const experience: Experience[] = [
   {
+    id: "sameward",
+    company: "Sameward",
+    role: "Independent product — frontend-strong full stack",
+    period: "2025 – Present",
+    bullets: [
+      "Designed and shipped Sameward (sameward.com): channels, realtime messaging, profiles, and Channel AI in one workspace.",
+      "Built the web app (Next.js, TypeScript, RTK Query, design system) plus a separate Socket.IO realtime service with authenticated channel rooms.",
+      "Owned auth (sessions, Google OAuth, email verification), MongoDB multi-tenant workspaces, S3 uploads, Resend email, and Railway production deploy.",
+      "Rebranded TeamHub → Sameward in product UI while keeping internal datastore and bucket identities stable — shipping judgment over cosmetic renames.",
+    ],
+  },
+  {
     id: "phrontier-ai",
     company: "Phrontier AI",
     role: "Frontend Engineer",

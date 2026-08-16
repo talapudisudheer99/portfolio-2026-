@@ -15,12 +15,14 @@ interface SocialLinksProps {
   links: SocialLink[]
   className?: string
   iconSize?: "sm" | "md"
+  compact?: boolean
 }
 
 export function SocialLinks({
   links,
   className,
   iconSize = "md",
+  compact = false,
 }: SocialLinksProps) {
   const iconClassName = iconSize === "sm" ? "size-4" : "size-5"
 
@@ -34,9 +36,16 @@ export function SocialLinks({
             key={link.href}
             href={link.href}
             target={link.href.startsWith("http") ? "_blank" : undefined}
-            rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            rel={
+              link.href.startsWith("http") ? "noopener noreferrer" : undefined
+            }
             aria-label={link.label}
-            className="inline-flex size-10 items-center justify-center rounded-[10px] border border-border text-muted-foreground transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground hover:shadow-md"
+            className={cn(
+              "inline-flex items-center justify-center text-muted-foreground transition-colors duration-200 ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              compact
+                ? "size-7"
+                : "size-10 rounded-full border border-border hover:border-primary/40"
+            )}
           >
             <Icon className={iconClassName} aria-hidden="true" />
           </a>
