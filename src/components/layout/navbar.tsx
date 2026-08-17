@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowDownToLine, Menu } from "lucide-react"
 
 import { ContentRail } from "@/components/shared/section-wrapper"
+import { ScrollProgress } from "@/components/shared/scroll-progress"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +24,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/88 backdrop-blur-xl">
+    <header className="relative sticky top-0 z-50 border-b border-border/70 bg-background/88 backdrop-blur-xl">
       <ContentRail>
         <nav
           aria-label="Main navigation"
@@ -118,6 +119,7 @@ export function Navbar() {
           </div>
         </nav>
       </ContentRail>
+      <ScrollProgress />
     </header>
   )
 }

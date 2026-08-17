@@ -21,8 +21,8 @@ export default function OpenGraphImage() {
         width: "100%",
         height: "100%",
         padding: "72px",
-        background: "#f3f0e8",
-        color: "#171612",
+        background: "#f2f1ed",
+        color: "#14151a",
         fontFamily: "system-ui, sans-serif",
       }}
     >
@@ -32,7 +32,7 @@ export default function OpenGraphImage() {
           alignItems: "center",
           gap: "16px",
           fontSize: 26,
-          color: "#d94b2b",
+          color: "#8e2b3a",
           fontWeight: 600,
         }}
       >
@@ -41,13 +41,13 @@ export default function OpenGraphImage() {
             width: 56,
             height: 56,
             borderRadius: 999,
-            background: "#d94b2b",
+            background: "#8e2b3a",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 24,
             fontWeight: 700,
-            color: "#fffaf2",
+            color: "#fdf8f7",
           }}
         >
           ST
@@ -61,13 +61,13 @@ export default function OpenGraphImage() {
         >
           {contact.name}
         </div>
-        <div style={{ fontSize: 42, color: "#d94b2b", fontWeight: 600 }}>
+        <div style={{ fontSize: 42, color: "#8e2b3a", fontWeight: 600 }}>
           Frontend engineer. Full product thinker.
         </div>
         <div
           style={{
             fontSize: 26,
-            color: "#6e685e",
+            color: "#63646c",
             lineHeight: 1.5,
             maxWidth: 900,
           }}

@@ -3,6 +3,7 @@
 import { ArrowUpRight, MapPin } from "lucide-react"
 import { toast } from "sonner"
 
+import { FadeIn, MaskedLine, TraceRule } from "@/components/shared/motion"
 import { SocialLinks } from "@/components/shared/social-links"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { Button } from "@/components/ui/button"
@@ -38,23 +39,26 @@ export function Contact() {
   return (
     <SectionWrapper id="contact" className="section-rule">
       <div className="content-grid gap-y-14">
-        <div className="col-span-12 md:col-span-3">
-          <p className="font-mono text-[10px] tracking-[0.18em] text-primary uppercase">
-            05 · Contact
-          </p>
-        </div>
+        <FadeIn className="col-span-12 md:col-span-3">
+          <p className="section-kicker text-primary">05 · Contact</p>
+        </FadeIn>
 
         <div className="col-span-12 md:col-span-9">
-          <h2 className="editorial-display max-w-[11ch] text-[clamp(3.8rem,8vw,8rem)] leading-[0.86] font-medium">
-            {section.title}
-            <span className="text-primary">.</span>
-          </h2>
-          <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground md:text-base">
-            {section.description}
-          </p>
+          <MaskedLine display>
+            <h2 className="editorial-display max-w-[11ch] text-[clamp(3.8rem,8vw,8rem)] leading-[0.86] font-medium">
+              {section.title}
+              <span className="text-primary">.</span>
+            </h2>
+          </MaskedLine>
+          <FadeIn delay={0.1}>
+            <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground md:text-base">
+              {section.description}
+            </p>
+          </FadeIn>
         </div>
 
         <div className="col-span-12 mt-4 md:col-span-5">
+          <TraceRule className="mb-6 bg-border" />
           <a
             href={`mailto:${contact.email}`}
             className="group inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 text-xl font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-2xl"

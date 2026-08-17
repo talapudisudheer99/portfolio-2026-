@@ -57,9 +57,5 @@ export function createSiteMetadata(): Metadata {
       description: metadata.description,
       images: [ogImage],
     },
-    icons: {
-      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-      apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
-    },
   }
 }

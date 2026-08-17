@@ -7,12 +7,12 @@
 
 ## 1. Project Overview
 
-| Item | Detail |
-|------|--------|
-| **Stack** | Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui (Nova / Base UI) |
-| **Purpose** | Portfolio + Sameward flagship case study, built on the redesign v2 editorial system |
-| **GitHub** | [Sudheer-webDeveloper/portfolio-2026-](https://github.com/Sudheer-webDeveloper/portfolio-2026-) |
-| **Deploy URL** | Set `NEXT_PUBLIC_SITE_URL` in Vercel after first deploy |
+| Item           | Detail                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| **Stack**      | Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui (Nova / Base UI)                |
+| **Purpose**    | Portfolio + Sameward flagship case study, built on the redesign v2 editorial system             |
+| **GitHub**     | [Sudheer-webDeveloper/portfolio-2026-](https://github.com/Sudheer-webDeveloper/portfolio-2026-) |
+| **Deploy URL** | Set `NEXT_PUBLIC_SITE_URL` in Vercel after first deploy                                         |
 
 ## 2. Local Development
 
@@ -35,10 +35,10 @@ npm run lint       # ESLint
 
 ## 3. Environment Variables
 
-| Variable | Required | Purpose | Where to get |
-|----------|----------|---------|--------------|
-| `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | Yes (contact form) | Sends contact form to your email | [web3forms.com](https://web3forms.com) dashboard |
-| `NEXT_PUBLIC_SITE_URL` | After deploy | Canonical URL for SEO, OG tags, social previews | Your Vercel URL (e.g. `https://sudheer-talapudi.vercel.app`) |
+| Variable                           | Required           | Purpose                                         | Where to get                                                 |
+| ---------------------------------- | ------------------ | ----------------------------------------------- | ------------------------------------------------------------ |
+| `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | Yes (contact form) | Sends contact form to your email                | [web3forms.com](https://web3forms.com) dashboard             |
+| `NEXT_PUBLIC_SITE_URL`             | After deploy       | Canonical URL for SEO, OG tags, social previews | Your Vercel URL (e.g. `https://sudheer-talapudi.vercel.app`) |
 
 **Local `.env.local` example:**
 
@@ -94,13 +94,13 @@ resume: {
 
 ## 6. Metadata & Favicon
 
-| Asset | Location | Purpose |
-|-------|----------|---------|
-| Page metadata | `src/lib/metadata.ts` + `src/data/site.ts` | Title, description, OG, Twitter cards |
-| Favicon | `public/favicon.svg` | Browser tab icon (ST monogram) |
-| Apple icon | `public/apple-icon.svg` | iOS home screen |
-| OG image | `src/app/opengraph-image.tsx` | Auto-generated social preview (1200×630) |
-| Site URL helper | `src/lib/site-url.ts` | Resolves `NEXT_PUBLIC_SITE_URL` or Vercel URL |
+| Asset           | Location                                   | Purpose                                       |
+| --------------- | ------------------------------------------ | --------------------------------------------- |
+| Page metadata   | `src/lib/metadata.ts` + `src/data/site.ts` | Title, description, OG, Twitter cards         |
+| Favicon         | `public/favicon.svg`                       | Browser tab icon (ST monogram)                |
+| Apple icon      | `public/apple-icon.svg`                    | iOS home screen                               |
+| OG image        | `src/app/opengraph-image.tsx`              | Auto-generated social preview (1200×630)      |
+| Site URL helper | `src/lib/site-url.ts`                      | Resolves `NEXT_PUBLIC_SITE_URL` or Vercel URL |
 
 **After deploy:** set `NEXT_PUBLIC_SITE_URL` so link previews and canonical URLs use your production domain.
 
@@ -111,15 +111,15 @@ resume: {
 
 ## 7. Content Update Guide
 
-| What to change | File |
-|----------------|------|
-| Contact, nav, social, hero, footer, metadata copy | `src/data/site.ts` |
-| Section titles (About, Skills, etc.) | `src/data/sections.ts` |
-| About paragraphs & highlights | `src/data/about.ts` |
-| Experience jobs | `src/data/experience.ts` |
-| Projects | `src/data/projects.ts` |
-| Skills groups | `src/data/skills.ts` |
-| Contact form labels & toast messages | `src/data/contact.ts` |
+| What to change                                    | File                     |
+| ------------------------------------------------- | ------------------------ |
+| Contact, nav, social, hero, footer, metadata copy | `src/data/site.ts`       |
+| Section titles (About, Skills, etc.)              | `src/data/sections.ts`   |
+| About paragraphs & highlights                     | `src/data/about.ts`      |
+| Experience jobs                                   | `src/data/experience.ts` |
+| Projects                                          | `src/data/projects.ts`   |
+| Skills groups                                     | `src/data/skills.ts`     |
+| Contact form labels & toast messages              | `src/data/contact.ts`    |
 
 **Rule:** All user-facing copy lives in `src/data/*.ts`. Components should not hardcode text.
 
@@ -162,21 +162,25 @@ Combining both on one element is what produced the rejected "floating slab" look
 
 Tokens live in `src/app/globals.css`. Never hardcode hex values in components.
 
-| Role | Token | Light | Dark |
-|------|-------|-------|------|
-| Canvas | `--background` | `#f3f0e8` warm paper | `#11100e` warm black |
-| Alt band | `--background-secondary` | `#e9e4da` | `#1a1815` |
-| Ink | `--foreground` | `#171612` | `#f1ece2` |
-| Accent (only one) | `--primary` | `#d94b2b` vermilion | `#f06a47` |
-| Sameward product | `--sameward-ink` | `#0f6076` | `#5cc0da` |
+| Role              | Token                    | Light             | Dark                |
+| ----------------- | ------------------------ | ----------------- | ------------------- |
+| Canvas            | `--background`           | `#f2f1ed` bone    | `#101117` ink black |
+| Alt band          | `--background-secondary` | `#e7e5df`         | `#171922`           |
+| Ink               | `--foreground`           | `#14151a`         | `#eceae5`           |
+| Accent (only one) | `--primary`              | `#8e2b3a` oxblood | `#cf5c63`           |
+| Sameward product  | `--sameward-ink`         | `#0f6076`         | `#5cc0da`           |
 
 **Colour rules:**
 
-- Vermilion is the *only* portfolio accent.
+- Oxblood is the _only_ portfolio accent. The palette is deliberately neutral-cool
+  (bone + blue-black) so it does not read as a copy of the warm-cream/orange
+  editorial portfolios this layout was benchmarked against.
+- Dark accent is capped at `#cf5c63`; anything deeper drops below 4.5:1 on the
+  dark canvas.
 - `--sameward-ink` is product identity — allowed only inside Sameward content
   (live dot, architecture diagram), never as page chrome.
-- Section surfaces stay in the warm family. A cold-hue full-bleed band breaks the
-  scroll and was removed for exactly that reason.
+- Section surfaces stay within the bone/ink family. A clashing full-bleed band
+  breaks the scroll and was removed for exactly that reason.
 - The page has **one** dark climax (Profile/About). Adding more flattens it.
 
 **Typography:** Fraunces (`editorial-display`) for large statements, Manrope for
@@ -189,13 +193,13 @@ kill-switch in `globals.css`. No WebGL, no scroll hijacking.
 
 Mobile-first Tailwind breakpoints used across the site:
 
-| Breakpoint | Min width | Typical layout changes |
-|------------|-----------|------------------------|
-| `base` | 0px | Single column, stacked hero CTAs, mobile nav sheet |
-| `sm:` | 640px | Wider content rail gutters, 2-up capability/build lists |
-| `md:` | 768px | Desktop navbar links, 12-column editorial grid engages |
-| `lg:` | 1024px | Architecture diagram splits from its heading |
-| `xl:` | 1280px | Content rail caps at `80rem` (1280px) |
+| Breakpoint | Min width | Typical layout changes                                  |
+| ---------- | --------- | ------------------------------------------------------- |
+| `base`     | 0px       | Single column, stacked hero CTAs, mobile nav sheet      |
+| `sm:`      | 640px     | Wider content rail gutters, 2-up capability/build lists |
+| `md:`      | 768px     | Desktop navbar links, 12-column editorial grid engages  |
+| `lg:`      | 1024px    | Architecture diagram splits from its heading            |
+| `xl:`      | 1280px    | Content rail caps at `80rem` (1280px)                   |
 
 Test at: **375px**, **768px**, **1024px**, **1440px**.
 
@@ -205,11 +209,11 @@ Test at: **375px**, **768px**, **1024px**, **1440px**.
 
 Use a name-based Vercel subdomain — **not** `portfolio-2026` (too generic and may already be taken):
 
-| Option | Vercel URL |
-|--------|------------|
+| Option          | Vercel URL                            |
+| --------------- | ------------------------------------- |
 | **Recommended** | `https://sudheer-talapudi.vercel.app` |
-| Alternative | `https://sudheertalapudi.vercel.app` |
-| Alternative | `https://sudheer-dev.vercel.app` |
+| Alternative     | `https://sudheertalapudi.vercel.app`  |
+| Alternative     | `https://sudheer-dev.vercel.app`      |
 
 ### Deploy steps
 
@@ -243,12 +247,12 @@ Use a name-based Vercel subdomain — **not** `portfolio-2026` (too generic and 
 
 ### Contact form shows error / nothing in Gmail
 
-| Check | Fix |
-|-------|-----|
-| `.env.local` missing key | Add `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` |
-| Dev server not restarted after env change | `Ctrl+C` then `npm run dev` |
-| Domain not allowed in Web3Forms | Add `localhost` (dev) or Vercel URL (prod) |
-| Key wrong | Copy fresh key from Web3Forms dashboard |
+| Check                                     | Fix                                        |
+| ----------------------------------------- | ------------------------------------------ |
+| `.env.local` missing key                  | Add `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`     |
+| Dev server not restarted after env change | `Ctrl+C` then `npm run dev`                |
+| Domain not allowed in Web3Forms           | Add `localhost` (dev) or Vercel URL (prod) |
+| Key wrong                                 | Copy fresh key from Web3Forms dashboard    |
 
 ### Resume link 404
 
@@ -309,18 +313,18 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 
 ## 14. Folder Map
 
-| Path | Purpose |
-|------|---------|
-| `public/` | Static files (`favicon.svg`, `apple-icon.svg`, `resume.pdf`) |
-| `docs/PORTFOLIO.md` | This file — project & debug documentation |
-| `src/app/` | Next.js App Router entry, layout, global styles |
-| `src/components/layout/` | Navbar, footer |
-| `src/components/sections/` | Page sections (hero → contact) |
-| `src/components/shared/` | Reusable layout/content wrappers |
-| `src/components/ui/` | shadcn/ui primitives |
-| `src/data/` | All portfolio copy & config |
-| `src/hooks/` | `use-contact-form` (Web3Forms) |
-| `src/lib/` | Utilities, metadata builder, site URL |
-| `src/types/` | Shared TypeScript interfaces |
-| `.env.example` | Documented env var template |
-| `.env.local` | Your secrets (gitignored) |
+| Path                       | Purpose                                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| `public/`                  | Static files (`favicon.svg`, `apple-icon.svg`, `resume.pdf`) |
+| `docs/PORTFOLIO.md`        | This file — project & debug documentation                    |
+| `src/app/`                 | Next.js App Router entry, layout, global styles              |
+| `src/components/layout/`   | Navbar, footer                                               |
+| `src/components/sections/` | Page sections (hero → contact)                               |
+| `src/components/shared/`   | Reusable layout/content wrappers                             |
+| `src/components/ui/`       | shadcn/ui primitives                                         |
+| `src/data/`                | All portfolio copy & config                                  |
+| `src/hooks/`               | `use-contact-form` (Web3Forms)                               |
+| `src/lib/`                 | Utilities, metadata builder, site URL                        |
+| `src/types/`               | Shared TypeScript interfaces                                 |
+| `.env.example`             | Documented env var template                                  |
+| `.env.local`               | Your secrets (gitignored)                                    |

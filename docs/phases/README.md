@@ -20,6 +20,10 @@ Ops / env / deploy: [PORTFOLIO.md](../PORTFOLIO.md)
 | [04](./04-performance-a11y/README.md) | Responsive, performance & accessibility | ✅ Done |
 | [05](./05-ship/README.md) | Content QA and ship | ✅ Code complete (deploy pending) |
 
+**Motion track (local experiment):** [docs/phases/motion/README.md](./motion/README.md) —
+Engineering Trace (masked lines, drawing rules, activating nodes). No WebGL /
+GSAP / custom cursors.
+
 ## Why the first direction failed
 
 - Nearly every section became a bounded rectangle. The page read as stacked
@@ -66,10 +70,9 @@ dashboard.
 
 ### Visual language
 
-- Warm paper light canvas: `#F3F0E8`; warm near-black dark canvas: `#11100E`.
-- Ink: `#171612`; dark-theme paper text: `#F1ECE2`.
-- One portfolio accent only: signal vermilion around `#F05A3C` (final contrast
-  values set in Phase 01).
+- Bone light canvas: `#F2F1ED`; blue-black dark canvas: `#101117`.
+- Ink: `#14151A`; dark-theme paper text: `#ECEAE5`.
+- One portfolio accent only: oxblood `#8E2B3A` light / `#CF5C63` dark.
 - Sameward Ocean Blue appears only inside Sameward media/diagrams. It is product
   content, not the portfolio chrome.
 - Expressive variable serif for large statements; neutral sans for body/UI;

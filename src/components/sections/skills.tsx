@@ -1,8 +1,9 @@
-import { FadeIn } from "@/components/shared/motion"
+import { FadeIn, TraceNode, TraceSequence } from "@/components/shared/motion"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { sections } from "@/data/sections"
 import { skillGroups } from "@/data/skills"
+import { gap } from "@/lib/motion"
 
 export function Skills() {
   const { skills } = sections
@@ -13,19 +14,18 @@ export function Skills() {
       className="bg-background-secondary"
       railClassName="section-space"
     >
-      <p className="mb-8 font-mono text-[10px] tracking-[0.18em] text-primary uppercase">
-        02 · Capabilities
-      </p>
+      <FadeIn>
+        <p className="section-kicker mb-8 text-primary">02 · Capabilities</p>
+      </FadeIn>
       <SectionHeader title={skills.title} description={skills.description} />
 
-      <FadeIn>
-        <div className="content-grid gap-y-12">
-          {skillGroups.map((group, index) => (
-            <section
-              key={group.id}
-              aria-labelledby={`capability-${group.id}`}
-              className="col-span-12 sm:col-span-6 lg:col-span-4"
-            >
+      <TraceSequence className="content-grid gap-y-12" gap={gap.nodes}>
+        {skillGroups.map((group, index) => (
+          <TraceNode
+            key={group.id}
+            className="col-span-12 sm:col-span-6 lg:col-span-4"
+          >
+            <section aria-labelledby={`capability-${group.id}`}>
               <div className="flex items-baseline gap-3">
                 <span className="font-mono text-[10px] text-primary">
                   {String(index + 1).padStart(2, "0")}
@@ -41,9 +41,9 @@ export function Skills() {
                 {group.skills.join(" · ")}
               </p>
             </section>
-          ))}
-        </div>
-      </FadeIn>
+          </TraceNode>
+        ))}
+      </TraceSequence>
     </SectionWrapper>
   )
 }

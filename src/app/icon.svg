@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Sudheer Talapudi">
+  <rect width="32" height="32" rx="7" fill="#101117" />
+  <text
+    x="13.2"
+    y="24.4"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="24"
+    font-weight="700"
+    fill="#f2f1ed"
+  >S</text>
+  <circle cx="24" cy="22.4" r="2.8" fill="#cf5c63" />
+</svg>

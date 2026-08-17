@@ -17,9 +17,9 @@ export const experience: Experience[] = [
     id: "phrontier-ai",
     company: "Phrontier AI",
     role: "Frontend Engineer",
-    period: "Jan 2025 – Present",
+    period: "Jan 2025 – Jul 2026",
     bullets: [
-      "Building frontend systems for an enterprise platform under active development using Next.js, TypeScript, and GraphQL.",
+      "Built frontend systems for an enterprise platform under active development using Next.js, TypeScript, and GraphQL.",
       "Implemented scalable UI architecture across dual Next.js applications with shared patterns for data fetching and state management.",
       "Integrated RTK Query and WebSocket-driven updates for responsive, real-time user experiences.",
       "Collaborated on authentication flows, role-based access patterns, and production-ready component libraries.",

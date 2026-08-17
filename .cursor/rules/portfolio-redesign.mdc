@@ -18,7 +18,7 @@ boxed SaaS/dashboard presentation.
 ## Direction locked after user review
 
 - Headline: Frontend-strong engineer who ships full product systems (still FE II / Senior FE target)
-- Visual language: warm paper / warm near-black, one vermilion accent, expressive editorial typography
+- Visual language: bone paper / blue-black ink, one oxblood accent, expressive editorial typography
 - Layout: continuous canvas, asymmetric 12-column grid, full-bleed media, hairline rules
 - Never paint large rectangular backgrounds behind every section; avoid cards unless content is genuinely bounded
 - Remove Three.js/R3F/drei/GSAP; use restrained CSS/Framer motion only

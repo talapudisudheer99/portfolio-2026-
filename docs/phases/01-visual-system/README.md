@@ -37,7 +37,7 @@ The boxed look is structural, not only a color problem:
 
 ## Establish the new system
 
-- [ ] Implement warm-paper / warm-black theme tokens with one vermilion accent
+- [ ] Implement bone / blue-black theme tokens with one oxblood accent
 - [ ] Keep Sameward Ocean Blue scoped to project media only
 - [ ] Default theme should not force dark; keep toggle, prefer system or light
   for first paint unless product decision says otherwise

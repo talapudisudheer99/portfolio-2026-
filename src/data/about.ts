@@ -9,7 +9,7 @@ export const aboutContent: AboutContent = {
   paragraphs: [
     "I started with a BBA background and transitioned into software through self-directed learning — HTML, CSS, JavaScript, and React — before moving into production frontend roles.",
     "Independently, I designed and shipped Sameward: a live team workspace with channels, realtime messaging, auth, storage, email, and Channel AI. Building it expanded my work from interface architecture into backend, infrastructure, and product decisions.",
-    "At Phrontier AI, I build frontend systems for an enterprise platform under active development. I do my best work where architecture judgment, product clarity, and polished interaction all matter.",
+    "At Phrontier AI, I built frontend systems for an enterprise platform in active development. I do my best work where architecture judgment, product clarity, and polished interaction all matter.",
   ],
   highlights: [
     { label: "Flagship", value: "Sameward · Live" },
