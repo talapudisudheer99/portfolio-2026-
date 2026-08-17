@@ -1,11 +1,12 @@
 "use client"
 
 import { ArrowUpRight } from "lucide-react"
-import type { PointerEvent as ReactPointerEvent } from "react"
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useRef, useState } from "react"
 
 import { HeroStage } from "@/components/shared/hero-stage"
 import { LocalTime } from "@/components/shared/local-time"
+import { MaskedLine, useMountReveal } from "@/components/shared/motion"
 import { SkillMarquee } from "@/components/shared/skill-marquee"
 import { SectionShell } from "@/components/shared/section-wrapper"
 import { siteConfig } from "@/data/site"
@@ -20,6 +21,7 @@ export function Hero() {
   const [coord, setCoord] = useState({ x: 0, y: 0 })
   const frame = useRef(0)
   const next = useRef({ x: 0, y: 0 })
+  const entered = useMountReveal()
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
@@ -65,30 +67,74 @@ export function Hero() {
           <div className="flex flex-col items-center gap-4 px-5 text-center sm:px-8 lg:px-12">
             <span
               aria-hidden="true"
-              className="block h-px w-11 bg-primary/70"
+              className={cn(
+                "hero-mark block h-px w-11 bg-primary/70",
+                entered && "is-revealed"
+              )}
+              style={{ "--hero-delay": "0.06s" } as CSSProperties}
             />
-            <p className="section-kicker text-muted-foreground">{hero.kicker}</p>
+            <p
+              className={cn(
+                "hero-kicker section-kicker text-muted-foreground",
+                entered && "is-revealed"
+              )}
+              style={{ "--hero-delay": "0.16s" } as CSSProperties}
+            >
+              {hero.kicker}
+            </p>
 
             <h1 className="mx-auto max-w-[18ch] text-[clamp(3.4rem,12vw,8.75rem)] leading-[1.08] font-semibold tracking-[-0.06em] text-foreground">
-              {hero.headline.map((line) => (
-                <span
-                  key={line.text}
-                  className={cn(
-                    "block",
-                    line.accent &&
-                      "editorial-display py-[0.04em] font-medium tracking-[-0.02em] text-primary italic [font-variation-settings:'SOFT'_50,'WONK'_0]"
-                  )}
-                >
-                  {line.text}
-                </span>
-              ))}
+              {hero.headline.map((line, index) => {
+                const word = (
+                  <MaskedLine
+                    as="span"
+                    onMount
+                    display
+                    ink
+                    durationSec={line.accent ? 0.95 : 0.82}
+                    delay={0.28 + index * 0.22}
+                    className={cn(
+                      "block",
+                      line.accent &&
+                        "hero-accent-line editorial-display py-[0.04em] font-medium tracking-[-0.02em] text-primary italic [font-variation-settings:'SOFT'_50,'WONK'_0]"
+                    )}
+                  >
+                    {line.text}
+                  </MaskedLine>
+                )
+
+                if (!line.accent) {
+                  return <span key={line.text}>{word}</span>
+                }
+
+                return (
+                  <span
+                    key={line.text}
+                    className="relative mx-auto block w-fit"
+                  >
+                    {word}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "hero-accent-rule pointer-events-none absolute inset-x-[0.06em] bottom-[0.12em] block h-px bg-primary",
+                        entered && "is-revealed"
+                      )}
+                      style={{ "--hero-delay": "1.18s" } as CSSProperties}
+                    />
+                  </span>
+                )
+              })}
             </h1>
 
             <a
               href={hero.availabilityHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.16em] text-primary uppercase focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              className={cn(
+                "hero-live group inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.16em] text-primary uppercase focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+                entered && "is-revealed"
+              )}
+              style={{ "--hero-delay": "1.52s" } as CSSProperties}
             >
               <span className="relative flex size-2">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 animation-duration-[2.6s] motion-reduce:hidden" />

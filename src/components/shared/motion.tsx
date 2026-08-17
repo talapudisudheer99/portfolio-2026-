@@ -9,7 +9,7 @@ import {
 } from "framer-motion"
 import type { MotionValue } from "framer-motion"
 import type { CSSProperties, ReactNode } from "react"
-import { useRef, useSyncExternalStore } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 
 import type { HeadlineSegment } from "@/types"
 
@@ -28,6 +28,27 @@ import { cn } from "@/lib/utils"
 
 /** The snapshot never changes after hydration, so there is nothing to watch. */
 const subscribeNever = () => () => {}
+
+/** First paint stays masked; the next frame starts CSS animations. */
+export function useMountReveal(enabled = true) {
+  const [revealed, setRevealed] = useState(false)
+
+  useEffect(() => {
+    if (!enabled) return
+
+    let inner = 0
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setRevealed(true))
+    })
+
+    return () => {
+      cancelAnimationFrame(outer)
+      cancelAnimationFrame(inner)
+    }
+  }, [enabled])
+
+  return revealed
+}
 
 /** Keeps the server and first client render identical, then applies the choice. */
 export function useHydratedReducedMotion() {
@@ -99,6 +120,12 @@ interface MaskedLineProps {
   /** Longer display-type timing for hero/editorial headlines. */
   display?: boolean
   onMount?: boolean
+  /** Seconds. Overrides display/trace defaults. */
+  durationSec?: number
+  /** Use `span` inside headings so SSR does not hoist the mask out of `h1`. */
+  as?: "div" | "span"
+  /** Full-ink clip — no fade. Hero signature only. */
+  ink?: boolean
 }
 
 /**
@@ -106,8 +133,8 @@ interface MaskedLineProps {
  * Put grid/layout classes on `className` (outer wrapper) so columns stay intact.
  *
  * The rise is a percentage of the line's own height. Framer Motion leaves
- * percentage transforms stuck at their start value, so the transition lives in
- * CSS (`.mask-line-inner`) and this only decides when to reveal. Reduced motion
+ * percentage transforms stuck at their start value, so CSS owns the motion
+ * (`@keyframes mask-rise`). This only decides when to reveal. Reduced motion
  * is handled by the stylesheet, which keeps server and client markup identical.
  */
 export function MaskedLine({
@@ -116,32 +143,33 @@ export function MaskedLine({
   delay = 0,
   display = false,
   onMount = false,
+  durationSec,
+  as: Tag = "div",
+  ink = false,
 }: MaskedLineProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, viewportOnce)
-  const hydrated = useSyncExternalStore(
-    subscribeNever,
-    () => true,
-    () => false
-  )
+  const mountRevealed = useMountReveal(onMount)
 
-  const revealed = onMount ? hydrated : inView
-  const time = display ? duration.hero : duration.trace
+  const revealed = onMount ? mountRevealed : inView
+  const time = durationSec ?? (display ? duration.hero : duration.trace)
+  const Inner = Tag === "span" ? "span" : "div"
 
   return (
-    <div ref={ref} className={cn("mask-line", className)}>
-      <div
-        className={cn("mask-line-inner", revealed && "is-revealed")}
-        style={
-          {
-            "--mask-duration": `${time}s`,
-            "--mask-delay": `${delay}s`,
-          } as CSSProperties
-        }
-      >
+    <Tag
+      ref={ref as never}
+      className={cn("mask-line", ink && "mask-line-ink", className)}
+      style={
+        {
+          "--mask-duration": `${time}s`,
+          "--mask-delay": `${delay}s`,
+        } as CSSProperties
+      }
+    >
+      <Inner className={cn("mask-line-inner", revealed && "is-revealed")}>
         {children}
-      </div>
-    </div>
+      </Inner>
+    </Tag>
   )
 }
 

@@ -528,35 +528,127 @@
   }
 
   /*
-   * Line mask. The rise is a percentage of the line's own height, which
-   * Framer Motion cannot animate reliably, so CSS owns the transition and
-   * JS only toggles `is-revealed`.
+   * Line mask. Percentage Y must stay percentage on both ends (`0%`, not `0`)
+   * or the browser cannot interpolate and the line pops in after the delay.
+   * A keyframe with fill-mode `both` also plays when `is-revealed` is present
+   * on the first painted frame — a CSS transition would skip.
    */
   .mask-line {
+    display: block;
     overflow: hidden;
   }
 
-  /* After the rise, stop clipping so descenders (p) and italic overflow (e)
-     stay whole. Tight stacked headlines can then sit close without a gap. */
-  .mask-line:has(.is-revealed) {
-    overflow: visible;
-  }
-
   .mask-line-inner {
+    display: block;
     transform: translateY(110%);
-    opacity: 0.35;
-    transition:
-      transform var(--mask-duration, 0.72s) cubic-bezier(0.22, 1, 0.36, 1)
-        var(--mask-delay, 0s),
-      opacity var(--mask-duration, 0.72s) cubic-bezier(0.22, 1, 0.36, 1)
-        var(--mask-delay, 0s);
-    will-change: transform;
+    opacity: 0;
   }
 
   .mask-line-inner.is-revealed {
-    transform: translateY(0);
+    animation-name: mask-rise;
+    animation-duration: var(--mask-duration, 0.72s);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-delay: var(--mask-delay, 0s);
+    animation-fill-mode: both;
+  }
+
+  @keyframes mask-rise {
+    from {
+      transform: translateY(110%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
+
+  .mask-line-ink .mask-line-inner {
     opacity: 1;
-    will-change: auto;
+  }
+
+  .mask-line-ink .mask-line-inner.is-revealed {
+    animation-name: mask-rise-ink;
+  }
+
+  @keyframes mask-rise-ink {
+    from {
+      transform: translateY(110%);
+    }
+    to {
+      transform: translateY(0%);
+    }
+  }
+
+  .hero-accent-line .mask-line-inner.is-revealed {
+    animation-name: hero-accent-rise;
+  }
+
+  @keyframes hero-accent-rise {
+    from {
+      transform: translateY(110%);
+      color: var(--foreground);
+    }
+    to {
+      transform: translateY(0%);
+      color: var(--primary);
+    }
+  }
+
+  .hero-mark,
+  .hero-accent-rule {
+    transform: scaleX(0);
+    transform-origin: center;
+  }
+
+  .hero-mark.is-revealed,
+  .hero-accent-rule.is-revealed {
+    animation: hero-draw 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--hero-delay, 0s);
+  }
+
+  @keyframes hero-draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .hero-kicker,
+  .hero-live {
+    opacity: 0;
+  }
+
+  .hero-kicker.is-revealed,
+  .hero-live.is-revealed {
+    animation: hero-cue 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--hero-delay, 0s);
+  }
+
+  @keyframes hero-cue {
+    from {
+      opacity: 0;
+      transform: translateY(0.45em);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Unclip only after the rise finishes so stacked lines do not leak,
+     then descenders (p) and italic overflow (e) stay whole. */
+  .mask-line:has(.is-revealed) {
+    animation: mask-unclip 0.01s linear
+      calc(var(--mask-delay, 0s) + var(--mask-duration, 0.72s)) forwards;
+  }
+
+  @keyframes mask-unclip {
+    to {
+      overflow: visible;
+    }
   }
 }
 
@@ -565,6 +657,16 @@
   .mask-line-inner {
     transform: none;
     opacity: 1;
+    animation: none;
+  }
+
+  .hero-mark,
+  .hero-accent-rule,
+  .hero-kicker,
+  .hero-live {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 
@@ -603,11 +705,22 @@
 
   .mask-line {
     overflow: visible;
+    animation: none !important;
   }
 
   .mask-line-inner {
     transform: none;
     opacity: 1;
+    animation: none !important;
+  }
+
+  .hero-mark,
+  .hero-accent-rule,
+  .hero-kicker,
+  .hero-live {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
   }
 
   .hero-stage-probe {
