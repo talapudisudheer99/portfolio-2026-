@@ -328,3 +328,250 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 | `src/types/`               | Shared TypeScript interfaces                                 |
 | `.env.example`             | Documented env var template                                  |
 | `.env.local`               | Your secrets (gitignored)                                    |
+
+
+
+
+1. Manuscript Press (current)
+Warm cream sheet, press ink, saturated brick. Brightest and warmest of the set.
+
+Role	Hex
+Canvas
+#FAF5EB
+Ink
+#1A1612
+Brick accent
+#9B1B30
+Muted text
+#6B645A
+Borders
+#D4C9B8
+2. Bone Paper Classic (docs baseline)
+Cooler bone, blue-black ink. Clean editorial; can read flat without strong grid.
+
+Role	Hex
+Canvas
+#F2F1ED
+Ink
+#14151A
+Oxblood accent
+#8E2B3A
+Muted text
+#5C5E66
+Borders
+#CFC9BC
+3. Concrete & Brick (original redesign)
+Grey concrete canvas, pure black ink. Most neutral; often felt dull.
+
+Role	Hex
+Canvas
+#E0DEDD
+Ink
+#000000
+Brick accent
+#891A20
+Muted text
+#565C5F
+Borders
+#C3C1C0
+4. Press & Parchment (Egstad-style)
+Olive-khaki paper, warm brown ink. Printed poster feel; less digital.
+
+Role	Hex
+Canvas
+#E2E0D9
+Ink
+#252422
+Brick accent
+#9B1B30
+Muted text
+#6A655E
+Borders
+#C8C2B6
+5. Editorial Cream (t402 / Swiss editorial)
+Near-white cream, near-black ink. Crisp and minimal; high clarity.
+
+Role	Hex
+Canvas
+#FAFAF7
+Ink
+#0F0F0F
+Oxblood accent
+#8E2B3A
+Muted text
+#5A5750
+Borders
+#E5E2DA
+6. Warm Clay Editorial (Safi-style paper + your brick)
+Warm paper like Safi’s rebuild, but keeps oxblood instead of clay orange.
+
+Role	Hex
+Canvas
+#F4F1EA
+Ink
+#1C1916
+Brick accent
+#9B1B30
+Muted text
+#6B6560
+Borders
+#D8D2C8
+7. High Key Manuscript (max contrast)
+Almost white canvas, deep ink. Sharpest light mode; less “paper,” more magazine.
+
+Role	Hex
+Canvas
+#FFFBF3
+Ink
+#0D0B09
+Brick accent
+#A02030
+Muted text
+#5E5850
+Borders
+#DDD5C8
+8. Newsprint Warm (subtle sepia)
+Slightly aged newsprint. Softer than Manuscript Press; good if cream feels too bright.
+
+Role	Hex
+Canvas
+#F0EBE0
+Ink
+#1E1A16
+Brick accent
+#922A38
+Muted text
+#736C62
+Borders
+#CEC4B4
+Reply with the template name (e.g. “7 — High Key Manuscript”) and I’ll apply only that palette for light mode. Dark mode won’t change.
+
+Y1 — Highlighter Editorial (André Cândido style)
+Cream page. Black ink. Yellow like a marker stroke — not the whole page.
+
+Role	Hex
+Canvas
+#FAFAF7
+Ink
+#111118
+Yellow accent
+#FEF199
+Brick (links / complete)
+#9B1B30 (keep your brick for headline word)
+Muted text
+#5A5750
+Borders
+#E5E2DA
+Best for: Keeping your brick on complete, adding yellow on kickers, hero mark, or Sameward live dot.
+
+Y2 — Butter Broadsheet (Thisispam style)
+Entire light mode is yellow paper. Highest energy of the set.
+
+Role	Hex
+Canvas (yellow paper)
+#FFF3B8
+Ink
+#0A0A0A
+Accent
+#9B1B30 (brick on yellow — strong contrast)
+Muted text
+#4A4438
+Borders
+#E8D99A
+Best for: If you want light mode to feel as bold as dark mode black.
+
+Y3 — Electric Signal (AREA 17 style)
+White page. Near-black ink. One electric yellow bar/accent.
+
+Role	Hex
+Canvas
+#FFFFFF
+Ink
+#1A1A1A
+Yellow accent
+#FDF313
+Brick
+#9B1B30
+Muted text
+#6B6B6B
+Borders
+#E8E8E8
+Best for: Minimal, agency-clean. Yellow only on announcement bar or one hero element.
+
+Y4 — Botanica Ledger (magazine triad)
+Ivory + black + precise yellow tags (like status labels).
+
+Role	Hex
+Canvas
+#F7F7EC
+Ink
+#000000
+Yellow highlight
+#FFE937
+Brick accent
+#9B1B30
+Muted text
+#555550
+Borders
+#D8D8CC
+Best for: Technical portfolio with “live / shipped” labels in yellow.
+
+Y5 — Dovetail Butter (soft yellow mood)
+Cream canvas with buttery yellow as mood accent, not full page.
+
+Role	Hex
+Canvas
+#F5F0E8
+Ink
+#1A1612
+Butter yellow
+#F5E6A8
+Brick accent
+#9B1B30
+Muted text
+#6B645A
+Borders
+#DDD5C8
+Best for: Warm and readable — yellow on hover states, pill tags, ticker dots.
+
+Y6 — Gold & Oxblood (Editorial Cream variant)
+Cream page. Brick stays primary. Gold only for tiny highlights.
+
+Role	Hex
+Canvas
+#F4F4F0
+Ink
+#111111
+Gold highlight
+#E8B84B
+Brick accent
+#9B1B30
+Muted text
+#55534E
+Borders
+#D5D1C8
+Best for: If you want warmth without neon yellow.
+
+Y7 — Yellow Canvas + Brick Only (no second accent)
+Full yellow paper, brick is the only chromatic accent.
+
+Role	Hex
+Canvas
+#FFF0B3
+Ink
+#1C1916
+Brick accent
+#9B1B30
+Muted text
+#5C5248
+Borders
+#E5D4A0
+Best for: Simplest yellow experiment — one accent rule preserved.
+
+My recommendation for your site
+Given your hero (complete in brick), grid board, and dark mode you already love:
+
+Safest: Y1 Highlighter Editorial — cream page + brick on complete + yellow on kickers/mark/live dot
+Boldest: Y2 Butter Broadsheet — if you want light mode to stop feeling dull immediately
+Most refined: Y6 Gold & Oxblood — if full yellow feels too loud
+Reply with a template ID (Y1–Y7) and I’ll apply it for light mode only. Dark mode won’t change.

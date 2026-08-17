@@ -21,8 +21,8 @@ export default function OpenGraphImage() {
         width: "100%",
         height: "100%",
         padding: "72px",
-        background: "#faf5eb",
-        color: "#1a1612",
+        background: "#fafaf7",
+        color: "#0f0f0f",
         fontFamily: "system-ui, sans-serif",
       }}
     >
@@ -32,7 +32,7 @@ export default function OpenGraphImage() {
           alignItems: "center",
           gap: "16px",
           fontSize: 26,
-          color: "#9b1b30",
+          color: "#8e2b3a",
           fontWeight: 600,
         }}
       >
@@ -41,13 +41,13 @@ export default function OpenGraphImage() {
             width: 56,
             height: 56,
             borderRadius: 999,
-            background: "#9b1b30",
+            background: "#8e2b3a",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 24,
             fontWeight: 700,
-            color: "#faf5eb",
+            color: "#fafaf7",
           }}
         >
           ST
@@ -61,13 +61,13 @@ export default function OpenGraphImage() {
         >
           {contact.name}
         </div>
-        <div style={{ fontSize: 42, color: "#9b1b30", fontWeight: 600 }}>
+        <div style={{ fontSize: 42, color: "#8e2b3a", fontWeight: 600 }}>
           {`${hero.kicker}. ${hero.headline.map((part) => part.text).join(" ")}`}
         </div>
         <div
           style={{
             fontSize: 26,
-            color: "#6b645a",
+            color: "#5a5750",
             lineHeight: 1.5,
             maxWidth: 900,
           }}
