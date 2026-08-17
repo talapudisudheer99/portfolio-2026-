@@ -2,7 +2,7 @@ import { FadeIn, TraceNode, TraceSequence } from "@/components/shared/motion"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { sections } from "@/data/sections"
-import { skillGroups } from "@/data/skills"
+import { skillGroups, workingRange } from "@/data/skills"
 import { gap } from "@/lib/motion"
 
 export function Skills() {
@@ -18,6 +18,36 @@ export function Skills() {
         <p className="section-kicker mb-8 text-primary">02 · Capabilities</p>
       </FadeIn>
       <SectionHeader title={skills.title} description={skills.description} />
+
+      {/* The interface-through-infrastructure span, before the detail below. */}
+      <FadeIn className="mb-14">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <p className="section-kicker text-muted-foreground">Working range</p>
+          <p className="editorial-display text-lg leading-tight font-medium text-foreground">
+            {workingRange.role}
+          </p>
+        </div>
+
+        <dl className="mt-4 grid grid-cols-1 gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+          {workingRange.layers.map((row) => (
+            <div
+              key={row.layer}
+              className="group flex items-baseline justify-between gap-4 border-t border-border py-2.5"
+            >
+              <dt className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase transition-colors group-hover:text-primary">
+                {row.layer}
+              </dt>
+              <dd className="text-right text-xs leading-snug font-semibold text-foreground">
+                {row.detail}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          {workingRange.note}
+        </p>
+      </FadeIn>
 
       <TraceSequence className="content-grid gap-y-10" gap={gap.nodes}>
         {skillGroups.map((group, index) => (

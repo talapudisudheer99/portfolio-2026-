@@ -11,6 +11,8 @@ import type { MotionValue } from "framer-motion"
 import type { CSSProperties, ReactNode } from "react"
 import { useRef, useSyncExternalStore } from "react"
 
+import type { HeadlineSegment } from "@/types"
+
 import {
   duration,
   easeOut,
@@ -44,6 +46,7 @@ interface FadeInProps {
   className?: string
   delay?: number
   y?: number
+  x?: number
   /** When true, animates on mount instead of whileInView (hero signature). */
   onMount?: boolean
 }
@@ -54,6 +57,7 @@ export function FadeIn({
   className,
   delay = 0,
   y = rise.md,
+  x = 0,
   onMount = false,
 }: FadeInProps) {
   const prefersReducedMotion = useHydratedReducedMotion()
@@ -65,8 +69,8 @@ export function FadeIn({
   if (onMount) {
     return (
       <motion.div
-        initial={{ opacity: 0, y }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y, x }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
         transition={{ duration: duration.copy, delay, ease: easeOut }}
         className={className}
       >
@@ -77,8 +81,8 @@ export function FadeIn({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y, x }}
+      whileInView={{ opacity: 1, y: 0, x: 0 }}
       viewport={viewportOnce}
       transition={{ duration: duration.copy, delay, ease: easeOut }}
       className={className}
@@ -145,8 +149,10 @@ export function MaskedLine({
 export const Reveal = MaskedLine
 
 interface WordRevealProps {
-  text: string
+  segments: HeadlineSegment[]
   className?: string
+  /** Applied to segments flagged as the accent. */
+  accentClassName?: string
   /** Delay before the first word moves. */
   delay?: number
   /** Spacing between consecutive words. */
@@ -163,17 +169,28 @@ interface WordRevealProps {
  * which also avoids depending on the browser painting a CSS start state first.
  */
 export function WordReveal({
-  text,
+  segments,
   className,
+  accentClassName,
   delay = 0,
   step = 0.11,
   onMount = false,
 }: WordRevealProps) {
   const prefersReducedMotion = useHydratedReducedMotion()
-  const words = text.split(" ")
 
   if (prefersReducedMotion) {
-    return <span className={className}>{text}</span>
+    return (
+      <span className={className}>
+        {segments.map((segment, index) => (
+          <span key={`${segment.text}-${index}`}>
+            {index > 0 ? " " : null}
+            <span className={segment.accent ? accentClassName : undefined}>
+              {segment.text}
+            </span>
+          </span>
+        ))}
+      </span>
+    )
   }
 
   const sequence = {
@@ -197,11 +214,18 @@ export function WordReveal({
 
   return (
     <motion.span variants={sequence} {...activation} className={className}>
-      {words.map((value, index) => (
-        <span key={`${value}-${index}`}>
+      {segments.map((segment, index) => (
+        <span key={`${segment.text}-${index}`}>
           {index > 0 ? " " : null}
-          <motion.span variants={word} className="inline-block">
-            {value}
+          <motion.span
+            variants={word}
+            className={
+              segment.accent
+                ? `inline-block ${accentClassName ?? ""}`
+                : "inline-block"
+            }
+          >
+            {segment.text}
           </motion.span>
         </span>
       ))}
@@ -287,7 +311,7 @@ interface TraceRuleProps {
   delay?: number
   onMount?: boolean
   /** Origin of the draw. */
-  origin?: "left" | "right"
+  origin?: "left" | "right" | "center"
 }
 
 /** Decorative hairline that draws via scaleX. Always aria-hidden. */
@@ -324,6 +348,7 @@ export function TraceRule({
       className={cn(
         "h-px w-full origin-left bg-border",
         origin === "right" && "origin-right",
+        origin === "center" && "origin-center",
         className
       )}
     />

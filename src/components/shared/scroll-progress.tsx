@@ -1,24 +1,30 @@
 "use client"
 
-import { motion, useScroll, useSpring } from "framer-motion"
+import { useScroll } from "framer-motion"
+import { useEffect, useRef } from "react"
 
 /**
  * Thin reading progress under the sticky nav.
- * CSS hides it for reduced motion so server and client render the same tree.
+ * Plain DOM + a subscription, so Framer cannot write a client-only transform
+ * that mismatches the server HTML.
  */
 export function ScrollProgress() {
+  const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    restDelta: 0.001,
-  })
+
+  useEffect(() => {
+    return scrollYProgress.on("change", (value) => {
+      const node = ref.current
+      if (node) node.style.transform = `scaleX(${value})`
+    })
+  }, [scrollYProgress])
 
   return (
-    <motion.div
+    <div
+      ref={ref}
       aria-hidden="true"
       className="scroll-progress pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-primary"
-      style={{ scaleX }}
+      style={{ transform: "scaleX(0)" }}
     />
   )
 }

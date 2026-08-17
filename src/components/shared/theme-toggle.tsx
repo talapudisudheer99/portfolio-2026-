@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
 
   return (
     <Button
@@ -15,9 +14,8 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       className="relative size-10 rounded-full text-muted-foreground hover:text-foreground"
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      aria-pressed={isDark}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label="Toggle color theme"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       <Sun className="size-[18px] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
       <Moon className="absolute size-[18px] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />

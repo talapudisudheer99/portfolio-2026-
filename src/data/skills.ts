@@ -1,4 +1,39 @@
-import type { SkillGroup } from "@/types"
+import type { SkillGroup, WorkingRange } from "@/types"
+
+/** The interface-through-infrastructure span, summarised above the detail. */
+export const workingRange: WorkingRange = {
+  role: "Frontend-strong, full stack",
+  note: "New technology joins the stack when it solves a real product need.",
+  layers: [
+    { layer: "Interface", detail: "React · Next.js · TypeScript" },
+    { layer: "Data", detail: "REST · GraphQL · MongoDB" },
+    { layer: "Live updates", detail: "Socket.IO · presence" },
+    { layer: "Sign-in", detail: "Sessions · OAuth" },
+    { layer: "AI", detail: "OpenAI · Channel AI" },
+    { layer: "Testing", detail: "React Testing Library" },
+    { layer: "Launch", detail: "Railway · Vercel · AWS S3" },
+  ],
+}
+
+/**
+ * Hero marquee — the Honey "partners" strip, translated for an interview:
+ * the tools a hiring reader actually scans, not a logo wall.
+ */
+export const marqueeSkills = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Tailwind CSS",
+  "Socket.IO",
+  "GraphQL",
+  "MongoDB",
+  "OpenAI",
+  "React Testing Library",
+  "OAuth",
+  "Railway",
+  "Vercel",
+  "AWS S3",
+]
 
 export const skillGroups: SkillGroup[] = [
   {
@@ -17,6 +52,13 @@ export const skillGroups: SkillGroup[] = [
       "Accessibility",
       "Component architecture",
     ],
+  },
+  {
+    id: "testing",
+    title: "Testing",
+    summary:
+      "Component tests that lock the Sameward flows that cannot break — sign-in, messaging, and Channel AI.",
+    skills: ["React Testing Library", "User-event flows", "Component tests"],
   },
   {
     id: "api-data",
@@ -50,10 +92,10 @@ export const skillGroups: SkillGroup[] = [
     id: "auth",
     title: "Sign-in & access",
     summary:
-      "Secure sign-in, account recovery, session control, and access by role.",
+      "Secure sign-in with sessions and OAuth across providers, account recovery, session control, and access by role.",
     skills: [
       "Session cookies",
-      "Google OAuth",
+      "OAuth (Google and other providers)",
       "Email verification",
       "Password reset",
       "Role-based access",

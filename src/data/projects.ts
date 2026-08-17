@@ -24,6 +24,7 @@ export const projects: Project[] = [
       "Added direct AWS S3 uploads for profile images and files",
       "Set up account and product email with Resend",
       "Built AI tools to summarize, catch up, answer questions, and draft replies",
+      "Covered core Sameward flows with React Testing Library so sign-in, messaging, and Channel AI stay stable",
       "Deployed the web and realtime services on Railway",
     ],
   },

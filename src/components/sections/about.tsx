@@ -54,7 +54,7 @@ export function About() {
             >
               {highlights.map((item) => (
                 <TraceNode key={item.label}>
-                  <dt className="font-mono text-[9px] tracking-[0.16em] text-background/70 uppercase">
+                  <dt className="font-mono text-[9px] tracking-[0.16em] text-background/45 uppercase">
                     {item.label}
                   </dt>
                   <dd className="mt-2 text-sm font-bold text-background">

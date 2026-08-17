@@ -27,19 +27,32 @@ export interface CtaLink {
   external?: boolean
 }
 
-export interface HeroStackRow {
+export interface StackLayer {
   layer: string
   detail: string
 }
 
+/** The stack a hiring reader checks, shown under Capabilities. */
+export interface WorkingRange {
+  role: string
+  note: string
+  layers: StackLayer[]
+}
+
+/** One word of the headline. Only a single segment should carry the accent. */
+export interface HeadlineSegment {
+  text: string
+  accent?: boolean
+}
+
 export interface HeroContent {
   badge: string
-  greeting: string
-  role: string
+  /** Small label above the headline. */
+  kicker: string
+  headline: HeadlineSegment[]
   tagline: string
   availability: string
-  stack: HeroStackRow[]
-  stackNote: string
+  availabilityHref?: string
   ctas: CtaLink[]
 }
 

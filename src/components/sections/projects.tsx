@@ -21,7 +21,7 @@ export function Projects() {
   if (!featured) return null
 
   return (
-    <SectionShell id="projects" className="section-rule">
+    <SectionShell id="projects">
       <ContentRail className="section-space">
         <div className="content-grid gap-y-10">
           <FadeIn className="col-span-12 md:col-span-3">

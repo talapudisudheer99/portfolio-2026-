@@ -10,6 +10,7 @@ export const experience: Experience[] = [
       "Designed and launched Sameward, a live workspace for team chat, planning, files, and AI help.",
       "Built the Next.js web app and a separate realtime service for fast, secure messaging.",
       "Built sign-in, team roles, file uploads, email flows, the database, and production deployment.",
+      "Covered core product flows with React Testing Library so messaging, sign-in, and Channel AI stay stable.",
       "Changed the product from TeamHub to Sameward without putting live data or storage at risk.",
     ],
   },

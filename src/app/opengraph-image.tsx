@@ -62,7 +62,7 @@ export default function OpenGraphImage() {
           {contact.name}
         </div>
         <div style={{ fontSize: 42, color: "#891a20", fontWeight: 600 }}>
-          {hero.greeting}
+          {`${hero.kicker}. ${hero.headline.map((part) => part.text).join(" ")}`}
         </div>
         <div
           style={{
