@@ -84,46 +84,24 @@ export function Hero() {
             </p>
 
             <h1 className="mx-auto max-w-[18ch] text-[clamp(3.4rem,12vw,8.75rem)] leading-[1.08] font-semibold tracking-[-0.06em] text-foreground">
-              {hero.headline.map((line, index) => {
-                const word = (
-                  <MaskedLine
-                    as="span"
-                    onMount
-                    display
-                    ink
-                    durationSec={line.accent ? 0.95 : 0.82}
-                    delay={0.28 + index * 0.22}
-                    className={cn(
-                      "block",
-                      line.accent &&
-                        "hero-accent-line editorial-display py-[0.04em] font-medium tracking-[-0.02em] text-primary italic [font-variation-settings:'SOFT'_50,'WONK'_0]"
-                    )}
-                  >
-                    {line.text}
-                  </MaskedLine>
-                )
-
-                if (!line.accent) {
-                  return <span key={line.text}>{word}</span>
-                }
-
-                return (
-                  <span
-                    key={line.text}
-                    className="relative mx-auto block w-fit"
-                  >
-                    {word}
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "hero-accent-rule pointer-events-none absolute inset-x-[0.06em] bottom-[0.12em] block h-px bg-primary",
-                        entered && "is-revealed"
-                      )}
-                      style={{ "--hero-delay": "1.18s" } as CSSProperties}
-                    />
-                  </span>
-                )
-              })}
+              {hero.headline.map((line, index) => (
+                <MaskedLine
+                  key={line.text}
+                  as="span"
+                  onMount
+                  display
+                  ink
+                  durationSec={line.accent ? 0.92 : 0.76}
+                  delay={0.2 + index * 0.14}
+                  className={cn(
+                    "block",
+                    line.accent &&
+                      "hero-accent-line editorial-display py-[0.04em] font-medium tracking-[-0.02em] text-primary italic [font-variation-settings:'SOFT'_50,'WONK'_0]"
+                  )}
+                >
+                  {line.text}
+                </MaskedLine>
+              ))}
             </h1>
 
             <a
@@ -134,7 +112,7 @@ export function Hero() {
                 "hero-live group inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.16em] text-primary uppercase focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
                 entered && "is-revealed"
               )}
-              style={{ "--hero-delay": "1.52s" } as CSSProperties}
+              style={{ "--hero-delay": "1.18s" } as CSSProperties}
             >
               <span className="relative flex size-2">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 animation-duration-[2.6s] motion-reduce:hidden" />
@@ -150,7 +128,7 @@ export function Hero() {
             </a>
           </div>
 
-          <SkillMarquee className="mt-6 bg-background" duration={72} />
+          <SkillMarquee className="mt-6 border-t border-border/70" duration={72} />
         </div>
       </div>
     </SectionShell>

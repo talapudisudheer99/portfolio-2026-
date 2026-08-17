@@ -21,7 +21,7 @@ export function Projects() {
   if (!featured) return null
 
   return (
-    <SectionShell id="projects">
+    <SectionShell id="projects" className="section-rule">
       <ContentRail className="section-space">
         <div className="content-grid gap-y-10">
           <FadeIn className="col-span-12 md:col-span-3">
@@ -171,7 +171,7 @@ export function Projects() {
         </div>
       </ContentRail>
 
-      <div className="border-y border-border bg-background-secondary">
+      <div className="border-y border-border">
         <ContentRail className="section-space">
           <div className="content-grid gap-y-12">
             <div className="col-span-12 lg:col-span-4">

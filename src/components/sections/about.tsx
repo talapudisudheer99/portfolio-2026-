@@ -13,7 +13,7 @@ export function About() {
   const { section, paragraphs, highlights } = aboutContent
 
   return (
-    <SectionWrapper id="about" className="bg-foreground text-background">
+    <SectionWrapper id="about" className="section-ink">
       <div className="content-grid gap-y-12">
         <FadeIn className="col-span-12 md:col-span-3">
           <p className="section-kicker text-primary">04 · Profile</p>

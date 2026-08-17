@@ -54,44 +54,46 @@
 }
 
 /*
- * Concrete & Brick. Three swatches carry the whole site: #e0dedd canvas,
- * pure black ink, #891a20 brand. Greys are steps of the canvas and borders
- * are black laid over it at low alpha, so nothing introduces a fourth hue.
+ * Light: Manuscript Press — warm cream sheet, press ink, saturated brick.
+ * Dark: unchanged pure black + paper type (user-approved).
+ *
+ * Light swatches (only three hues + Sameward product teal in diagrams):
+ *   canvas  #faf5eb   manuscript cream
+ *   ink     #1a1612   warm press black
+ *   brick   #9b1b30   oxblood accent
  */
 :root {
   color-scheme: light;
-  --background: #e0dedd;
-  --background-secondary: #d4d2d1;
-  --background-tertiary: #c7c5c4;
-  --foreground: #000000;
-  --foreground-secondary: #31383b;
-  --card: #e9e7e6;
-  --card-foreground: #000000;
-  --popover: #e9e7e6;
-  --popover-foreground: #000000;
-  --primary: #891a20;
-  /* For panels that invert the canvas: the brick only reaches 2.2:1 on black. */
-  --primary-inverted: #d84e55;
-  --primary-foreground: #e0dedd;
-  --primary-hover: #6b1419;
-  --primary-light: #d8c3c4;
-  --secondary: #d4d2d1;
-  --secondary-foreground: #000000;
-  --muted: #d4d2d1;
-  --muted-foreground: #565c5f;
-  --accent: #891a20;
-  --accent-foreground: #e0dedd;
+  --background: #faf5eb;
+  --background-secondary: #f0e9dc;
+  --background-tertiary: #e5dcc9;
+  --foreground: #1a1612;
+  --foreground-secondary: #4a443c;
+  --card: #fffdf8;
+  --card-foreground: #1a1612;
+  --popover: #fffdf8;
+  --popover-foreground: #1a1612;
+  --primary: #9b1b30;
+  --primary-inverted: #c43e4f;
+  --primary-foreground: #faf5eb;
+  --primary-hover: #7f1526;
+  --primary-light: #f0d5d9;
+  --secondary: #f0e9dc;
+  --secondary-foreground: #1a1612;
+  --muted: #ede6d8;
+  --muted-foreground: #6b645a;
+  --accent: #9b1b30;
+  --accent-foreground: #faf5eb;
   --destructive: #a3231a;
   --success: #2b6b4f;
   --warning: #7d5310;
-  --border: #c3c1c0;
-  --border-light: #d2d0cf;
-  --input: #a7a5a4;
-  --ring: #891a20;
-  --sameward: #2998b8;
+  --border: #d4c9b8;
+  --border-light: #e8e0d2;
+  --input: #a89b88;
+  --ring: #9b1b30;
+  --sameward: #1a7f9a;
   --sameward-dark: #0b3442;
-  /* Product teal darkened to stay legible on the concrete canvas. */
-  --sameward-ink: #0f6076;
+  --sameward-ink: #0d5f75;
   --radius: 8px;
 }
 
@@ -146,6 +148,43 @@
     min-width: 320px;
   }
 
+  /*
+   * Manuscript canvas: bright warm cream, soft top light, faint brick warmth
+   * at the foot. No grey grain multiply — that was muddying the sheet.
+   */
+  html:not(.dark) {
+    background-color: var(--background);
+    background-image:
+      radial-gradient(
+        ellipse 110% 75% at 50% -8%,
+        color-mix(in srgb, #ffffff 55%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 80% 50% at 50% 108%,
+        color-mix(in srgb, var(--primary) 5%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 130% 95% at 50% 50%,
+        transparent 48%,
+        color-mix(in srgb, var(--foreground) 5%, transparent) 100%
+      );
+    background-attachment: fixed;
+  }
+
+  html:not(.dark) body {
+    background-color: transparent;
+  }
+
+  html.dark {
+    background-color: var(--background);
+  }
+
+  html.dark body {
+    background-color: transparent;
+  }
+
   ::selection {
     background: var(--primary);
     color: var(--primary-foreground);
@@ -196,6 +235,22 @@
     border-top: 1px solid var(--border);
   }
 
+  /* Profile only: ink panel on the paper canvas. */
+  .section-ink {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  /* Chrome that floats over the canvas without painting a slab. */
+  .surface-chrome {
+    background-color: color-mix(in srgb, var(--background) 78%, transparent);
+    backdrop-filter: blur(18px) saturate(1.08);
+  }
+
+  .dark .surface-chrome {
+    background-color: color-mix(in srgb, var(--background) 88%, transparent);
+  }
+
   /* Mono eyebrows — 12px, one step above the 10px metadata labels. */
   .section-kicker {
     font-family: var(--font-mono);
@@ -237,6 +292,25 @@
     to {
       transform: translateX(0);
     }
+  }
+
+  html:not(.dark) .hero-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        ellipse 78% 64% at 50% 40%,
+        color-mix(in srgb, #ffffff 38%, transparent) 0%,
+        transparent 54%
+      ),
+      radial-gradient(
+        ellipse 100% 88% at 50% 50%,
+        transparent 36%,
+        color-mix(in srgb, var(--foreground) 6%, transparent) 100%
+      );
   }
 
   .hero-stage {
@@ -285,12 +359,12 @@
     background-image:
       linear-gradient(
         to right,
-        color-mix(in srgb, var(--foreground) 7%, transparent) 1px,
+        color-mix(in srgb, var(--foreground) 17%, transparent) 1px,
         transparent 1px
       ),
       linear-gradient(
         to bottom,
-        color-mix(in srgb, var(--foreground) 6%, transparent) 1px,
+        color-mix(in srgb, var(--foreground) 13%, transparent) 1px,
         transparent 1px
       );
     background-size: var(--hero-col) var(--hero-row);
@@ -339,6 +413,15 @@
       color-mix(in srgb, var(--primary) 70%, transparent) 0%,
       color-mix(in srgb, var(--primary) 28%, transparent) 46%,
       transparent 74%
+    );
+  }
+
+  html:not(.dark) .hero-stage-probe-glow {
+    background: radial-gradient(
+      ellipse,
+      color-mix(in srgb, var(--primary) 78%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 32%, transparent) 44%,
+      transparent 72%
     );
   }
 
@@ -588,21 +671,21 @@
     from {
       transform: translateY(110%);
       color: var(--foreground);
+      letter-spacing: -0.005em;
     }
     to {
       transform: translateY(0%);
       color: var(--primary);
+      letter-spacing: -0.02em;
     }
   }
 
-  .hero-mark,
-  .hero-accent-rule {
+  .hero-mark {
     transform: scaleX(0);
     transform-origin: center;
   }
 
-  .hero-mark.is-revealed,
-  .hero-accent-rule.is-revealed {
+  .hero-mark.is-revealed {
     animation: hero-draw 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--hero-delay, 0s);
   }
@@ -616,25 +699,39 @@
     }
   }
 
-  .hero-kicker,
-  .hero-live {
+  .hero-kicker {
     opacity: 0;
   }
 
-  .hero-kicker.is-revealed,
-  .hero-live.is-revealed {
-    animation: hero-cue 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .hero-kicker.is-revealed {
+    animation: hero-kicker-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--hero-delay, 0s);
   }
 
-  @keyframes hero-cue {
+  @keyframes hero-kicker-in {
     from {
       opacity: 0;
-      transform: translateY(0.45em);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+    }
+  }
+
+  .hero-live {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .hero-live.is-revealed {
+    animation: hero-live-in 0.62s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--hero-delay, 0s);
+  }
+
+  @keyframes hero-live-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
     }
   }
 
@@ -661,11 +758,11 @@
   }
 
   .hero-mark,
-  .hero-accent-rule,
   .hero-kicker,
   .hero-live {
     opacity: 1;
     transform: none;
+    clip-path: none;
     animation: none;
   }
 }
@@ -715,11 +812,11 @@
   }
 
   .hero-mark,
-  .hero-accent-rule,
   .hero-kicker,
   .hero-live {
     opacity: 1;
     transform: none;
+    clip-path: none;
     animation: none !important;
   }
 

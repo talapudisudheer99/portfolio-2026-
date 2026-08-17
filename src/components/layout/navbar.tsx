@@ -24,7 +24,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="relative sticky top-0 z-50 border-b border-border/70 bg-background/88 backdrop-blur-xl">
+    <header className="surface-chrome relative sticky top-0 z-50 border-b border-border/70">
       <ContentRail>
         <nav
           aria-label="Main navigation"
@@ -80,7 +80,7 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-full max-w-sm bg-background"
+                className="surface-chrome w-full max-w-sm"
               >
                 <SheetHeader>
                   <SheetTitle className="editorial-display text-3xl">

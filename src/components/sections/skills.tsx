@@ -11,7 +11,7 @@ export function Skills() {
   return (
     <SectionWrapper
       id="skills"
-      className="bg-background-secondary"
+      className="section-rule"
       railClassName="section-space"
     >
       <FadeIn>
