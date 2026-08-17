@@ -1,10 +1,9 @@
 "use client"
 
-import { ArrowDownRight, ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import {
   motion,
   useMotionValue,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -12,7 +11,13 @@ import {
 import type { PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useRef } from "react"
 
-import { FadeIn, TraceRule, WordReveal } from "@/components/shared/motion"
+import { LocalTime } from "@/components/shared/local-time"
+import {
+  FadeIn,
+  TraceRule,
+  useHydratedReducedMotion,
+  WordReveal,
+} from "@/components/shared/motion"
 import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { SocialLinks } from "@/components/shared/social-links"
 import { siteConfig } from "@/data/site"
@@ -28,7 +33,7 @@ export function Hero() {
   const [statement, counterpoint] = hero.greeting.split(". ")
 
   const sectionRef = useRef<HTMLElement>(null)
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
 
   const pointerX = useMotionValue(0)
   const pointerY = useMotionValue(0)
@@ -74,51 +79,94 @@ export function Hero() {
       onPointerLeave={handlePointerLeave}
     >
       <ContentRail className="flex min-h-[calc(100svh-4.5rem)] flex-col border-x border-border/60">
+        {/* Masthead */}
         <div className="px-4 sm:px-6 lg:px-8">
           <TraceRule onMount className="bg-border/60" delay={0.02} />
           <FadeIn
             onMount
             y={rise.sm}
             delay={0.06}
-            className="flex items-center justify-between py-4"
+            className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4"
           >
             <p className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase sm:text-xs">
               {hero.badge}
             </p>
-            <a
-              href="#projects"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-            >
-              Selected work
-              <ArrowDownRight className="size-4" aria-hidden="true" />
-            </a>
+            <LocalTime className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase sm:text-xs" />
           </FadeIn>
         </div>
 
-        <div className="content-grid flex-1 items-center px-4 py-16 sm:px-6 md:py-20 lg:px-8">
-          <motion.h1
+        <div className="content-grid flex-1 items-center gap-y-12 px-4 py-10 sm:px-6 md:py-12 lg:px-8">
+          <motion.div
             style={
               prefersReducedMotion
                 ? undefined
                 : { x: driftX, y: headlineY, opacity: scrollFade }
             }
-            className="col-span-12 max-w-[11ch] text-[clamp(3.9rem,10.5vw,9.5rem)] leading-[0.82] font-semibold tracking-[-0.075em] text-foreground"
+            className="col-span-12 md:col-span-8"
           >
-            <WordReveal
-              onMount
-              delay={0.12}
-              text={`${statement}.`}
-              className="block"
-            />
-            <WordReveal
-              onMount
-              delay={0.5}
-              text={counterpoint ?? ""}
-              className="editorial-display mt-2 block font-medium text-primary italic"
-            />
-          </motion.h1>
+            <h1 className="max-w-[10ch] text-[clamp(3.4rem,9vw,8.75rem)] leading-[0.84] font-semibold tracking-[-0.075em] text-foreground">
+              <WordReveal
+                onMount
+                delay={0.12}
+                text={`${statement}.`}
+                className="block"
+              />
+              <WordReveal
+                onMount
+                delay={0.5}
+                text={counterpoint ?? ""}
+                className="editorial-display mt-2 block font-medium text-primary italic"
+              />
+            </h1>
+
+            <FadeIn onMount y={rise.sm} delay={0.86}>
+              <p className="mt-10 inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.16em] text-primary uppercase">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 [animation-duration:2.6s] motion-reduce:hidden" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                {hero.availability}
+              </p>
+            </FadeIn>
+          </motion.div>
+
+          {/* Working range — the span a hiring reader is actually checking for. */}
+          <FadeIn
+            onMount
+            delay={0.6}
+            className="col-span-12 md:col-span-4 md:col-start-9"
+          >
+            <p className="section-kicker text-muted-foreground">
+              Working range
+            </p>
+            <p className="editorial-display mt-2 text-xl leading-tight font-medium text-foreground">
+              {hero.role}
+            </p>
+
+            <dl className="mt-6">
+              {hero.stack.map((row) => (
+                <div
+                  key={row.layer}
+                  className="group flex items-baseline justify-between gap-4 border-t border-border/70 py-2.5"
+                >
+                  <dt className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase transition-colors group-hover:text-primary">
+                    {row.layer}
+                  </dt>
+                  <dd className="text-right text-xs leading-snug font-semibold text-foreground">
+                    {row.detail}
+                  </dd>
+                </div>
+              ))}
+              <div className="border-t border-border/70" />
+            </dl>
+
+            <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
+              {hero.stackNote}
+            </p>
+          </FadeIn>
         </div>
 
+        {/* Colophon */}
         <div className="px-4 sm:px-6 lg:px-8">
           <TraceRule onMount className="bg-border/60" delay={0.38} />
           <FadeIn
@@ -127,20 +175,11 @@ export function Hero() {
             delay={0.44}
             className="content-grid gap-y-8 py-7"
           >
-            <div className="col-span-12 md:col-span-3">
-              <p className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
-                Focus
-              </p>
-              <p className="mt-2 text-sm font-semibold text-foreground">
-                {hero.role}
-              </p>
-            </div>
-
-            <p className="col-span-12 max-w-xl text-sm leading-relaxed text-muted-foreground md:col-span-5 md:text-base">
+            <p className="col-span-12 max-w-xl text-sm leading-relaxed text-muted-foreground md:col-span-6 md:text-base">
               {hero.tagline}
             </p>
 
-            <div className="col-span-12 flex flex-col gap-4 md:col-span-4 md:items-end">
+            <div className="col-span-12 flex flex-col gap-4 md:col-span-6 md:items-end">
               <div className="flex flex-wrap gap-x-5 gap-y-3">
                 {hero.ctas.map((cta) => {
                   const external = cta.external ?? cta.href.startsWith("http")

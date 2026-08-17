@@ -3,7 +3,9 @@ import type { SkillGroup } from "@/types"
 export const skillGroups: SkillGroup[] = [
   {
     id: "ui",
-    title: "UI & product craft",
+    title: "UI & product design",
+    summary:
+      "Responsive product screens, reusable components, and design systems that stay consistent as the product grows.",
     skills: [
       "React",
       "Next.js App Router",
@@ -19,6 +21,7 @@ export const skillGroups: SkillGroup[] = [
   {
     id: "api-data",
     title: "API & data",
+    summary: "Reliable API connections, forms, validation, and frontend state.",
     skills: [
       "Route Handlers",
       "REST APIs",
@@ -33,6 +36,8 @@ export const skillGroups: SkillGroup[] = [
   {
     id: "realtime",
     title: "Realtime",
+    summary:
+      "Fast live updates for messages, typing, presence, and shared team activity.",
     skills: [
       "Socket.IO",
       "Handshake auth",
@@ -43,7 +48,9 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: "auth",
-    title: "Auth & access",
+    title: "Sign-in & access",
+    summary:
+      "Secure sign-in, account recovery, session control, and access by role.",
     skills: [
       "Session cookies",
       "Google OAuth",
@@ -56,6 +63,8 @@ export const skillGroups: SkillGroup[] = [
   {
     id: "ai",
     title: "AI product features",
+    summary:
+      "AI features that use real product context to give useful answers and actions.",
     skills: [
       "OpenAI integration",
       "Channel AI (summarize / catch-up / ask / draft)",
@@ -65,7 +74,9 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     id: "ship-ops",
-    title: "Ship & ops",
+    title: "Launch & hosting",
+    summary:
+      "Production releases, file storage, email, domains, and day-to-day debugging.",
     skills: [
       "Railway",
       "Vercel",

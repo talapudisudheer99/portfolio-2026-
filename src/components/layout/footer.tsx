@@ -32,8 +32,9 @@ export function Footer() {
               ) : (
                 <a
                   href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...(link.href.startsWith("http")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                   className="rounded-sm text-xs font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 >
                   {link.label}

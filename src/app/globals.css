@@ -20,6 +20,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-inverted: var(--primary-inverted);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
@@ -47,76 +48,86 @@
   --radius-xl: 18px;
   --radius-2xl: 24px;
 
-  --shadow-sm: 0 1px 2px rgb(16 17 23 / 0.06);
-  --shadow-md: 0 12px 32px rgb(16 17 23 / 0.08);
-  --shadow-lg: 0 24px 70px rgb(16 17 23 / 0.12);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.07);
+  --shadow-md: 0 12px 32px rgb(0 0 0 / 0.09);
+  --shadow-lg: 0 24px 70px rgb(0 0 0 / 0.14);
 }
 
+/*
+ * Concrete & Brick. Three swatches carry the whole site: #e0dedd canvas,
+ * pure black ink, #891a20 brand. Greys are steps of the canvas and borders
+ * are black laid over it at low alpha, so nothing introduces a fourth hue.
+ */
 :root {
   color-scheme: light;
-  --background: #f2f1ed;
-  --background-secondary: #e7e5df;
-  --background-tertiary: #dad8d0;
-  --foreground: #14151a;
-  --foreground-secondary: #3a3c44;
-  --card: #f8f7f4;
-  --card-foreground: #14151a;
-  --popover: #f8f7f4;
-  --popover-foreground: #14151a;
-  --primary: #8e2b3a;
-  --primary-foreground: #fdf8f7;
-  --primary-hover: #74202d;
-  --primary-light: #e8cbd0;
-  --secondary: #e3e1da;
-  --secondary-foreground: #14151a;
-  --muted: #e7e5df;
-  --muted-foreground: #63646c;
-  --accent: #8e2b3a;
-  --accent-foreground: #fdf8f7;
-  --destructive: #a32219;
-  --success: #2c6b50;
-  --warning: #8a5a12;
-  --border: #cbc9c1;
-  --border-light: #dbd9d2;
-  --input: #b6b4ab;
-  --ring: #8e2b3a;
+  --background: #e0dedd;
+  --background-secondary: #d4d2d1;
+  --background-tertiary: #c7c5c4;
+  --foreground: #000000;
+  --foreground-secondary: #31383b;
+  --card: #e9e7e6;
+  --card-foreground: #000000;
+  --popover: #e9e7e6;
+  --popover-foreground: #000000;
+  --primary: #891a20;
+  /* For panels that invert the canvas: the brick only reaches 2.2:1 on black. */
+  --primary-inverted: #d84e55;
+  --primary-foreground: #e0dedd;
+  --primary-hover: #6b1419;
+  --primary-light: #d8c3c4;
+  --secondary: #d4d2d1;
+  --secondary-foreground: #000000;
+  --muted: #d4d2d1;
+  --muted-foreground: #565c5f;
+  --accent: #891a20;
+  --accent-foreground: #e0dedd;
+  --destructive: #a3231a;
+  --success: #2b6b4f;
+  --warning: #7d5310;
+  --border: #c3c1c0;
+  --border-light: #d2d0cf;
+  --input: #a7a5a4;
+  --ring: #891a20;
   --sameward: #2998b8;
   --sameward-dark: #0b3442;
-  /* Product teal darkened to stay legible on the bone canvas. */
+  /* Product teal darkened to stay legible on the concrete canvas. */
   --sameward-ink: #0f6076;
   --radius: 8px;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #101117;
-  --background-secondary: #171922;
-  --background-tertiary: #20232d;
-  --foreground: #eceae5;
-  --foreground-secondary: #c6c5cc;
-  --card: #15171e;
-  --card-foreground: #eceae5;
-  --popover: #15171e;
-  --popover-foreground: #eceae5;
-  --primary: #cf5c63;
-  --primary-foreground: #17070b;
-  --primary-hover: #e07a80;
-  --primary-light: #4a1c26;
-  --secondary: #20232d;
-  --secondary-foreground: #eceae5;
-  --muted: #20232d;
-  --muted-foreground: #9a9aa4;
-  --accent: #cf5c63;
-  --accent-foreground: #17070b;
+  --background: #000000;
+  --background-secondary: #0c0e0e;
+  --background-tertiary: #171c1c;
+  --foreground: #e0dedd;
+  --foreground-secondary: #acb7c1;
+  --card: #0c0e0e;
+  --card-foreground: #e0dedd;
+  --popover: #0c0e0e;
+  --popover-foreground: #e0dedd;
+  /* The #891a20 brick only reaches 2.2:1 on black, so dark mode carries the
+     same hue lightened to a readable 4.7:1. */
+  --primary: #d84e55;
+  --primary-inverted: #891a20;
+  --primary-foreground: #000000;
+  --primary-hover: #e0666c;
+  --primary-light: #3a0f12;
+  --secondary: #171c1c;
+  --secondary-foreground: #e0dedd;
+  --muted: #171c1c;
+  --muted-foreground: #8c9296;
+  --accent: #d84e55;
+  --accent-foreground: #000000;
   --destructive: #ff8c82;
   --success: #6fc39b;
   --warning: #e2ad62;
-  --border: #33363f;
-  --border-light: #262932;
-  --input: #444751;
-  --ring: #cf5c63;
+  --border: #2a2f2f;
+  --border-light: #1a1e1e;
+  --input: #3d4344;
+  --ring: #d84e55;
   --sameward: #47b5d1;
-  --sameward-dark: #092833;
+  --sameward-dark: #06222b;
   --sameward-ink: #5cc0da;
 }
 
@@ -244,6 +255,18 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .scroll-progress {
+    display: none;
+  }
+
+  /* Framer can skip the enter animation and leave opacity at 0. Force content on. */
+  .reduce-show,
+  .reduce-show * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 
   *,

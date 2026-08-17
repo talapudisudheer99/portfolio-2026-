@@ -4,7 +4,7 @@ export const siteConfig: SiteConfig = {
   metadata: {
     title: "Sudheer Talapudi | Frontend Engineer & Product Builder",
     description:
-      "Frontend engineer building polished interfaces and complete product systems. Creator of Sameward — Next.js, realtime, auth, AI, and production infrastructure.",
+      "Frontend-strong engineer and creator of Sameward, building complete product systems across interfaces, data, realtime, sign-in, AI, and production.",
     keywords: [
       "Sudheer Talapudi",
       "Frontend Engineer",
@@ -26,7 +26,7 @@ export const siteConfig: SiteConfig = {
     name: "Sudheer Talapudi",
     phone: "+91 9676234130",
     email: "sudheertalaudi@gmail.com",
-    location: "Hyderabad, India (Open to Remote)",
+    location: "Hyderabad, India · Onsite / Hybrid / Remote",
   },
   navLinks: [
     { label: "Work", href: "#projects" },
@@ -53,11 +53,23 @@ export const siteConfig: SiteConfig = {
     },
   ],
   hero: {
-    badge: "Sudheer Talapudi · Hyderabad / Remote",
-    greeting: "Frontend engineer. Full product thinker.",
-    role: "Next.js · TypeScript · Realtime · AI",
+    badge: "Sudheer Talapudi · Hyderabad · Onsite / Hybrid / Remote",
+    greeting: "Frontend engineer. I ship complete products.",
+    role: "Frontend-strong, full stack",
     tagline:
-      "I turn complex product requirements into clear, production-ready experiences—from interface systems to the infrastructure behind them.",
+      "I take product ideas from the first screen to a live release. I build the interface, data flow, realtime features, sign-in, AI tools, and deployment.",
+    availability: "Sameward live · Built end to end",
+    // The span a hiring reader wants to confirm, interface through infrastructure.
+    stack: [
+      { layer: "Interface", detail: "React · Next.js · TypeScript" },
+      { layer: "Data", detail: "REST · GraphQL · MongoDB" },
+      { layer: "Live updates", detail: "Socket.IO · presence" },
+      { layer: "Sign-in", detail: "Sessions · Google OAuth" },
+      { layer: "AI", detail: "OpenAI · Channel AI" },
+      { layer: "Launch", detail: "Railway · Vercel · AWS S3" },
+    ],
+    stackNote:
+      "New technology joins the stack when it solves a real product need.",
     ctas: [
       {
         label: "View Sameward",

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og"
 
 import { siteConfig } from "@/data/site"
 
-export const alt = `${siteConfig.contact.name} — Frontend Engineer`
+export const alt = `${siteConfig.contact.name} — Frontend Engineer and Product Builder`
 export const size = {
   width: 1200,
   height: 630,
@@ -21,8 +21,8 @@ export default function OpenGraphImage() {
         width: "100%",
         height: "100%",
         padding: "72px",
-        background: "#f2f1ed",
-        color: "#14151a",
+        background: "#e0dedd",
+        color: "#000000",
         fontFamily: "system-ui, sans-serif",
       }}
     >
@@ -32,7 +32,7 @@ export default function OpenGraphImage() {
           alignItems: "center",
           gap: "16px",
           fontSize: 26,
-          color: "#8e2b3a",
+          color: "#891a20",
           fontWeight: 600,
         }}
       >
@@ -41,13 +41,13 @@ export default function OpenGraphImage() {
             width: 56,
             height: 56,
             borderRadius: 999,
-            background: "#8e2b3a",
+            background: "#891a20",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 24,
             fontWeight: 700,
-            color: "#fdf8f7",
+            color: "#e0dedd",
           }}
         >
           ST
@@ -61,13 +61,13 @@ export default function OpenGraphImage() {
         >
           {contact.name}
         </div>
-        <div style={{ fontSize: 42, color: "#8e2b3a", fontWeight: 600 }}>
-          Frontend engineer. Full product thinker.
+        <div style={{ fontSize: 42, color: "#891a20", fontWeight: 600 }}>
+          {hero.greeting}
         </div>
         <div
           style={{
             fontSize: 26,
-            color: "#63646c",
+            color: "#565c5f",
             lineHeight: 1.5,
             maxWidth: 900,
           }}

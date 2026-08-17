@@ -27,11 +27,19 @@ export interface CtaLink {
   external?: boolean
 }
 
+export interface HeroStackRow {
+  layer: string
+  detail: string
+}
+
 export interface HeroContent {
   badge: string
   greeting: string
   role: string
   tagline: string
+  availability: string
+  stack: HeroStackRow[]
+  stackNote: string
   ctas: CtaLink[]
 }
 
@@ -98,6 +106,7 @@ export interface Project {
 export interface SkillGroup {
   id: string
   title: string
+  summary: string
   skills: string[]
 }
 
@@ -140,11 +149,8 @@ export interface ContactContent {
 }
 
 export interface SectionContent {
-  about: SectionMeta
   skills: SectionMeta
   experience: SectionMeta
-  projects: SectionMeta
-  contact: SectionMeta
 }
 
 export interface ProjectActions {

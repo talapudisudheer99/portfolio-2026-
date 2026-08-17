@@ -9,10 +9,10 @@ import {
 import { gap } from "@/lib/motion"
 
 const services = [
-  ["MongoDB", "Multi-tenant workspaces"],
-  ["AWS S3", "Presigned uploads"],
-  ["Resend", "Transactional email"],
-  ["OpenAI", "Grounded Channel AI"],
+  ["MongoDB", "Workspaces, members, roles"],
+  ["AWS S3", "Profile images and files"],
+  ["Resend", "Account and product email"],
+  ["OpenAI", "AI help using channel context"],
 ] as const
 
 export function ArchitectureDiagram() {
@@ -23,9 +23,9 @@ export function ArchitectureDiagram() {
           id="architecture-title"
           className="mb-10 max-w-2xl text-sm leading-relaxed text-muted-foreground"
         >
-          Two independently deployable services, one shared product context.
-          Realtime stays responsive without forcing long-lived connections into
-          the web process.
+          Sameward uses a web app and a separate realtime service. This keeps
+          messaging fast while the web app handles pages, data, and product
+          actions.
         </figcaption>
       </FadeIn>
 
@@ -34,14 +34,14 @@ export function ArchitectureDiagram() {
           <span className="mb-5 block size-2 rounded-full bg-sameward-ink" />
           <p className="text-xl font-bold">Next.js web</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            App Router · Route Handlers · RTK Query
+            Pages · APIs · product data
           </p>
         </TraceNode>
         <TraceNode className="border-t border-border pt-4">
           <span className="mb-5 block size-2 rounded-full bg-sameward-ink" />
           <p className="text-xl font-bold">Socket.IO realtime</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Handshake auth · channel rooms · presence
+            Messages · typing · presence
           </p>
         </TraceNode>
       </TraceSequence>
@@ -74,7 +74,7 @@ export function ArchitectureDiagram() {
         <TraceRule className="mb-5 bg-border" />
         <FadeIn delay={0.08}>
           <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            Railway · sameward.com · Web + realtime deploys
+            Live on Railway at sameward.com
           </p>
         </FadeIn>
       </div>

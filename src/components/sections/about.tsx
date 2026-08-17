@@ -23,7 +23,7 @@ export function About() {
           <MaskedLine display>
             <h2 className="editorial-display max-w-[11ch] text-[clamp(3.5rem,7.5vw,7rem)] leading-[0.88] font-medium text-background">
               {section.title}
-              <span className="text-primary">.</span>
+              <span className="text-primary-inverted">.</span>
             </h2>
           </MaskedLine>
           <FadeIn delay={0.12}>
@@ -54,7 +54,7 @@ export function About() {
             >
               {highlights.map((item) => (
                 <TraceNode key={item.label}>
-                  <dt className="font-mono text-[9px] tracking-[0.16em] text-background/45 uppercase">
+                  <dt className="font-mono text-[9px] tracking-[0.16em] text-background/70 uppercase">
                     {item.label}
                   </dt>
                   <dd className="mt-2 text-sm font-bold text-background">

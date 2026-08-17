@@ -41,10 +41,10 @@ export function SocialLinks({
             }
             aria-label={link.label}
             className={cn(
-              "inline-flex items-center justify-center text-muted-foreground transition-colors duration-200 ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              "inline-flex size-10 items-center justify-center text-muted-foreground transition-colors duration-200 ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
               compact
-                ? "size-7"
-                : "size-10 rounded-full border border-border hover:border-primary/40"
+                ? undefined
+                : "rounded-full border border-border hover:border-primary/40"
             )}
           >
             <Icon className={iconClassName} aria-hidden="true" />

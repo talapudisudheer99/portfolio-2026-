@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowUpRight, MapPin } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
 
 import { FadeIn, MaskedLine, TraceRule } from "@/components/shared/motion"
@@ -26,13 +27,20 @@ export function Contact() {
   const { contact, socialLinks } = siteConfig
   const { register, handleSubmit, onSubmit, isSubmitting, errors } =
     useContactForm()
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [statusMessage, setStatusMessage] = useState("")
 
   async function handleFormSubmit(values: Parameters<typeof onSubmit>[0]) {
     try {
       await onSubmit(values)
+      setStatus("success")
+      setStatusMessage(successMessage)
       toast.success(successMessage)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : errorMessage)
+      const message = error instanceof Error ? error.message : errorMessage
+      setStatus("error")
+      setStatusMessage(message)
+      toast.error(message)
     }
   }
 
@@ -137,6 +145,17 @@ export function Contact() {
             {isSubmitting ? submittingLabel : submitLabel}
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </Button>
+          <p
+            role="status"
+            aria-live="polite"
+            className={
+              status === "error"
+                ? "text-sm text-destructive"
+                : "text-sm text-success"
+            }
+          >
+            {status === "idle" ? "" : statusMessage}
+          </p>
         </form>
       </div>
     </SectionWrapper>

@@ -5,14 +5,17 @@ import {
   motion,
   useInView,
   useMotionValue,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "framer-motion"
 import { useEffect, useRef } from "react"
 
-import { FadeIn, MaskedLine } from "@/components/shared/motion"
+import {
+  FadeIn,
+  MaskedLine,
+  useHydratedReducedMotion,
+} from "@/components/shared/motion"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { experience } from "@/data/experience"
 import { sections } from "@/data/sections"
@@ -78,7 +81,7 @@ interface CountUpProps {
 function CountUp({ value, pad }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true })
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const count = useMotionValue(0)
   const text = useTransform(count, (latest) =>
     String(Math.round(latest)).padStart(pad, "0")
@@ -101,7 +104,7 @@ function CountUp({ value, pad }: CountUpProps) {
 export function Experience() {
   const { experience: content } = sections
   const railRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
 
   const { scrollYProgress } = useScroll({
     target: railRef,
@@ -200,7 +203,7 @@ interface ExperienceRowProps {
 }
 
 function ExperienceRow({ role, index }: ExperienceRowProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const current = isCurrent(role.period)
 
   const meta = (
@@ -246,7 +249,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
         {company}
         {title}
         <ul className="mt-5 space-y-2.5">
-          {role.bullets.slice(0, 3).map((bullet) => (
+          {role.bullets.map((bullet) => (
             <li
               key={bullet}
               className="relative pl-4 text-sm leading-relaxed text-muted-foreground"
@@ -269,7 +272,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
       initial="hidden"
       whileInView="visible"
       viewport={rowViewport}
-      className={rowClass}
+      className={cn("reduce-show", rowClass)}
     >
       <motion.span aria-hidden="true" variants={rowNode} className={dotClass} />
       {current ? (
@@ -285,7 +288,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
       <motion.div variants={rowPart}>{title}</motion.div>
 
       <motion.ul variants={rowSequence} className="mt-5 space-y-2.5">
-        {role.bullets.slice(0, 3).map((bullet) => (
+        {role.bullets.map((bullet) => (
           <motion.li
             key={bullet}
             variants={rowPart}

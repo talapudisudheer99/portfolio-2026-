@@ -24,6 +24,21 @@ import {
 } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
+/** The snapshot never changes after hydration, so there is nothing to watch. */
+const subscribeNever = () => () => {}
+
+/** Keeps the server and first client render identical, then applies the choice. */
+export function useHydratedReducedMotion() {
+  const prefersReducedMotion = useReducedMotion()
+  const hydrated = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false
+  )
+
+  return hydrated && prefersReducedMotion === true
+}
+
 interface FadeInProps {
   children: ReactNode
   className?: string
@@ -41,7 +56,7 @@ export function FadeIn({
   y = rise.md,
   onMount = false,
 }: FadeInProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>
@@ -72,9 +87,6 @@ export function FadeIn({
     </motion.div>
   )
 }
-
-/** The snapshot never changes after hydration, so there is nothing to watch. */
-const subscribeNever = () => () => {}
 
 interface MaskedLineProps {
   children: ReactNode
@@ -157,7 +169,7 @@ export function WordReveal({
   step = 0.11,
   onMount = false,
 }: WordRevealProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const words = text.split(" ")
 
   if (prefersReducedMotion) {
@@ -236,7 +248,7 @@ export function ScrollWordReveal({
   from = 0.16,
 }: ScrollWordRevealProps) {
   const ref = useRef<HTMLParagraphElement>(null)
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.85", "end 0.65"],
@@ -285,7 +297,7 @@ export function TraceRule({
   onMount = false,
   origin = "left",
 }: TraceRuleProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
 
   if (prefersReducedMotion) {
     return (
@@ -336,7 +348,7 @@ export function TraceSequence({
   onMount = false,
   as = "div",
 }: TraceSequenceProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
 
   if (prefersReducedMotion) {
     const Static = as
@@ -396,7 +408,7 @@ interface TraceNodeProps {
 
 /** Activating system node (product surface columns, architecture cells). */
 export function TraceNode({ children, className, as = "div" }: TraceNodeProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const Component = as === "li" ? motion.li : motion.div
 
   if (prefersReducedMotion) {
@@ -422,7 +434,7 @@ interface TraceRowProps {
  * Prefer TraceSequence as="ol|ul" + TraceRow as="li".
  */
 export function TraceRow({ children, className, as = "div" }: TraceRowProps) {
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useHydratedReducedMotion()
   const Component = as === "li" ? motion.li : motion.div
 
   if (prefersReducedMotion) {

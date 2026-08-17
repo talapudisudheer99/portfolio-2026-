@@ -79,7 +79,7 @@ export function Projects() {
           <div className="content-grid gap-y-10">
             <FadeIn className="col-span-12 flex items-center justify-between md:col-span-3 md:block">
               <p className="section-kicker text-muted-foreground">
-                Product surface
+                Inside the product
               </p>
               <span className="mt-0 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-sameward-ink uppercase md:mt-5">
                 <span className="size-1.5 rounded-full bg-sameward-ink" />
@@ -146,7 +146,7 @@ export function Projects() {
 
           <div className="col-span-12 mt-8 md:col-span-3">
             <TraceRule className="mb-8 bg-border" />
-            <p className="section-kicker text-primary">Decisions, not badges</p>
+            <p className="section-kicker text-primary">Key choices</p>
           </div>
           <TraceSequence
             as="ol"
@@ -176,11 +176,11 @@ export function Projects() {
           <div className="content-grid gap-y-12">
             <div className="col-span-12 lg:col-span-4">
               <FadeIn>
-                <p className="section-kicker text-sameward-ink">Architecture</p>
+                <p className="section-kicker text-sameward-ink">How it works</p>
               </FadeIn>
               <MaskedLine display delay={0.08}>
                 <h3 className="editorial-display mt-5 max-w-[8ch] text-[clamp(3rem,5vw,5.5rem)] leading-[0.9] font-medium">
-                  Built to stay responsive.
+                  Built for fast updates.
                 </h3>
               </MaskedLine>
             </div>
@@ -223,7 +223,7 @@ export function Projects() {
               <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="section-kicker text-muted-foreground">
-                    Proof, not promise
+                    Live product
                   </p>
                   <p className="editorial-display mt-3 text-4xl leading-none md:text-6xl">
                     Live at sameward.com
