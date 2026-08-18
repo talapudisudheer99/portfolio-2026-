@@ -5,33 +5,32 @@ import {
   TraceRule,
   TraceSequence,
 } from "@/components/shared/motion"
+import { ParallaxLayer, ScrollEmergence } from "@/components/shared/parallax"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { aboutContent } from "@/data/about"
-import { gap } from "@/lib/motion"
+import { gap, parallax } from "@/lib/motion"
 
 export function About() {
   const { section, paragraphs, highlights } = aboutContent
 
   return (
-    <SectionWrapper id="about" className="section-ink">
+    <SectionWrapper id="about" className="section-ink min-h-svh">
       <div className="content-grid gap-y-12">
-        <FadeIn className="col-span-12 md:col-span-3">
-          <p className="section-kicker text-primary">04 · Profile</p>
-        </FadeIn>
-
-        <div className="col-span-12 md:col-span-9">
-          <MaskedLine display>
-            <h2 className="editorial-display max-w-[11ch] text-[clamp(3.5rem,7.5vw,7rem)] leading-[0.88] font-medium text-background">
-              {section.title}
-              <span className="text-primary-inverted">.</span>
-            </h2>
-          </MaskedLine>
+        <ScrollEmergence className="col-span-12 md:col-span-9">
+          <ParallaxLayer speed={parallax.mid}>
+            <MaskedLine display>
+              <h2 className="editorial-display max-w-[11ch] text-[clamp(3.5rem,7.5vw,7rem)] leading-[0.88] font-medium text-background">
+                {section.title}
+                <span className="text-primary-inverted">.</span>
+              </h2>
+            </MaskedLine>
+          </ParallaxLayer>
           <FadeIn delay={0.12}>
             <p className="mt-6 max-w-xl text-sm leading-relaxed text-background/65 md:text-base">
               {section.description}
             </p>
           </FadeIn>
-        </div>
+        </ScrollEmergence>
 
         <div className="col-span-12 mt-6 md:col-span-9 md:col-start-4">
           <TraceRule className="mb-8 bg-background/20" />

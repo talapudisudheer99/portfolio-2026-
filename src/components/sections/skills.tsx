@@ -1,4 +1,5 @@
 import { FadeIn, TraceNode, TraceSequence } from "@/components/shared/motion"
+import { ScrollEmergence } from "@/components/shared/parallax"
 import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { sections } from "@/data/sections"
@@ -14,10 +15,9 @@ export function Skills() {
       className="section-rule"
       railClassName="section-space"
     >
-      <FadeIn>
-        <p className="section-kicker mb-8 text-primary">02 · Capabilities</p>
-      </FadeIn>
-      <SectionHeader title={skills.title} description={skills.description} />
+      <ScrollEmergence>
+        <SectionHeader title={skills.title} description={skills.description} />
+      </ScrollEmergence>
 
       {/* The interface-through-infrastructure span, before the detail below. */}
       <FadeIn className="mb-14">

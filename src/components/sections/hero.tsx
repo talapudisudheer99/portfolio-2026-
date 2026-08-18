@@ -7,9 +7,14 @@ import { useCallback, useRef, useState } from "react"
 import { HeroStage } from "@/components/shared/hero-stage"
 import { LocalTime } from "@/components/shared/local-time"
 import { MaskedLine, useMountReveal } from "@/components/shared/motion"
+import {
+  ParallaxFloat,
+  ScrollCue,
+} from "@/components/shared/parallax"
 import { SkillMarquee } from "@/components/shared/skill-marquee"
 import { SectionShell } from "@/components/shared/section-wrapper"
 import { siteConfig } from "@/data/site"
+import { parallax } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 function padCoord(value: number) {
@@ -48,9 +53,14 @@ export function Hero() {
       className="hero-shell relative overflow-hidden"
       onPointerMove={handlePointerMove}
     >
-      <HeroStage />
+      <ParallaxFloat speed={parallax.bg} className="absolute inset-0">
+        <HeroStage />
+      </ParallaxFloat>
 
-      <div className="relative z-10 flex min-h-[calc(100svh-4.5rem)] w-full flex-col">
+      <ParallaxFloat
+        speed={parallax.fg}
+        className="relative z-10 flex min-h-[calc(100svh-4.5rem)] w-full flex-col"
+      >
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border/60 px-5 py-4 sm:px-8 lg:px-12">
           <p className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase sm:text-xs">
             {hero.badge}
@@ -130,7 +140,9 @@ export function Hero() {
 
           <SkillMarquee className="mt-6 border-t border-border/70" duration={72} />
         </div>
-      </div>
+      </ParallaxFloat>
+
+      <ScrollCue />
     </SectionShell>
   )
 }

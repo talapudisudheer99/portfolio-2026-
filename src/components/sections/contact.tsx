@@ -5,6 +5,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 import { FadeIn, MaskedLine, TraceRule } from "@/components/shared/motion"
+import { ScrollEmergence } from "@/components/shared/parallax"
 import { SocialLinks } from "@/components/shared/social-links"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { Button } from "@/components/ui/button"
@@ -47,11 +48,7 @@ export function Contact() {
   return (
     <SectionWrapper id="contact" className="section-rule">
       <div className="content-grid gap-y-14">
-        <FadeIn className="col-span-12 md:col-span-3">
-          <p className="section-kicker text-primary">05 · Contact</p>
-        </FadeIn>
-
-        <div className="col-span-12 md:col-span-9">
+        <ScrollEmergence className="col-span-12 md:col-span-9">
           <MaskedLine display>
             <h2 className="editorial-display max-w-[11ch] text-[clamp(3.8rem,8vw,8rem)] leading-[0.86] font-medium">
               {section.title}
@@ -63,9 +60,9 @@ export function Contact() {
               {section.description}
             </p>
           </FadeIn>
-        </div>
+        </ScrollEmergence>
 
-        <div className="col-span-12 mt-4 md:col-span-5">
+        <ScrollEmergence className="col-span-12 mt-4 md:col-span-5">
           <TraceRule className="mb-6 bg-border" />
           <a
             href={`mailto:${contact.email}`}
@@ -82,11 +79,12 @@ export function Contact() {
             {contact.location}
           </p>
           <SocialLinks links={socialLinks} className="mt-6" />
-        </div>
+        </ScrollEmergence>
 
+        <ScrollEmergence className="col-span-12 md:col-span-6 md:col-start-7">
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
-          className="col-span-12 space-y-7 md:col-span-6 md:col-start-7"
+          className="space-y-7"
           aria-label="Contact form"
           noValidate
         >
@@ -157,6 +155,7 @@ export function Contact() {
             {status === "idle" ? "" : statusMessage}
           </p>
         </form>
+        </ScrollEmergence>
       </div>
     </SectionWrapper>
   )

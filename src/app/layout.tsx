@@ -3,6 +3,8 @@ import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google"
 
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
+import { ScrollGrain } from "@/components/shared/parallax"
+import { SmoothScroll } from "@/components/smooth-scroll"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { siteConfig } from "@/data/site"
@@ -50,16 +52,21 @@ export default function RootLayout({
     >
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
-          <a
+          <SmoothScroll>
+            <ScrollGrain />
+            <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
           >
             {siteConfig.labels.skipToContent}
           </a>
           <Navbar />
-          <main id="main-content">{children}</main>
+          <main id="main-content" className="pt-18">
+            {children}
+          </main>
           <Footer />
           <Toaster richColors position="top-right" />
+          </SmoothScroll>
         </ThemeProvider>
       </body>
     </html>

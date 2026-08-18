@@ -16,6 +16,7 @@ import {
   MaskedLine,
   useHydratedReducedMotion,
 } from "@/components/shared/motion"
+import { ScrollEmergence } from "@/components/shared/parallax"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { experience } from "@/data/experience"
 import { sections } from "@/data/sections"
@@ -125,12 +126,8 @@ export function Experience() {
     <SectionWrapper id="experience" className="section-rule">
       <div className="content-grid gap-y-16">
         {/* Sticky so the heading and career summary stay with the list. */}
-        <div className="col-span-12 md:sticky md:top-24 md:col-span-4 md:self-start">
-          <FadeIn>
-            <p className="section-kicker text-primary">03 · Experience</p>
-          </FadeIn>
-
-          <MaskedLine display className="mt-6">
+        <ScrollEmergence className="col-span-12 md:sticky md:top-24 md:col-span-4 md:self-start">
+          <MaskedLine display className="mt-0">
             <h2 className="editorial-display text-[clamp(2.6rem,4.6vw,4.25rem)] leading-[0.9] font-medium text-foreground">
               {content.title}
             </h2>
@@ -168,7 +165,7 @@ export function Experience() {
               </div>
             </dl>
           </FadeIn>
-        </div>
+        </ScrollEmergence>
 
         <div
           ref={railRef}

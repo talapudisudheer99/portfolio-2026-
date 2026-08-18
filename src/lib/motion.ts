@@ -31,6 +31,35 @@ export const viewportOnce = {
   margin: "-72px" as const,
 }
 
+/** Scroll-linked depth — Podium-style restraint, not carnival parallax. */
+export const parallax = {
+  /** Hero grid / ambient background */
+  bg: -0.14,
+  /** Section eyebrows, kickers */
+  mid: -0.06,
+  /** Foreground accents */
+  fg: 0.08,
+  /** ScrollEmergence travel (px) */
+  emerge: 36,
+  /** Footer negative lift (px) */
+  footer: -28,
+  /** Drawer sheet spring (enter scrub smoothing) */
+  drawerSpring: {
+    stiffness: 118,
+    damping: 30,
+    restDelta: 0.001,
+  },
+  /** Featured work — headline vs product surface */
+  product: {
+    headlineY: [36, -24] as const,
+    panelY: [34, -46] as const,
+    panelX: [8, -8] as const,
+    panelScale: [0.95, 1, 0.985] as const,
+    panelRotate: [1.1, -0.8] as const,
+    glowY: [78, -44] as const,
+  },
+} as const
+
 export const fadeRise = {
   hidden: { opacity: 0, y: rise.md },
   visible: {

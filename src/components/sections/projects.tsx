@@ -1,6 +1,7 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 
 import { ArchitectureDiagram } from "@/components/shared/architecture-diagram"
+import { FeaturedWorkStage } from "@/components/sections/featured-work-stage"
 import {
   FadeIn,
   MaskedLine,
@@ -10,10 +11,14 @@ import {
   TraceRow,
   TraceSequence,
 } from "@/components/shared/motion"
+import {
+  ParallaxLayer,
+  ScrollEmergence,
+} from "@/components/shared/parallax"
 import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { projects } from "@/data/projects"
 import { projectActions } from "@/data/sections"
-import { gap } from "@/lib/motion"
+import { gap, parallax } from "@/lib/motion"
 
 export function Projects() {
   const featured = projects.find((project) => project.featured) ?? projects[0]
@@ -23,55 +28,10 @@ export function Projects() {
   return (
     <SectionShell id="projects" className="section-rule">
       <ContentRail className="section-space">
-        <div className="content-grid gap-y-10">
-          <FadeIn className="col-span-12 md:col-span-3">
-            <p className="section-kicker text-primary">01 · Featured work</p>
-          </FadeIn>
-
-          <div className="col-span-12 md:col-span-9">
-            <h2 className="editorial-display max-w-[10ch] text-[clamp(3.8rem,8.5vw,8rem)] leading-[0.86] font-medium">
-              <MaskedLine display>
-                <span className="block">One product,</span>
-              </MaskedLine>
-              <MaskedLine display delay={0.1}>
-                <span className="block text-primary italic">end to end.</span>
-              </MaskedLine>
-            </h2>
-          </div>
-
-          <div className="col-span-12 mt-5 md:col-span-9 md:col-start-4">
-            <TraceRule className="mb-8 bg-border" />
-            <FadeIn className="grid gap-8 md:grid-cols-2">
-              <div>
-                <p className="section-kicker text-muted-foreground">
-                  {featured.title} · Live product
-                </p>
-                <h3 className="mt-4 text-2xl font-extrabold tracking-[-0.04em] md:text-4xl">
-                  {featured.subtitle}
-                </h3>
-              </div>
-              <div>
-                <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                  {featured.description}
-                </p>
-                {featured.liveUrl ? (
-                  <a
-                    href={featured.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group mt-6 inline-flex items-center gap-2 border-b border-primary pb-1 text-sm font-bold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                  >
-                    {projectActions.liveDemo}
-                    <ArrowUpRight
-                      className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      aria-hidden="true"
-                    />
-                  </a>
-                ) : null}
-              </div>
-            </FadeIn>
-          </div>
-        </div>
+        <FeaturedWorkStage
+          featured={featured}
+          liveDemoLabel={projectActions.liveDemo}
+        />
       </ContentRail>
 
       <div className="border-y border-border">
@@ -87,12 +47,14 @@ export function Projects() {
               </span>
             </FadeIn>
 
-            <div className="col-span-12 md:col-span-9">
-              <MaskedLine display>
-                <p className="editorial-display text-[clamp(4.5rem,12vw,11rem)] leading-[0.72] font-medium tracking-[-0.07em] text-foreground">
-                  Sameward
-                </p>
-              </MaskedLine>
+            <ScrollEmergence className="col-span-12 md:col-span-9">
+              <ParallaxLayer speed={parallax.bg}>
+                <MaskedLine display>
+                  <p className="editorial-display text-[clamp(4.5rem,12vw,11rem)] leading-[0.72] font-medium tracking-[-0.07em] text-foreground">
+                    Sameward
+                  </p>
+                </MaskedLine>
+              </ParallaxLayer>
 
               <div className="mt-12">
                 <TraceRule className="bg-border" />
@@ -129,7 +91,7 @@ export function Projects() {
                   ))}
                 </TraceSequence>
               </div>
-            </div>
+            </ScrollEmergence>
           </div>
         </ContentRail>
       </div>
@@ -178,15 +140,17 @@ export function Projects() {
               <FadeIn>
                 <p className="section-kicker text-sameward-ink">How it works</p>
               </FadeIn>
-              <MaskedLine display delay={0.08}>
-                <h3 className="editorial-display mt-5 max-w-[8ch] text-[clamp(3rem,5vw,5.5rem)] leading-[0.9] font-medium">
-                  Built for fast updates.
-                </h3>
-              </MaskedLine>
+              <ScrollEmergence>
+                <MaskedLine display delay={0.08}>
+                  <h3 className="editorial-display mt-5 max-w-[8ch] text-[clamp(3rem,5vw,5.5rem)] leading-[0.9] font-medium">
+                    Built for fast updates.
+                  </h3>
+                </MaskedLine>
+              </ScrollEmergence>
             </div>
-            <div className="col-span-12 lg:col-span-7 lg:col-start-6">
+            <ScrollEmergence className="col-span-12 lg:col-span-7 lg:col-start-6">
               <ArchitectureDiagram />
-            </div>
+            </ScrollEmergence>
           </div>
         </ContentRail>
       </div>

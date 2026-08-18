@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -742,6 +743,217 @@
     to {
       overflow: visible;
     }
+  }
+
+  /* Podium-adjacent film grain — fixed, non-interactive. */
+  .scroll-grain {
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  .dark .scroll-grain {
+    opacity: 0.055;
+  }
+
+  .scroll-cue-line {
+    animation: scroll-cue-pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes scroll-cue-pulse {
+    0%,
+    100% {
+      transform: scaleY(0.55);
+      opacity: 0.35;
+    }
+    50% {
+      transform: scaleY(1);
+      opacity: 0.9;
+    }
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  /* Featured work — headline + panel row, copy row below */
+  .featured-work-stage {
+    padding-bottom: clamp(1rem, 3vw, 2rem);
+  }
+
+  .featured-work-hero-row {
+    min-height: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .featured-work-hero-row {
+      min-height: min(26rem, 52vh);
+    }
+  }
+
+  .scroll-drawer-sheet-motion {
+    will-change: transform;
+  }
+
+  .product-chrome-shell {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid color-mix(in srgb, var(--border) 88%, var(--sameward) 12%);
+    background: var(--card);
+    box-shadow:
+      0 28px 70px rgb(0 0 0 / 0.16),
+      0 0 0 1px color-mix(in srgb, var(--sameward) 10%, transparent);
+  }
+
+  .dark .product-chrome-shell {
+    box-shadow:
+      0 32px 80px rgb(0 0 0 / 0.45),
+      0 0 0 1px color-mix(in srgb, var(--sameward) 18%, transparent);
+  }
+
+  .product-chrome-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+    background: color-mix(in srgb, var(--background-secondary) 88%, transparent);
+    padding: 0.65rem 1rem;
+  }
+
+  .product-chrome-dots {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+
+  .product-chrome-dots span {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--border) 85%, var(--foreground) 15%);
+  }
+
+  .product-chrome-dots span:first-child {
+    background: color-mix(in srgb, var(--primary) 55%, var(--border) 45%);
+  }
+
+  .product-chrome-url {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    color: var(--muted-foreground);
+  }
+
+  .product-chrome-glow {
+    background: radial-gradient(
+      ellipse 82% 72% at 50% 52%,
+      color-mix(in srgb, var(--sameward) 24%, transparent),
+      transparent 72%
+    );
+    filter: blur(42px);
+  }
+
+  .dark .product-chrome-glow {
+    background: radial-gradient(
+      ellipse 82% 72% at 50% 52%,
+      color-mix(in srgb, var(--sameward) 38%, transparent),
+      transparent 70%
+    );
+  }
+
+  /*
+   * Scroll drawer — hero pins; each next chapter slides up over it.
+   */
+  .scroll-drawer-stack {
+    isolation: isolate;
+  }
+
+  .scroll-drawer-slot {
+    position: relative;
+  }
+
+  .scroll-drawer-slot--cover {
+    /* Extra runway so the sheet has room to rise before content reads. */
+    scroll-margin-top: 6rem;
+  }
+
+  /* Base chapter (hero) — stays pinned while the next sheet rises. */
+  .scroll-drawer-panel--base {
+    position: sticky;
+    top: 0;
+    min-height: 100svh;
+    background-color: var(--background);
+    transform-origin: center top;
+  }
+
+  /* Cover chapters — full opaque sheet, motion drives the rise. */
+  .scroll-drawer-panel--cover {
+    position: relative;
+    min-height: 100svh;
+    background-color: var(--background);
+    will-change: transform;
+  }
+
+  .scroll-drawer-panel--sheet {
+    margin-top: -2rem;
+    border-radius: 1.375rem 1.375rem 0 0;
+    box-shadow:
+      0 -1px 0 var(--border),
+      0 -40px 80px rgb(0 0 0 / 0.14),
+      0 -8px 24px rgb(0 0 0 / 0.08);
+  }
+
+  .scroll-drawer-lip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.9rem 0 0.4rem;
+    background-color: inherit;
+    border-radius: 1.375rem 1.375rem 0 0;
+  }
+
+  .scroll-drawer-chapter {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .scroll-drawer-handle {
+    display: block;
+    width: 3.25rem;
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--border) 65%, var(--foreground) 35%);
+  }
+
+  .scroll-drawer-body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .scroll-drawer-panel--cover:has(.section-ink) {
+    background-color: var(--foreground);
+  }
+
+  .scroll-drawer-panel--cover:has(.section-ink) .scroll-drawer-lip {
+    background-color: var(--foreground);
+  }
+
+  .scroll-drawer-panel--cover:has(.section-ink) .scroll-drawer-chapter {
+    color: var(--primary-inverted);
+  }
+
+  .scroll-drawer-panel--cover:has(.section-ink) .scroll-drawer-handle {
+    background: color-mix(in srgb, var(--background) 40%, transparent);
   }
 }
 

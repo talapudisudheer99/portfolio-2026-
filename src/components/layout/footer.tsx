@@ -1,11 +1,14 @@
+"use client"
+
 import Link from "next/link"
 
 import { ContentRail } from "@/components/shared/section-wrapper"
+import { ParallaxFooter } from "@/components/shared/parallax"
 import { siteConfig } from "@/data/site"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border">
+    <ParallaxFooter className="border-t border-border">
       <ContentRail className="flex flex-col gap-7 py-8 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
           <p className="text-sm font-bold text-foreground">
@@ -44,6 +47,6 @@ export function Footer() {
           ))}
         </ul>
       </ContentRail>
-    </footer>
+    </ParallaxFooter>
   )
 }

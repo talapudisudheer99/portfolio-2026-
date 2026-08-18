@@ -7,28 +7,30 @@ import { useEffect, useState } from "react"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { duration, easeOut } from "@/lib/motion"
 
+import { cn } from "@/lib/utils"
+
 const messages = [
   {
-    id: "maya",
-    initials: "MA",
-    name: "Maya",
+    id: "sam",
+    initials: "SC",
+    name: "Sam Chen",
     time: "9:41",
-    body: "Can we get onboarding out this week?",
+    body: "Product sync at 10 — agenda shared.",
   },
   {
-    id: "dev",
-    initials: "DV",
-    name: "Dev",
+    id: "aisha",
+    initials: "AP",
+    name: "Aisha Patel",
     time: "9:42",
-    body: "API is ready. Waiting on the final flow.",
+    body: "Deploy runbook for Friday: docs.northwind.dev",
   },
 ]
 
 const START = 0.5
 const STEP = 0.14
 
-const AI_SUMMARY = "Caught up on 24 messages — 3 open decisions."
-const AI_BLOCKER = "Blocker: billing owner is unassigned."
+const AI_SUMMARY = "Catch-up · last 7 days — sync today, Friday deploy runbook linked."
+const AI_BLOCKER = "1 linked page read for context."
 /** Roughly when the AI row has finished entering, so it composes on cue. */
 const AI_TYPE_START = 1500
 
@@ -172,12 +174,21 @@ function TypingDots({ still }: Readonly<{ still: boolean }>) {
 }
 
 /** A card is justified here because a product surface is genuinely bounded. */
-export function SamewardPanel({ className }: Readonly<{ className?: string }>) {
+export function SamewardPanel({
+  className,
+  embedded = false,
+}: Readonly<{ className?: string; embedded?: boolean }>) {
   const still = useHydratedReducedMotion()
 
   return (
     <figure
-      className={`overflow-hidden rounded-(--radius) border border-border bg-card shadow-(--shadow-md) ${className ?? ""}`}
+      className={cn(
+        "overflow-hidden border border-border bg-card shadow-(--shadow-md)",
+        embedded
+          ? "rounded-b-(--radius) border-x-0 border-t-0 border-b-0 shadow-none"
+          : "rounded-(--radius)",
+        className
+      )}
     >
       <Line
         order={0}
@@ -199,7 +210,7 @@ export function SamewardPanel({ className }: Readonly<{ className?: string }>) {
 
       <div className="px-4 py-3.5">
         <Line order={1} still={still}>
-          <p className="font-mono text-[11px] text-muted-foreground"># launch</p>
+          <p className="font-mono text-[11px] text-muted-foreground"># general</p>
         </Line>
 
         <div className="mt-3.5 flex flex-col gap-3.5">
@@ -241,7 +252,7 @@ export function SamewardPanel({ className }: Readonly<{ className?: string }>) {
         still={still}
         className="flex items-center gap-2 border-t border-border px-4 py-2.5 font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase"
       >
-        Maya is typing
+        Aisha is typing
         <TypingDots still={still} />
       </Line>
     </figure>

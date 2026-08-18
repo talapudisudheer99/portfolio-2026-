@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { motion, useMotionValueEvent, useScroll } from "framer-motion"
+import { useRef, useState } from "react"
 import Link from "next/link"
 import { ArrowDownToLine, Menu } from "lucide-react"
 
 import { ContentRail } from "@/components/shared/section-wrapper"
+import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { ScrollProgress } from "@/components/shared/scroll-progress"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { Button } from "@/components/ui/button"
@@ -16,15 +18,42 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/data/site"
+import { cn } from "@/lib/utils"
 
 const focus =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastY = useRef(0)
+  const prefersReducedMotion = useHydratedReducedMotion()
+  const { scrollY } = useScroll()
+
+  useMotionValueEvent(scrollY, "change", (y) => {
+    if (prefersReducedMotion) return
+
+    const delta = y - lastY.current
+    if (y < 96) {
+      setHidden(false)
+    } else if (delta > 10) {
+      setHidden(true)
+    } else if (delta < -10) {
+      setHidden(false)
+    }
+    lastY.current = y
+  })
 
   return (
-    <header className="surface-chrome relative sticky top-0 z-50 border-b border-border/70">
+    <motion.header
+      initial={false}
+      animate={{ y: hidden ? "-100%" : "0%" }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "surface-chrome fixed inset-x-0 top-0 z-50 border-b border-border/70 transition-shadow duration-300",
+        hidden ? "shadow-none" : "shadow-[0_12px_40px_rgb(0_0_0/0.06)] dark:shadow-[0_12px_40px_rgb(0_0_0/0.28)]"
+      )}
+    >
       <ContentRail>
         <nav
           aria-label="Main navigation"
@@ -120,6 +149,6 @@ export function Navbar() {
         </nav>
       </ContentRail>
       <ScrollProgress />
-    </header>
+    </motion.header>
   )
 }
