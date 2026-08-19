@@ -8,7 +8,7 @@ import { siteConfig } from "@/data/site"
 
 export function Footer() {
   return (
-    <ParallaxFooter className="border-t border-border">
+    <ParallaxFooter className="section-rule">
       <ContentRail className="flex flex-col gap-7 py-8 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
           <p className="text-sm font-bold text-foreground">

@@ -1,45 +1,80 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowDownToLine, Menu, X } from "lucide-react"
 
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { siteConfig } from "@/data/site"
+import { cn } from "@/lib/utils"
+
 const focus =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeHref, setActiveHref] = useState("")
+
+  useEffect(() => {
+    const sections = siteConfig.navLinks
+      .map((link) => document.querySelector<HTMLElement>(link.href))
+      .filter((section): section is HTMLElement => section !== null)
+
+    if (!sections.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+
+        const id = visible[0]?.target.id
+        if (id) setActiveHref(`#${id}`)
+      },
+      { rootMargin: "-42% 0px -48% 0px", threshold: [0.12, 0.35, 0.6] }
+    )
+
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <>
       <header className="nav-header">
-        <nav
-          aria-label="Main navigation"
-          className="nav-pill"
-        >
-          {/* Logo */}
+        <nav aria-label="Main navigation" className="nav-pill">
           <Link href="/" className={`nav-logo ${focus}`} data-cursor="Home">
             S<span className="nav-logo-dot">.</span>
           </Link>
 
-          {/* Desktop links */}
+          <span aria-hidden="true" className="nav-divider nav-divider--desktop" />
+
           <ul className="nav-links">
             {siteConfig.navLinks.map((link, i) => (
               <li key={link.href}>
-                <a href={link.href} className={`nav-link ${focus}`} data-cursor={link.label}>
-                  <span className="nav-link-index">{String(i + 1).padStart(2, "0")}</span>
+                <a
+                  href={link.href}
+                  className={cn(
+                    "nav-link",
+                    focus,
+                    activeHref === link.href && "is-active"
+                  )}
+                  data-cursor={link.label}
+                  aria-current={activeHref === link.href ? "page" : undefined}
+                >
+                  <span className="nav-link-index">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   {link.label}
                 </a>
               </li>
             ))}
           </ul>
 
-          {/* Right cluster */}
+          <span aria-hidden="true" className="nav-divider nav-divider--desktop" />
+
           <div className="nav-right">
-            <ThemeToggle />
+            <ThemeToggle className="nav-theme-toggle" />
             <a
               href={siteConfig.resume.href}
               target="_blank"
@@ -51,7 +86,6 @@ export function Navbar() {
               <span className="nav-resume-text">CV</span>
             </a>
 
-            {/* Mobile toggle */}
             <button
               type="button"
               className="nav-mobile-toggle"
@@ -65,7 +99,6 @@ export function Navbar() {
               )}
             </button>
           </div>
-
         </nav>
       </header>
 

@@ -49,33 +49,61 @@ const messages = [
     name: "Sam Chen",
     time: "9:41",
     body: "Product sync at 10 — agenda shared.",
+    reactions: [{ emoji: "👍", count: 2 }],
   },
   {
     id: "aisha",
     name: "Aisha Patel",
     time: "9:42",
     body: "Deploy runbook for Friday: docs.northwind.dev",
+    reactions: [
+      { emoji: "🚀", count: 1 },
+      { emoji: "👀", count: 1 },
+    ],
   },
   {
     id: "rohit",
     name: "Rohit Singh",
     time: "9:44",
     body: "I pushed the notification debounce fix. QA build is ready.",
+    reactions: [{ emoji: "✅", count: 2 }],
   },
   {
     id: "sam",
     name: "Sam Chen",
     time: "9:46",
     body: "Nice. Let's ship after smoke test and update the release notes.",
+    reactions: [{ emoji: "👍", count: 1 }],
   },
 ] as const
 
 const aiActions = [
-  { id: "summarize", label: "Summarize", icon: AlignLeft },
-  { id: "catch-up", label: "Catch up", icon: Sparkles },
-  { id: "ask", label: "Ask", icon: MessageSquare },
-  { id: "draft", label: "Draft reply", icon: PenLine },
+  { id: "summarize", label: "Summarize", icon: AlignLeft, accent: "cyan" },
+  { id: "catch-up", label: "Catch up", icon: Sparkles, accent: "violet" },
+  { id: "ask", label: "Ask", icon: MessageSquare, accent: "blue" },
+  { id: "draft", label: "Draft reply", icon: PenLine, accent: "pink" },
 ] as const
+
+type AiAccent = (typeof aiActions)[number]["accent"]
+
+const aiActionTone: Record<AiAccent, { box: string; icon: string }> = {
+  cyan: {
+    box: "border-cyan-400/40 bg-cyan-400/10",
+    icon: "bg-cyan-400/25 text-cyan-400",
+  },
+  violet: {
+    box: "border-violet-400/40 bg-violet-400/10",
+    icon: "bg-violet-400/25 text-violet-400",
+  },
+  blue: {
+    box: "border-blue-400/40 bg-blue-400/10",
+    icon: "bg-blue-400/25 text-blue-400",
+  },
+  pink: {
+    box: "border-pink-400/40 bg-pink-400/10",
+    icon: "bg-pink-400/25 text-pink-400",
+  },
+}
 
 const START = 0.5
 const STEP = 0.14
@@ -213,6 +241,27 @@ function AiReply({ still }: Readonly<{ still: boolean }>) {
   )
 }
 
+function MessageReactions({
+  reactions,
+}: Readonly<{
+  reactions: ReadonlyArray<{ emoji: string; count: number }>
+}>) {
+  if (!reactions.length) return null
+
+  return (
+    <ul className="sameward-reactions" aria-label="Reactions">
+      {reactions.map((reaction) => (
+        <li key={`${reaction.emoji}-${reaction.count}`}>
+          <span className="sameward-reaction">
+            <span aria-hidden="true">{reaction.emoji}</span>
+            <span>{reaction.count}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function TypingDots({ still }: Readonly<{ still: boolean }>) {
   if (still) {
     return <span className="text-muted-foreground">···</span>
@@ -338,6 +387,7 @@ export function SamewardPanel({
                   <p className="mt-1 text-[13px] leading-snug text-foreground-secondary">
                     {message.body}
                   </p>
+                  <MessageReactions reactions={message.reactions} />
                 </div>
               </Line>
             ))}
@@ -387,8 +437,20 @@ export function SamewardPanel({
 
             return (
               <li key={action.id}>
-                <span className="sameward-ai-action">
-                  <Icon className="size-3" aria-hidden="true" />
+                <span
+                  className={cn(
+                    "flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-semibold text-foreground-secondary",
+                    aiActionTone[action.accent].box
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "inline-flex size-6 shrink-0 items-center justify-center rounded-md",
+                      aiActionTone[action.accent].icon
+                    )}
+                  >
+                    <Icon className="size-3.5 stroke-[2]" aria-hidden="true" />
+                  </span>
                   {action.label}
                 </span>
               </li>

@@ -1,38 +1,29 @@
 "use client"
 
 import { motion, useInView } from "framer-motion"
+import { ArrowRight } from "lucide-react"
 import { useRef } from "react"
 
 import {
   FadeIn,
-  MaskedLine,
   TraceNode,
-  TraceRule,
   TraceSequence,
   useHydratedReducedMotion,
 } from "@/components/shared/motion"
-import { ParallaxLayer, ScrollEmergence } from "@/components/shared/parallax"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { aboutContent } from "@/data/about"
-import { easeOut, gap, parallax } from "@/lib/motion"
+import { easeOut, gap } from "@/lib/motion"
+import type { AboutRadarAxis } from "@/types"
 
-const PROFILE_AXES = [
-  { label: "Engineering", value: 0.95 },
-  { label: "Product", value: 0.8 },
-  { label: "Performance", value: 0.85 },
-  { label: "UX", value: 0.75 },
-  { label: "Systems", value: 0.9 },
-]
-
-function ProfileRadar() {
+function ProfileRadar({ axes }: { axes: AboutRadarAxis[] }) {
   const ref = useRef<SVGSVGElement>(null)
   const inView = useInView(ref, { once: true, margin: "-10%" })
   const still = useHydratedReducedMotion()
 
-  const cx = 120
-  const cy = 120
-  const r = 90
-  const n = PROFILE_AXES.length
+  const cx = 160
+  const cy = 160
+  const r = 92
+  const n = axes.length
   const angleStep = (2 * Math.PI) / n
   const offset = -Math.PI / 2
 
@@ -45,45 +36,69 @@ function ProfileRadar() {
   }
 
   const gridLevels = [0.25, 0.5, 0.75, 1]
-  const dataPoints = PROFILE_AXES.map((a, i) => point(i, a.value))
-  const dataPath = dataPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
+  const dataPoints = axes.map((axis, i) => point(i, axis.value))
+  const dataPath =
+    dataPoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") +
+    " Z"
 
   return (
     <svg
       ref={ref}
-      viewBox="0 0 240 240"
-      className="profile-radar mx-auto w-full max-w-[240px]"
-      aria-label="Profile strengths radar"
+      viewBox="0 0 320 320"
+      className="about-impact-radar"
+      aria-label="Engineering impact radar"
     >
       {gridLevels.map((level) => {
         const pts = Array.from({ length: n }, (_, i) => point(i, level))
-        const d = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
-        return <path key={level} d={d} fill="none" stroke="var(--foreground)" strokeOpacity={0.1} strokeWidth="0.5" />
+        const d =
+          pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") +
+          " Z"
+        return (
+          <path
+            key={level}
+            d={d}
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity={0.16}
+            strokeWidth="0.85"
+          />
+        )
       })}
 
-      {PROFILE_AXES.map((_, i) => {
+      {axes.map((axis, i) => {
         const p = point(i, 1)
-        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="var(--foreground)" strokeOpacity={0.08} strokeWidth="0.5" />
+        return (
+          <line
+            key={axis.label}
+            x1={cx}
+            y1={cy}
+            x2={p.x}
+            y2={p.y}
+            stroke="currentColor"
+            strokeOpacity={0.12}
+            strokeWidth="0.85"
+          />
+        )
       })}
 
       {still || !inView ? (
-        <path d={dataPath} fill="var(--primary)" fillOpacity={0.15} stroke="var(--primary)" strokeWidth="1.5" />
+        <path d={dataPath} className="about-impact-radar-shape" />
       ) : (
         <motion.path
           d={dataPath}
-          fill="var(--primary)"
-          fillOpacity={0.15}
-          stroke="var(--primary)"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0, fillOpacity: 0 }}
-          animate={{ pathLength: 1, fillOpacity: 0.15 }}
+          className="about-impact-radar-shape"
+          initial={{ pathLength: 0, opacity: 0.4 }}
+          animate={{ pathLength: 1, opacity: 1 }}
           transition={{ duration: 1.2, ease: easeOut }}
         />
       )}
 
-      {PROFILE_AXES.map((axis, i) => {
-        const labelPoint = point(i, 1.22)
-        const anchor = i === 0 ? "middle" : labelPoint.x > cx ? "start" : "end"
+      {axes.map((axis, i) => {
+        const labelPoint = point(i, 1.2)
+        let anchor: "start" | "middle" | "end" = "middle"
+        if (i !== 0) {
+          anchor = labelPoint.x > cx ? "start" : "end"
+        }
         return (
           <text
             key={axis.label}
@@ -91,8 +106,7 @@ function ProfileRadar() {
             y={labelPoint.y}
             textAnchor={anchor}
             dominantBaseline="central"
-            className="fill-current text-[7px] font-bold uppercase tracking-[0.12em]"
-            style={{ fill: "color-mix(in srgb, var(--foreground) 40%, transparent)" }}
+            className="about-impact-radar-label"
           >
             {axis.label}
           </text>
@@ -100,68 +114,134 @@ function ProfileRadar() {
       })}
 
       {dataPoints.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--primary)" />
+        <circle
+          key={`node-${axes[i]?.label ?? i}`}
+          cx={p.x}
+          cy={p.y}
+          r="4"
+          className="about-impact-radar-node"
+        />
       ))}
     </svg>
   )
 }
 
 export function About() {
-  const { section, paragraphs, highlights } = aboutContent
+  const { kicker, headline, section, featureCards, impact, radarAxes } =
+    aboutContent
 
   return (
-    <SectionWrapper id="about" className="section-rule min-h-svh">
-      <div className="content-grid gap-y-12">
-        <ScrollEmergence className="col-span-12 md:col-span-9">
-          <ParallaxLayer speed={parallax.mid}>
-            <MaskedLine display>
-              <h2 className="editorial-display max-w-[11ch] text-[clamp(3.5rem,7.5vw,7rem)] leading-[0.88] font-medium text-foreground">
-                {section.title}
-                <span style={{ background: 'linear-gradient(135deg, #00d4ff, #c850c0, #ff4040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>.</span>
-              </h2>
-            </MaskedLine>
-          </ParallaxLayer>
-          <FadeIn delay={0.12}>
-            <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-              {section.description}
-            </p>
+    <SectionWrapper id="about" className="about-section section-rule">
+      <div className="about-workspace">
+        <span
+          className="about-workspace-aurora about-workspace-aurora--left"
+          aria-hidden="true"
+        />
+        <span
+          className="about-workspace-aurora about-workspace-aurora--right"
+          aria-hidden="true"
+        />
+        <span
+          className="about-workspace-aurora about-workspace-aurora--mid"
+          aria-hidden="true"
+        />
+
+        <div className="about-workspace-layout">
+          <FadeIn className="about-workspace-copy-header">
+            <p className="about-workspace-kicker">{kicker}</p>
+            <h2 className="about-workspace-headline">
+              <span className="about-workspace-headline-line editorial-display">
+                {headline.lead}
+              </span>
+              <span className="about-workspace-headline-line editorial-display about-workspace-headline-line--gradient">
+                {headline.accent}
+              </span>
+            </h2>
           </FadeIn>
-        </ScrollEmergence>
 
-        <div className="col-span-12 mt-6 md:col-span-9 md:col-start-4">
-          <TraceRule className="mb-8 bg-border" />
-          <div className="grid gap-8 md:grid-cols-3">
-            <TraceSequence className="space-y-5 md:col-span-2" gap={gap.facts}>
-              {paragraphs.map((paragraph) => (
-                <TraceNode key={paragraph}>
-                  <p className="text-sm leading-relaxed text-foreground-secondary md:text-base">
-                    {paragraph}
-                  </p>
-                </TraceNode>
-              ))}
-            </TraceSequence>
-
-            <div className="flex flex-col gap-8">
-              <ProfileRadar />
-              <TraceSequence
-                as="dl"
-                className="grid grid-cols-2 gap-x-6 gap-y-6"
-                gap={gap.facts}
-                delayChildren={0.1}
-              >
-                {highlights.map((item) => (
-                  <TraceNode key={item.label}>
-                    <dt className="font-mono text-[9px] tracking-[0.16em] text-muted-foreground uppercase">
-                      {item.label}
-                    </dt>
-                    <dd className="mt-2 text-sm font-bold text-foreground">
-                      {item.value}
-                    </dd>
-                  </TraceNode>
-                ))}
-              </TraceSequence>
-            </div>
+          <div className="about-workspace-aside-kicker">
+            <span className="about-impact-float-badge">{impact.floatBadge}</span>
           </div>
+
+          <div className="about-workspace-copy-body">
+            <span
+              className="about-workspace-copy-aurora"
+              aria-hidden="true"
+            />
+
+            <div className="about-workspace-intro">
+              <p className="about-workspace-lead">
+                {(section.description ?? "").split("\n").map((line) => (
+                  <span key={line} className="about-workspace-lead-line">
+                    {line}
+                  </span>
+                ))}
+              </p>
+              <span className="about-workspace-rule" aria-hidden="true" />
+            </div>
+
+            <TraceSequence className="about-feature-list" gap={gap.facts}>
+              {featureCards.map((card) => {
+                const Icon = card.icon
+                return (
+                  <TraceNode key={card.title}>
+                    <article
+                      className="about-feature-card"
+                      data-accent={card.accent}
+                    >
+                      <span className="about-feature-icon" aria-hidden="true">
+                        <Icon className="size-[1.05rem]" strokeWidth={1.5} />
+                      </span>
+                      <div className="about-feature-copy">
+                        <h3 className="about-feature-title">{card.title}</h3>
+                        <p className="about-feature-detail">
+                          {card.detail.split("\n").map((line) => (
+                            <span
+                              key={`${card.title}-${line}`}
+                              className="about-feature-detail-line"
+                            >
+                              {line}
+                            </span>
+                          ))}
+                        </p>
+                      </div>
+                      <span
+                        className="about-feature-arrow-wrap"
+                        aria-hidden="true"
+                      >
+                        <ArrowRight
+                          className="about-feature-arrow"
+                          strokeWidth={1.75}
+                        />
+                      </span>
+                    </article>
+                  </TraceNode>
+                )
+              })}
+            </TraceSequence>
+          </div>
+
+          <aside className="about-workspace-aside">
+            <div className="about-impact-card">
+              <header className="about-impact-header">
+                <h3 className="about-impact-title">{impact.title}</h3>
+                <span className="about-impact-live">{impact.liveBadge}</span>
+              </header>
+
+              <div className="about-impact-radar-wrap">
+                <ProfileRadar axes={radarAxes} />
+              </div>
+
+              <div className="about-impact-stats">
+                {impact.stats.map((stat) => (
+                  <div key={stat.label} className="about-impact-stat">
+                    <span className="about-impact-stat-value">{stat.value}</span>
+                    <span className="about-impact-stat-label">{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </SectionWrapper>

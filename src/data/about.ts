@@ -1,19 +1,56 @@
+import { Code2, Layers, Rocket } from "lucide-react"
+
 import type { AboutContent } from "@/types"
 
 export const aboutContent: AboutContent = {
+  kicker: "Behind the code",
+  headline: {
+    lead: "More than",
+    accent: "the screen.",
+  },
   section: {
     title: "More than the screen",
     description:
-      "Business thinking, strong frontend work, and full-stack ownership behind the screen.",
+      "Business thinking, strong frontend work, and full-stack ownership\nbehind the screen.",
   },
-  paragraphs: [
-    "I bring business thinking into engineering. My BBA background helps me look beyond the feature list and think about users, priorities, and product value.",
-    "I own Sameward end to end: product direction, interface, backend systems, realtime messaging, sign-in, files, email, AI features, and deployment.",
-    "At Phrontier AI, I built frontend systems for an enterprise platform. I turn complex needs into clear, polished products, and I pick up new technology quickly when it gives the product a better answer.",
+  featureCards: [
+    {
+      title: "Build Thoughtfully",
+      detail:
+        "Turning business needs into clean, scalable and\nmaintainable solutions.",
+      accent: "violet",
+      icon: Code2,
+    },
+    {
+      title: "Ship End-to-End",
+      detail:
+        "From clean architecture to production-ready\nsystems.",
+      accent: "cyan",
+      icon: Layers,
+    },
+    {
+      title: "Solve Real Problems",
+      detail:
+        "Creating smooth, performant and delightful\nexperiences.",
+      accent: "pink",
+      icon: Rocket,
+    },
   ],
-  highlights: [
-    { label: "Flagship", value: "Sameward · Live" },
-    { label: "Experience", value: "3 Years" },
-    { label: "Location", value: "Hyderabad · Onsite / Hybrid / Remote" },
+  impact: {
+    floatBadge: "Engineering Mindset",
+    title: "Engineering Impact",
+    liveBadge: "Live Systems",
+    stats: [
+      { value: "3+", label: "Years Experience" },
+      { value: "10+", label: "Products Shipped" },
+      { value: "∞", label: "Learning Mode" },
+    ],
+  },
+  radarAxes: [
+    { label: "Frontend", value: 0.92 },
+    { label: "Prod", value: 0.8 },
+    { label: "Performance", value: 0.85 },
+    { label: "Architecture", value: 0.9 },
+    { label: "Tools", value: 0.78 },
   ],
 }

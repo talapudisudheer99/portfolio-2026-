@@ -253,7 +253,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
             >
               <span
                 aria-hidden="true"
-                className="absolute top-[0.6em] left-0 size-1 rounded-full bg-border"
+                className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
               />
               {bullet}
             </li>
@@ -293,7 +293,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
           >
             <span
               aria-hidden="true"
-              className="absolute top-[0.6em] left-0 size-1 rounded-full bg-border"
+              className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
             />
             {bullet}
           </motion.li>

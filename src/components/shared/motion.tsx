@@ -266,6 +266,8 @@ interface ScrollWordProps {
   progress: MotionValue<number>
   range: [number, number]
   from: number
+  accent?: boolean
+  lift?: number
 }
 
 /**
@@ -273,10 +275,25 @@ interface ScrollWordProps {
  * `useTransform` is a hook — calling it inside the parent's `.map()` would break
  * the rules of hooks the moment the word count changed.
  */
-function ScrollWord({ children, progress, range, from }: ScrollWordProps) {
+function ScrollWord({
+  children,
+  progress,
+  range,
+  from,
+  accent = false,
+  lift = 5,
+}: ScrollWordProps) {
   const opacity = useTransform(progress, range, [from, 1])
+  const y = useTransform(progress, range, [lift, 0])
 
-  return <motion.span style={{ opacity }}>{children}</motion.span>
+  return (
+    <motion.span
+      style={{ opacity, y, display: "inline-block" }}
+      className={accent ? "text-primary" : undefined}
+    >
+      {children}
+    </motion.span>
+  )
 }
 
 interface ScrollWordRevealProps {
@@ -331,6 +348,107 @@ export function ScrollWordReveal({
         </span>
       ))}
     </p>
+  )
+}
+
+interface EditorialWordRevealProps {
+  lines: string[]
+  className?: string
+  /** Resting opacity before a word is reached. */
+  from?: number
+  /** Subtle rise (px) as each word lights up. */
+  lift?: number
+  accentWords?: string[]
+}
+
+function isAccentWord(word: string, accentWords: string[]) {
+  const bare = word.replace(/[^a-zA-Z0-9]/g, "")
+  return accentWords.some(
+    (accent) =>
+      bare.toLowerCase() === accent.toLowerCase() ||
+      bare.toLowerCase().startsWith(accent.toLowerCase())
+  )
+}
+
+/**
+ * Multi-line editorial statement — words light up in sequence as the reader
+ * scrolls, with accent hits and a longer scrub window for engagement.
+ */
+export function EditorialWordReveal({
+  lines,
+  className,
+  from = 0.38,
+  lift = 6,
+  accentWords = ["Sameward", "context", "AI", "workspace"],
+}: EditorialWordRevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useHydratedReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.9", "end 0.4"],
+  })
+
+  const totalWords = lines.reduce(
+    (count, line) => count + line.split(" ").length,
+    0
+  )
+
+  if (prefersReducedMotion) {
+    return (
+      <div ref={ref} className={className}>
+        {lines.map((line) => (
+          <p key={line} className="projects-problem-line editorial-display">
+            {line}
+          </p>
+        ))}
+      </div>
+    )
+  }
+
+  let wordOffset = 0
+
+  return (
+    <div ref={ref} className={className}>
+      {lines.map((line, lineIndex) => {
+        const words = line.split(" ")
+        const lineStart = wordOffset
+        wordOffset += words.length
+        const isResolution = lineIndex === lines.length - 1
+
+        return (
+          <p
+            key={line}
+            className={
+              isResolution
+                ? "projects-problem-line projects-problem-line--resolution editorial-display"
+                : "projects-problem-line editorial-display"
+            }
+          >
+            {words.map((word, wordIndex) => {
+              const globalIndex = lineStart + wordIndex
+
+              return (
+                <span key={`${word}-${wordIndex}`}>
+                  {wordIndex > 0 ? " " : null}
+                  <ScrollWord
+                    progress={scrollYProgress}
+                    range={[
+                      globalIndex / totalWords,
+                      (globalIndex + 1) / totalWords,
+                    ]}
+                    from={from}
+                    lift={lift}
+                    accent={isAccentWord(word, accentWords)}
+                  >
+                    {word}
+                  </ScrollWord>
+                </span>
+              )
+            })}
+          </p>
+        )
+      })}
+    </div>
   )
 }
 

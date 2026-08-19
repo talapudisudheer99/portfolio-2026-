@@ -128,8 +128,61 @@ export interface Project {
   featured?: boolean
   subtitle?: string
   problem?: string
+  /** Editorial beats for the problem statement (one line per beat). */
+  problemLines?: string[]
+  approachHeadline?: string
+  approachLead?: string
+  approachSteps?: ApproachStep[]
   decisions?: string[]
+  /** @deprecated Use shippedFlow — kept for reference during migration */
   buildList?: string[]
+  shippedFlowHub?: ShippedFlowHub
+  shippedFlow?: ShippedFlowNode[]
+}
+
+export interface ApproachStep {
+  title: string
+  detail: string
+}
+
+export type ShippedFlowIcon =
+  | "code"
+  | "shield"
+  | "database"
+  | "zap"
+  | "cloud"
+  | "sparkles"
+  | "test"
+  | "deploy"
+
+export type ShippedFlowAccent = "cyan" | "violet" | "green" | "purple" | "amber"
+
+export interface ShippedFlowArchitectureStep {
+  label: string
+  active?: boolean
+}
+
+export interface ShippedFlowNode {
+  id: string
+  index: number
+  title: string
+  detail: string
+  /** Primary tech line on the grid card. */
+  cardStack: string
+  /** Secondary feature line on the grid card. */
+  cardFeatures: string
+  icon: ShippedFlowIcon
+  accent: ShippedFlowAccent
+  description: string
+  bullets: string[]
+  architecture: ShippedFlowArchitectureStep[]
+  /** Other node ids this module connects to in the flow diagram. */
+  connectsTo: string[]
+}
+
+export interface ShippedFlowHub {
+  title: string
+  subtitle: string
 }
 
 export interface SkillGroup {
@@ -155,10 +208,42 @@ export interface AboutHighlight {
   value: string
 }
 
+export type AboutAccent = "violet" | "cyan" | "pink"
+
+export interface AboutFeatureCard {
+  title: string
+  detail: string
+  accent: AboutAccent
+  icon: import("lucide-react").LucideIcon
+}
+
+export interface AboutRadarAxis {
+  label: string
+  value: number
+}
+
+export interface AboutStat {
+  value: string
+  label: string
+}
+
+export interface AboutImpactPanel {
+  floatBadge: string
+  title: string
+  liveBadge: string
+  stats: AboutStat[]
+}
+
 export interface AboutContent {
+  kicker: string
+  headline: {
+    lead: string
+    accent: string
+  }
   section: SectionMeta
-  paragraphs: string[]
-  highlights: AboutHighlight[]
+  featureCards: AboutFeatureCard[]
+  impact: AboutImpactPanel
+  radarAxes: AboutRadarAxis[]
 }
 
 export interface ContactFormField {
