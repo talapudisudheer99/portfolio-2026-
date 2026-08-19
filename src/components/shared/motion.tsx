@@ -502,6 +502,66 @@ export function TraceRow({ children, className, as = "div" }: TraceRowProps) {
   )
 }
 
+interface HoverLiftProps {
+  children: ReactNode
+  className?: string
+  y?: number
+}
+
+export function HoverLift({ children, className, y = -4 }: HoverLiftProps) {
+  const prefersReducedMotion = useHydratedReducedMotion()
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>
+  }
+
+  return (
+    <motion.div
+      className={className}
+      whileHover={{ y, transition: { duration: 0.25, ease: easeOut } }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+interface ImageRevealProps {
+  children: ReactNode
+  className?: string
+  delay?: number
+}
+
+export function ImageReveal({
+  children,
+  className,
+  delay = 0,
+}: ImageRevealProps) {
+  const prefersReducedMotion = useHydratedReducedMotion()
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>
+  }
+
+  return (
+    <motion.div
+      className={cn("overflow-hidden", className)}
+      initial={{ clipPath: "inset(8% 12% 8% 12% round 4px)" }}
+      whileInView={{ clipPath: "inset(0% 0% 0% 0% round 0px)" }}
+      viewport={viewportOnce}
+      transition={{ duration: 0.7, delay, ease: easeOut }}
+    >
+      <motion.div
+        initial={{ scale: 1.08 }}
+        whileInView={{ scale: 1 }}
+        viewport={viewportOnce}
+        transition={{ duration: 0.9, delay, ease: easeOut }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
+  )
+}
+
 /** Aliases for gradual migration from Stagger API */
 export const Stagger = TraceSequence
 export const StaggerItem = TraceNode

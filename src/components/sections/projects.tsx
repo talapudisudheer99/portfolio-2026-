@@ -12,13 +12,12 @@ import {
   TraceSequence,
 } from "@/components/shared/motion"
 import {
-  ParallaxLayer,
   ScrollEmergence,
 } from "@/components/shared/parallax"
 import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { projects } from "@/data/projects"
 import { projectActions } from "@/data/sections"
-import { gap, parallax } from "@/lib/motion"
+import { gap } from "@/lib/motion"
 
 export function Projects() {
   const featured = projects.find((project) => project.featured) ?? projects[0]
@@ -26,42 +25,33 @@ export function Projects() {
   if (!featured) return null
 
   return (
-    <SectionShell id="projects" className="section-rule">
-      <ContentRail className="section-space">
-        <FeaturedWorkStage
-          featured={featured}
-          liveDemoLabel={projectActions.liveDemo}
-        />
-      </ContentRail>
+    <SectionShell id="projects">
+      <div className="projects-sameward-showcase">
+        <ContentRail className="projects-featured-space">
+          <FeaturedWorkStage
+            featured={featured}
+            liveDemoLabel={projectActions.liveDemo}
+          />
+        </ContentRail>
 
-      <div className="border-y border-border">
-        <ContentRail className="py-10 sm:py-14 lg:py-16">
-          <div className="content-grid gap-y-10">
-            <FadeIn className="col-span-12 flex items-center justify-between md:col-span-3 md:block">
-              <p className="section-kicker text-muted-foreground">
-                Inside the product
-              </p>
-              <span className="mt-0 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-sameward-ink uppercase md:mt-5">
-                <span className="size-1.5 rounded-full bg-sameward-ink" />
-                <span>Live</span>
-              </span>
-            </FadeIn>
+        <div className="projects-inside-sync">
+          <ContentRail className="projects-inside-rail">
+            <div className="projects-inside-block">
+              <FadeIn className="projects-inside-kicker">
+                <p className="section-kicker text-muted-foreground">
+                  Inside the product
+                </p>
+                <span className="mt-2 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-sameward-ink uppercase">
+                  <span className="size-1.5 rounded-full bg-sameward-ink" />
+                  <span>Live</span>
+                </span>
+              </FadeIn>
 
-            <ScrollEmergence className="col-span-12 md:col-span-9">
-              <ParallaxLayer speed={parallax.bg}>
-                <MaskedLine display>
-                  <p className="editorial-display text-[clamp(4.5rem,12vw,11rem)] leading-[0.72] font-medium tracking-[-0.07em] text-foreground">
-                    Sameward
-                  </p>
-                </MaskedLine>
-              </ParallaxLayer>
-
-              <div className="mt-12">
-                <TraceRule className="bg-border" />
+              <ScrollEmergence className="projects-inside-heading">
                 <TraceSequence
-                  className="grid sm:grid-cols-3"
+                  className="projects-inside-steps grid gap-6 sm:grid-cols-3 sm:gap-8"
                   gap={gap.nodes}
-                  delayChildren={0.12}
+                  delayChildren={0.1}
                 >
                   {[
                     ["01", "Talk", "Realtime channels"],
@@ -70,30 +60,30 @@ export function Projects() {
                   ].map(([number, action, detail]) => (
                     <TraceNode
                       key={number}
-                      className="group border-b border-border py-5 sm:border-r sm:border-b-0 sm:px-5 sm:first:pl-0 sm:last:border-r-0"
+                      className="projects-flow-step group"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] text-muted-foreground">
+                      <div className="projects-flow-meta">
+                        <span className="projects-flow-num">
                           {number}
                         </span>
-                        <ArrowRight
-                          className="size-4 text-sameward-ink transition-transform group-hover:translate-x-1"
-                          aria-hidden="true"
-                        />
                       </div>
-                      <p className="mt-7 text-2xl font-extrabold tracking-[-0.04em]">
+                      <p className="projects-flow-title">
                         {action}
                       </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
+                      <p className="projects-flow-detail">
                         {detail}
                       </p>
+                      <ArrowRight
+                        className="projects-flow-arrow size-4 text-sameward-ink"
+                        aria-hidden="true"
+                      />
                     </TraceNode>
                   ))}
                 </TraceSequence>
-              </div>
-            </ScrollEmergence>
-          </div>
-        </ContentRail>
+              </ScrollEmergence>
+            </div>
+          </ContentRail>
+        </div>
       </div>
 
       <ContentRail className="section-space">

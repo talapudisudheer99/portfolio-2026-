@@ -39,20 +39,36 @@ export interface WorkingRange {
   layers: StackLayer[]
 }
 
-/** One word of the headline. Only a single segment should carry the accent. */
+/** One piece of the headline. Only a single segment should carry the accent. */
 export interface HeadlineSegment {
   text: string
   accent?: boolean
+  /** Start a new visual line in the hero. */
+  break?: boolean
+  /** Indent this line on the broken composition. */
+  offset?: boolean
+}
+
+/** One stratum of the hero product stack. */
+export interface HeroLayer {
+  label: string
+  detail: string
 }
 
 export interface HeroContent {
   badge: string
   /** Small label above the headline. */
   kicker: string
+  wordmark: string
+  surname: string
   headline: HeadlineSegment[]
   tagline: string
   availability: string
   availabilityHref?: string
+  /** Eyebrow above the product stack. */
+  systemLabel: string
+  /** How a product is shipped — the hero motion object. */
+  layers: HeroLayer[]
   ctas: CtaLink[]
 }
 

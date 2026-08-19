@@ -28,7 +28,7 @@ export function ScrollProgress() {
     <div
       ref={ref}
       aria-hidden="true"
-      className="scroll-progress pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-primary"
+      className="scroll-progress pointer-events-none absolute inset-x-0 bottom-0 h-[2px] origin-left rounded-full bg-primary"
       style={{ transform: "scaleX(0)" }}
     />
   )

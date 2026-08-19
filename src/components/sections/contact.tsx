@@ -48,11 +48,11 @@ export function Contact() {
   return (
     <SectionWrapper id="contact" className="section-rule">
       <div className="content-grid gap-y-14">
-        <ScrollEmergence className="col-span-12 md:col-span-9">
+        <ScrollEmergence className="col-span-12">
+          <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
           <MaskedLine display>
-            <h2 className="editorial-display max-w-[11ch] text-[clamp(3.8rem,8vw,8rem)] leading-[0.86] font-medium">
-              {section.title}
-              <span className="text-primary">.</span>
+            <h2 className="editorial-display max-w-[16ch] text-[clamp(3rem,7vw,6.5rem)] leading-[0.9] font-medium">
+              Have a product worth building?
             </h2>
           </MaskedLine>
           <FadeIn delay={0.1}>

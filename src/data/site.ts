@@ -55,17 +55,28 @@ export const siteConfig: SiteConfig = {
   hero: {
     badge: "Sudheer Talapudi · Hyderabad · Onsite / Hybrid / Remote",
     kicker: "Frontend engineer",
-    // The accent is a single word. At display size it becomes the dominant
-    // colour if it carries a whole line.
+    wordmark: "Sudheer",
+    surname: "Talapudi",
     headline: [
-      { text: "I ship" },
-      { text: "complete", accent: true },
-      { text: "products." },
+      { text: "From the first" },
+      { text: "screen", break: true, offset: true },
+      { text: "to a", break: true },
+      { text: "live", accent: true },
+      { text: "release." },
     ],
     tagline:
       "I take product ideas from the first screen to a live release. I build the interface, data flow, realtime features, sign-in, AI tools, and deployment.",
     availability: "Sameward is live — built end to end",
     availabilityHref: "https://sameward.com/",
+    systemLabel: "How a product ships",
+    layers: [
+      { label: "Interface", detail: "Screens, states, motion" },
+      { label: "Data", detail: "Queries, cache, models" },
+      { label: "Realtime", detail: "Presence and events" },
+      { label: "Sign-in", detail: "Sessions and access" },
+      { label: "AI", detail: "Tools with product context" },
+      { label: "Launch", detail: "Live in production" },
+    ],
     ctas: [
       {
         label: "View Sameward",

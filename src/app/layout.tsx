@@ -3,6 +3,8 @@ import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google"
 
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
+import { BlobScene } from "@/components/shared/blob-scene"
+import { CursorInteraction } from "@/components/shared/cursor"
 import { ScrollGrain } from "@/components/shared/parallax"
 import { SmoothScroll } from "@/components/smooth-scroll"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -53,6 +55,8 @@ export default function RootLayout({
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
           <SmoothScroll>
+            <BlobScene />
+            <CursorInteraction />
             <ScrollGrain />
             <a
             href="#main-content"
@@ -61,7 +65,7 @@ export default function RootLayout({
             {siteConfig.labels.skipToContent}
           </a>
           <Navbar />
-          <main id="main-content" className="pt-18">
+          <main id="main-content" className="relative z-1">
             {children}
           </main>
           <Footer />

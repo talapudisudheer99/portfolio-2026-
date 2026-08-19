@@ -1,18 +1,27 @@
 "use client"
 
-import { ReactLenis } from "lenis/react"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { ReactLenis, useLenis } from "lenis/react"
 import type { ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
+
+function LenisGsapSync() {
+  useLenis((lenis) => {
+    ScrollTrigger.update()
+    void lenis
+  })
+  return null
+}
 
 interface SmoothScrollProps {
   children: ReactNode
 }
 
-/**
- * Podium-style weighted scroll. Disabled when the reader prefers reduced motion
- * so native scroll and instant reveals stay intact.
- */
 export function SmoothScroll({ children }: Readonly<SmoothScrollProps>) {
   const prefersReducedMotion = useHydratedReducedMotion()
 
@@ -34,6 +43,7 @@ export function SmoothScroll({ children }: Readonly<SmoothScrollProps>) {
         autoRaf: true,
       }}
     >
+      <LenisGsapSync />
       {children}
     </ReactLenis>
   )
