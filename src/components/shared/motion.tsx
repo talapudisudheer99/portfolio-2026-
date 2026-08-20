@@ -72,12 +72,12 @@ interface FadeInProps {
   onMount?: boolean
 }
 
-/** Supporting copy only — never the signature beat. */
+/** Supporting copy / section block arrive — never the hero signature beat. */
 export function FadeIn({
   children,
   className,
   delay = 0,
-  y = rise.md,
+  y = rise.sm,
   x = 0,
   onMount = false,
 }: FadeInProps) {
@@ -112,6 +112,12 @@ export function FadeIn({
     </motion.div>
   )
 }
+
+/**
+ * Sitewide section-arrive (Phase 07.2). Same as FadeIn — prefer this name for
+ * block wrappers so ScrollEmergence does not re-enter the stack.
+ */
+export const SectionArrive = FadeIn
 
 interface MaskedLineProps {
   children: ReactNode
@@ -405,14 +411,17 @@ export function EditorialWordReveal({
     )
   }
 
-  let wordOffset = 0
+  const lineStarts = lines.map((_, lineIndex) =>
+    lines
+      .slice(0, lineIndex)
+      .reduce((sum, line) => sum + line.split(" ").length, 0)
+  )
 
   return (
     <div ref={ref} className={className}>
       {lines.map((line, lineIndex) => {
         const words = line.split(" ")
-        const lineStart = wordOffset
-        wordOffset += words.length
+        const lineStart = lineStarts[lineIndex] ?? 0
         const isResolution = lineIndex === lines.length - 1
 
         return (

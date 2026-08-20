@@ -4,8 +4,8 @@ import { ArrowUpRight, MapPin } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
-import { FadeIn, MaskedLine, TraceRule } from "@/components/shared/motion"
-import { ScrollEmergence } from "@/components/shared/parallax"
+import { SectionReveal } from "@/components/motion/section-reveal"
+import { MaskedLine, TraceRule } from "@/components/shared/motion"
 import { SocialLinks } from "@/components/shared/social-links"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { Button } from "@/components/ui/button"
@@ -48,41 +48,44 @@ export function Contact() {
   return (
     <SectionWrapper id="contact" className="section-rule">
       <div className="content-grid items-center gap-y-10 md:gap-y-0">
-        <ScrollEmergence className="col-span-12 md:col-span-5">
+        <div className="col-span-12 md:col-span-5">
           <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
           <MaskedLine display>
             <h2 className="editorial-display type-display max-w-[16ch] font-medium">
               Have a product worth building?
             </h2>
           </MaskedLine>
-          <FadeIn delay={0.1}>
+          <SectionReveal variant="body" delay={0.1}>
             <p className="type-lead mt-6 max-w-lg text-muted-foreground">
               {section.description}
             </p>
-          </FadeIn>
 
-          <TraceRule className="mb-6 mt-10 bg-border" />
-          <a
-            href={`mailto:${contact.email}`}
-            className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-          >
-            <span className="truncate">{contact.email}</span>
-            <ArrowUpRight
-              className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden="true"
-            />
-          </a>
-          <p className="type-ui mt-6 flex items-center gap-2 text-muted-foreground">
-            <MapPin className="size-4 text-primary" aria-hidden="true" />
-            {contact.location}
-          </p>
-          <SocialLinks links={socialLinks} className="mt-6" />
-        </ScrollEmergence>
+            <TraceRule className="mb-6 mt-10 bg-border" />
+            <a
+              href={`mailto:${contact.email}`}
+              className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            >
+              <span className="truncate">{contact.email}</span>
+              <ArrowUpRight
+                className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              />
+            </a>
+            <p className="type-ui mt-6 flex items-center gap-2 text-muted-foreground">
+              <MapPin className="size-4 text-primary" aria-hidden="true" />
+              {contact.location}
+            </p>
+            <SocialLinks links={socialLinks} className="mt-6" />
+          </SectionReveal>
+        </div>
 
-        <ScrollEmergence className="col-span-12 md:col-span-6 md:col-start-7 md:row-start-1 md:self-center">
+        <SectionReveal
+          variant="visual"
+          className="col-span-12 md:col-span-6 md:col-start-7 md:row-start-1 md:self-center"
+        >
           <form
             onSubmit={handleSubmit(handleFormSubmit)}
-            className="space-y-6"
+            className="contact-form space-y-6"
             aria-label="Contact form"
             noValidate
           >
@@ -136,7 +139,7 @@ export function Contact() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="type-ui h-12 rounded-full px-7 font-bold"
+            className="contact-submit type-ui h-12 rounded-full px-7 font-bold"
           >
             {isSubmitting ? submittingLabel : submitLabel}
             <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -153,7 +156,7 @@ export function Contact() {
             {status === "idle" ? "" : statusMessage}
           </p>
         </form>
-        </ScrollEmergence>
+        </SectionReveal>
       </div>
     </SectionWrapper>
   )

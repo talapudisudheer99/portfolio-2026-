@@ -717,14 +717,19 @@ export function ShippedFlow({ hub, nodes, className }: ShippedFlowProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>("web")
 
-  const focusId = isCompact ? selectedId : hoveredId ?? selectedId
+  const activeHoverId = isCompact ? null : hoveredId
+  const focusId = isCompact ? selectedId : activeHoverId ?? selectedId
   const routingLanes = useMemo(
     () => buildRoutingLanes(edges, focusId),
     [edges, focusId]
   )
   const focusNode = focusId ? byId.get(focusId) : null
   const selectedNode = selectedId ? byId.get(selectedId) : null
-  const interaction = selectedId ? "selected" : hoveredId ? "hover" : "rest"
+  const interaction = selectedId
+    ? "selected"
+    : activeHoverId
+      ? "hover"
+      : "rest"
 
   const updateGeometry = useCallback(() => {
     if (isCompact) return
@@ -834,10 +839,6 @@ export function ShippedFlow({ hub, nodes, className }: ShippedFlowProps) {
       window.removeEventListener("resize", updateGeometry)
     }
   }, [isCompact, updateGeometry])
-
-  useEffect(() => {
-    if (isCompact) setHoveredId(null)
-  }, [isCompact])
 
   const registerNode = useCallback(
     (id: string, el: HTMLButtonElement | null) => {
@@ -1038,7 +1039,7 @@ export function ShippedFlow({ hub, nodes, className }: ShippedFlowProps) {
                     slotId,
                     focusId,
                     selectedId,
-                    hoveredId,
+                    activeHoverId,
                     connections
                   )
                   const isSelected = selectedId === slotId

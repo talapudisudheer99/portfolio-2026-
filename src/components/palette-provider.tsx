@@ -53,10 +53,12 @@ export function PaletteProvider({
     useState<BlobPaletteId>(defaultBlobPaletteId)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored && isBlobPaletteId(stored)) {
-      setPaletteIdState(stored)
-    }
+    queueMicrotask(() => {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored && isBlobPaletteId(stored)) {
+        setPaletteIdState(stored)
+      }
+    })
   }, [])
 
   const palette = useMemo(() => getBlobPalette(paletteId), [paletteId])

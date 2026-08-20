@@ -100,8 +100,8 @@ interface ScrollEmergenceProps {
 }
 
 /**
- * Podium-style emergence: copy and blocks materialize as scroll brings them
- * into focus — scrubbed, not one-shot.
+ * @deprecated Prefer MaskedLine / FadeIn / TraceSequence (Phase 07).
+ * Scrubbed emerge fought Trace one-shots. Kept only for commented / legacy use.
  */
 export function ScrollEmergence({
   children,

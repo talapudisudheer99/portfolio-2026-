@@ -4,7 +4,9 @@ import { ArrowRight, Rocket } from "lucide-react"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 
-import { FadeIn, TraceNode, TraceSequence } from "@/components/shared/motion"
+import { SectionReveal } from "@/components/motion/section-reveal"
+import { MotionParallax } from "@/components/motion/parallax-layer"
+import { TraceNode, TraceSequence } from "@/components/shared/motion"
 import {
   capabilitiesCta,
   capabilitiesHero,
@@ -44,12 +46,17 @@ export function CapabilitiesWorkspace() {
 
   return (
     <div className="capabilities-workspace">
-      <span className="capabilities-workspace-aurora" aria-hidden="true" />
+      <MotionParallax
+        as="span"
+        strength="decoration"
+        className="capabilities-workspace-aurora"
+        aria-hidden="true"
+      />
 
       <div className="capabilities-workspace-intro">
         <p className="capabilities-workspace-section-kicker">Capabilities</p>
 
-        <FadeIn className="capabilities-workspace-hero">
+        <SectionReveal className="capabilities-workspace-hero">
           <div className="capabilities-workspace-hero-copy">
             <h2 className="capabilities-workspace-headline">
               {capabilitiesHero.lines.map((line) => (
@@ -72,7 +79,7 @@ export function CapabilitiesWorkspace() {
               {capabilitiesHero.description}
             </p>
           </div>
-        </FadeIn>
+        </SectionReveal>
       </div>
 
       <div className="capabilities-workspace-main">
@@ -180,7 +187,7 @@ export function CapabilitiesWorkspace() {
         </div>
       </div>
 
-      <FadeIn className="capabilities-workspace-cta">
+      <SectionReveal variant="body" className="capabilities-workspace-cta">
         <div className="capabilities-workspace-cta-lead">
           <div className="capabilities-workspace-cta-icon" aria-hidden="true">
             <Rocket className="size-4" strokeWidth={1.75} />
@@ -198,7 +205,7 @@ export function CapabilitiesWorkspace() {
           {capabilitiesCta.action}
           <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden="true" />
         </Link>
-      </FadeIn>
+      </SectionReveal>
     </div>
   )
 }

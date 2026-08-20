@@ -1,51 +1,50 @@
-# Motion system — Engineering Trace
+# Motion system — Engineering Trace (vocabulary) + Phase 08 (orchestration)
 
-> Local experiment on `temp-branch`. Visual redesign v2 stays locked. Motion
-> makes the page feel like a product system assembling itself — not a generic
-> stagger demo.
+> **UI is frozen.** Do not redesign sections.  
+> **Complete:** [Phase 08 — Global Motion + Interaction System](../08-global-motion-system/README.md).  
+> Phase 07 token cleanup is **superseded** by Phase 08.
 
-| Phase                               | Name                         | Status                     |
-| ----------------------------------- | ---------------------------- | -------------------------- |
-| [A](./A-motion-system/README.md)    | Shared motion language       | ✅ Superseded by Trace     |
-| [B](./B-hero-signature/README.md)   | Hero signature choreography  | ✅ Retained + masked lines |
-| [C](./C-scroll-narrative/README.md) | Per-section scroll narrative | ✅ Replaced by Trace       |
-| [D](./D-micro-polish/README.md)     | Micro-interactions + QA      | ✅ Retained                |
-| **E**                               | **Engineering Trace**        | ✅ Implemented             |
+| Track | Role | Status |
+|-------|------|--------|
+| Engineering Trace | Reveal vocabulary (`MaskedLine`, `TraceNode`, …) | ✅ Implemented |
+| [07](../07-motion-unification/README.md) | Token alignment / double-enter cleanup | ⚠️ Superseded |
+| **[08](../08-global-motion-system/README.md)** | **Global motion + atmosphere + scroll** | ✅ Done |
 
 ## Concept
 
-One language across the site:
+The existing UI is the product. Motion is the layer that makes it feel alive.
 
-| Primitive                    | Job                                                  |
-| ---------------------------- | ---------------------------------------------------- |
-| `MaskedLine`                 | Editorial headings rise through a true overflow mask |
-| `TraceRule`                  | Hairlines draw with `scaleX` (`aria-hidden`)         |
-| `TraceNode`                  | System nodes activate (Talk/Plan/Ask, architecture)  |
-| `TraceRow` / `TraceSequence` | Decisions, shipped list, experience chronology       |
-| `FadeIn`                     | Supporting copy only                                 |
+| Owner | Job |
+|-------|-----|
+| Lenis | Physical smooth scrolling (one instance) |
+| GSAP + ScrollTrigger | Scroll choreography, parallax, section timelines |
+| Three.js | ONE global fluid atmosphere behind the UI |
+| Framer Motion | Micro UI only (menus, buttons, mock internals) |
+| CSS | Hovers, gradients, lightweight transitions |
 
-Tokens live in `src/lib/motion.ts` with distinct `hero` / `trace` / `micro` /
-`copy` durations. Animate `opacity` + `transform` only. Full
-`useReducedMotion()` static path on every primitive.
+Do not animate the same element with GSAP + Framer + Three.
 
-### MaskedLine is CSS-driven
+## Trace primitives (still valid for Framer micro / copy)
 
-The mask rise is `translateY(110%)` — a percentage of the line's own height, so
-it works at any type size. Framer Motion leaves percentage transforms pinned at
-their start value, which left every editorial heading invisible behind its mask.
-The transition therefore lives in `.mask-line-inner` in `globals.css`; the
-component only toggles `is-revealed` (via `useInView`, or hydration for
-`onMount`) and passes duration/delay as custom properties. Reduced motion is
-handled by the stylesheet rather than the hook so server and client markup stay
-identical, and `@media (scripting: none)` keeps headings readable without JS.
+| Primitive | Job |
+|-----------|-----|
+| `MaskedLine` | Editorial headings (CSS mask rise) |
+| `TraceRule` | Hairlines |
+| `TraceNode` / `TraceSequence` | Lists / nodes |
+| `FadeIn` / `SectionArrive` | Supporting copy / blocks |
+
+Tokens: `src/lib/motion.ts`. Phase 08 may expand durations (micro / UI /
+section / cinematic) without inventing a second token file.
 
 ## Explicitly rejected
 
-WebGL, GSAP, Lenis, custom cursors, magnetic buttons, pinned scroll hijacking,
-character scramble, animate-everything equal fade.
+- Redesigning locked UI
+- Per-section Three.js scenes
+- Solar system / cube clusters / giant 3D products
+- Magnetic systems that fight the cursor
+- “Every section has a different cool animation”
+- Installing another animation library
 
-## Sources
+## References (study, don’t clone)
 
-- Codrops R—K ’26 / Spitzer / Bernadou — presence, one reveal language
-- CSS scroll-driven animation guides 2026 — compositor properties + reduced motion
-- Award portfolio craft notes — protect one signature; cut competing motion
+ITom · Valentin Gassend · Hon Tran · HYDRA · Zera Studio · Hafsa (Next/GSAP/Lenis)
