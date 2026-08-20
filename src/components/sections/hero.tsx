@@ -9,12 +9,12 @@ import { useEffect, useRef } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { siteConfig } from "@/data/site"
+import { duration, ease } from "@/lib/motion"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText)
 
-const REACH = 200
-const PUSH = 30
-
+const REACH = 180
+const PUSH = 22
 
 export function Hero() {
   const { hero } = siteConfig
@@ -38,20 +38,23 @@ export function Hero() {
       const prefersStill = stillRef.current
 
       const contentEl = section.querySelector("[data-h-content]") as HTMLElement
-      const allTargets = "[data-h-kicker], [data-h-tagline], [data-h-status], [data-h-cta]"
+      const allTargets =
+        "[data-h-kicker], [data-h-tagline], [data-h-status], [data-h-cta]"
 
       if (prefersStill) {
         contentEl.style.visibility = "visible"
         return
       }
 
-      // Hide children individually, then show the container
-      gsap.set(allTargets, { autoAlpha: 0, y: (i, el) => {
-        if (el.matches("[data-h-kicker]")) return 20
-        if (el.matches("[data-h-tagline]")) return 20
-        if (el.matches("[data-h-status]")) return 16
-        return 12
-      }})
+      gsap.set(allTargets, {
+        autoAlpha: 0,
+        y: (_i, el) => {
+          if (el.matches("[data-h-kicker]")) return 16
+          if (el.matches("[data-h-tagline]")) return 18
+          if (el.matches("[data-h-status]")) return 14
+          return 10
+        },
+      })
       gsap.set(headlineEl, { autoAlpha: 1 })
       contentEl.style.visibility = "visible"
 
@@ -59,9 +62,13 @@ export function Hero() {
         "(hover: hover) and (pointer: fine)"
       ).matches
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
+      const tl = gsap.timeline({ defaults: { ease: ease.reveal } })
 
-      tl.from("[data-h-kicker]", { y: 20, autoAlpha: 0, duration: 0.5 })
+      tl.from("[data-h-kicker]", {
+        y: 16,
+        autoAlpha: 0,
+        duration: duration.copy,
+      })
 
       const split = SplitText.create(headlineEl, {
         type: "words",
@@ -70,75 +77,80 @@ export function Hero() {
         wordsClass: "hero-word",
         aria: "none",
         onSplit(self) {
-          gsap.set(self.words, { force3D: true, autoAlpha: 0, y: 40 })
-          headlineEl.querySelectorAll("[data-accent] .hero-word").forEach((el) => {
-            el.classList.add("hero-accent-word")
-          })
+          gsap.set(self.words, { force3D: true, autoAlpha: 0, y: 36 })
+          headlineEl
+            .querySelectorAll("[data-accent] .hero-word")
+            .forEach((el) => {
+              el.classList.add("hero-accent-word")
+            })
           tl.to(
             self.words,
             {
               y: 0,
               autoAlpha: 1,
-              duration: 0.8,
-              stagger: { each: 0.04, from: "start" },
+              duration: duration.hero,
+              stagger: { each: 0.035, from: "start" },
               ease: "power4.out",
             },
-            "-=0.15"
+            "-=0.12"
           )
         },
       })
 
       tl.to(
         "[data-h-tagline]",
-        { y: 0, autoAlpha: 1, duration: 0.5 },
-        "-=0.3"
+        { y: 0, autoAlpha: 1, duration: duration.copy },
+        "-=0.28"
       )
         .to(
           "[data-h-status]",
-          { y: 0, autoAlpha: 1, duration: 0.5 },
-          "-=0.25"
+          { y: 0, autoAlpha: 1, duration: duration.copy },
+          "-=0.22"
         )
         .to(
           "[data-h-cta]",
-          { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.06 },
-          "-=0.2"
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: duration.ui,
+            stagger: 0.05,
+          },
+          "-=0.18"
         )
 
-      // Scroll parallax
       gsap.to(headlineEl, {
-        yPercent: -18,
+        yPercent: -12,
         ease: "none",
         scrollTrigger: {
           trigger: section,
           start: "top top",
           end: "bottom top",
-          scrub: true,
+          scrub: 0.6,
         },
       })
 
       gsap.to("[data-h-content]", {
         autoAlpha: 0,
-        yPercent: -12,
+        yPercent: -8,
         ease: "none",
         scrollTrigger: {
           trigger: section,
-          start: "30% top",
-          end: "80% top",
-          scrub: true,
+          start: "35% top",
+          end: "85% top",
+          scrub: 0.6,
         },
       })
 
       if (!finePointer) return
 
-      // Magnetic headline words (subtle)
       const words = gsap.utils.toArray<HTMLElement>(".hero-word")
       let centers: { x: number; y: number }[] = []
 
       const xTo = words.map((n) =>
-        gsap.quickTo(n, "x", { duration: 0.5, ease: "power3.out" })
+        gsap.quickTo(n, "x", { duration: 0.45, ease: "power3.out" })
       )
       const yTo = words.map((n) =>
-        gsap.quickTo(n, "y", { duration: 0.5, ease: "power3.out" })
+        gsap.quickTo(n, "y", { duration: 0.45, ease: "power3.out" })
       )
 
       function cacheCenters() {
@@ -192,8 +204,11 @@ export function Hero() {
 
   return (
     <section ref={root} id="hero" className="hero-editorial">
-      {/* Content */}
-      <div className="hero-content" data-h-content="" style={{ visibility: 'hidden' }}>
+      <div
+        className="hero-content"
+        data-h-content=""
+        style={{ visibility: "hidden" }}
+      >
         <p data-h-kicker="" className="hero-kicker">
           <span className="hero-kicker-dot" aria-hidden="true" />
           {hero.kicker}
@@ -203,9 +218,7 @@ export function Hero() {
           {hero.headline.map((seg, i) => (
             <span key={i}>
               {seg.break && <br />}
-              <span data-accent={seg.accent ? "" : undefined}>
-                {seg.text}
-              </span>{" "}
+              <span data-accent={seg.accent ? "" : undefined}>{seg.text}</span>{" "}
             </span>
           ))}
         </h1>
@@ -252,7 +265,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="hero-scroll-cue" aria-hidden="true">
         <div className="hero-scroll-line" />
       </div>

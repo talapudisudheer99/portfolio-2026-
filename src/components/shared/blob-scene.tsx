@@ -6,10 +6,20 @@ import * as THREE from "three"
 import { usePalette } from "@/components/palette-provider"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { defaultBlobPaletteId, getBlobPalette } from "@/data/blob-palettes"
+import {
+  atmosphere,
+  sectionMoodOrder,
+  sectionMoods,
+  type SectionMoodId,
+} from "@/lib/motion"
 
 const initialBlob = getBlobPalette(defaultBlobPaletteId).blob
 
-export function BlobScene() {
+/**
+ * Phase 08 — ONE global WebGL atmosphere.
+ * Task 16: section moods shift color/intensity/speed via uniforms only.
+ */
+export function AmbientAtmosphere() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { palette } = usePalette()
   const reducedMotion = useHydratedReducedMotion()
@@ -18,9 +28,33 @@ export function BlobScene() {
     uColor1: { value: THREE.Color }
     uColor2: { value: THREE.Color }
     uColor3: { value: THREE.Color }
+    uIntensity: { value: number }
+    uMoodColor: { value: THREE.Color }
+    uMoodMix: { value: number }
+    uSpeed: { value: number }
   } | null>(null)
   const glowMatRef = useRef<THREE.MeshBasicMaterial | null>(null)
   const light2Ref = useRef<THREE.DirectionalLight | null>(null)
+  const moodTargetRef = useRef<{
+    id: SectionMoodId
+    intensity: number
+    speed: number
+    tint: THREE.Color
+  }>({
+    id: "hero",
+    intensity: sectionMoods.hero.intensity,
+    speed: sectionMoods.hero.speed,
+    tint: new THREE.Color(sectionMoods.hero.tint),
+  })
+  const moodCurrentRef = useRef<{
+    intensity: number
+    speed: number
+    tint: THREE.Color
+  }>({
+    intensity: sectionMoods.hero.intensity,
+    speed: sectionMoods.hero.speed,
+    tint: new THREE.Color(sectionMoods.hero.tint),
+  })
 
   useEffect(() => {
     reducedRef.current = reducedMotion
@@ -33,17 +67,21 @@ export function BlobScene() {
     const parent = canvas.parentElement!
     const w = parent.clientWidth || window.innerWidth
     const h = parent.clientHeight || window.innerHeight
-    const dpr = Math.min(window.devicePixelRatio, 2)
+    const isMobile = window.matchMedia("(max-width: 767px)").matches
+    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.15 : 1.75)
+    const segments = isMobile ? 40 : 96
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
-      antialias: true,
+      antialias: !isMobile,
+      powerPreference: "high-performance",
     })
     renderer.setSize(w, h)
     renderer.setPixelRatio(dpr)
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.2
+    renderer.setClearColor(0x000000, 0)
 
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100)
@@ -51,10 +89,25 @@ export function BlobScene() {
 
     const disposables: { dispose: () => void }[] = []
 
-    const blobUniforms = {
+    const blobUniforms: {
+      uTime: { value: number }
+      uMouse: { value: THREE.Vector2 }
+      uScroll: { value: number }
+      uIntensity: { value: number }
+      uSpeed: { value: number }
+      uMoodMix: { value: number }
+      uMoodColor: { value: THREE.Color }
+      uColor1: { value: THREE.Color }
+      uColor2: { value: THREE.Color }
+      uColor3: { value: THREE.Color }
+    } = {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0, 0) },
       uScroll: { value: 0 },
+      uIntensity: { value: sectionMoods.hero.intensity },
+      uSpeed: { value: sectionMoods.hero.speed },
+      uMoodMix: { value: 0.22 },
+      uMoodColor: { value: new THREE.Color(sectionMoods.hero.tint) },
       uColor1: { value: new THREE.Color(initialBlob.color1) },
       uColor2: { value: new THREE.Color(initialBlob.color2) },
       uColor3: { value: new THREE.Color(initialBlob.color3) },
@@ -63,6 +116,7 @@ export function BlobScene() {
 
     const blobVert = `
       uniform float uTime;
+      uniform float uSpeed;
       uniform vec2 uMouse;
       uniform float uScroll;
       varying vec3 vNormal;
@@ -70,11 +124,12 @@ export function BlobScene() {
       varying float vDisplacement;
 
       float noise3d(vec3 p) {
-        return sin(p.x * 1.5 + uTime * 0.4)
-             * sin(p.y * 1.8 + uTime * 0.3)
-             * sin(p.z * 1.3 + uTime * 0.5)
-             + sin(p.x * 3.0 - uTime * 0.6) * 0.3
-             + sin(p.y * 4.0 + uTime * 0.8) * 0.15;
+        float t = uTime * uSpeed;
+        return sin(p.x * 1.5 + t * 0.4)
+             * sin(p.y * 1.8 + t * 0.3)
+             * sin(p.z * 1.3 + t * 0.5)
+             + sin(p.x * 3.0 - t * 0.6) * 0.3
+             + sin(p.y * 4.0 + t * 0.8) * 0.15;
       }
 
       void main() {
@@ -82,8 +137,8 @@ export function BlobScene() {
         vec3 norm = normal;
 
         float n = noise3d(pos * 1.2) * 0.25;
-        n += noise3d(pos * 2.5 + uTime * 0.3) * 0.12;
-        n += noise3d(pos * 5.0 - uTime * 0.2) * 0.06;
+        n += noise3d(pos * 2.5 + uTime * uSpeed * 0.3) * 0.12;
+        n += noise3d(pos * 5.0 - uTime * uSpeed * 0.2) * 0.06;
 
         float mx = uMouse.x * 0.15;
         float my = uMouse.y * 0.15;
@@ -91,7 +146,6 @@ export function BlobScene() {
 
         pos += norm * n;
         vDisplacement = n;
-
         vNormal = normalize(normalMatrix * norm);
         vPosition = (modelViewMatrix * vec4(pos, 1.0)).xyz;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
@@ -100,6 +154,9 @@ export function BlobScene() {
 
     const blobFrag = `
       uniform float uTime;
+      uniform float uIntensity;
+      uniform float uMoodMix;
+      uniform vec3 uMoodColor;
       uniform vec3 uColor1;
       uniform vec3 uColor2;
       uniform vec3 uColor3;
@@ -114,6 +171,7 @@ export function BlobScene() {
 
         vec3 baseColor = mix(uColor2, uColor1, smoothstep(-0.1, 0.3, vDisplacement));
         baseColor = mix(baseColor, uColor3, fresnel * 0.6);
+        baseColor = mix(baseColor, uMoodColor, uMoodMix);
 
         vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
         vec3 halfDir = normalize(lightDir + viewDir);
@@ -121,16 +179,17 @@ export function BlobScene() {
 
         float rim = fresnel * 0.8;
         vec3 color = baseColor * 0.6 + baseColor * rim + vec3(1.0) * spec * 0.4;
+        color *= uIntensity;
 
         float iri = sin(vDisplacement * 20.0 + uTime) * 0.5 + 0.5;
         color += uColor3 * iri * fresnel * 0.15;
 
-        float alpha = 0.85 + fresnel * 0.15;
+        float alpha = (0.85 + fresnel * 0.15) * uIntensity;
         gl_FragColor = vec4(color, alpha);
       }
     `
 
-    const blobGeo = new THREE.SphereGeometry(1.3, 128, 128)
+    const blobGeo = new THREE.SphereGeometry(1.3, segments, segments)
     const blobMat = new THREE.ShaderMaterial({
       vertexShader: blobVert,
       fragmentShader: blobFrag,
@@ -145,7 +204,7 @@ export function BlobScene() {
     const glowMat = new THREE.MeshBasicMaterial({
       color: initialBlob.glow,
       transparent: true,
-      opacity: 0.06,
+      opacity: atmosphere.glowIntensity,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       side: THREE.BackSide,
@@ -164,55 +223,123 @@ export function BlobScene() {
     light2Ref.current = light2
     scene.add(new THREE.AmbientLight(0x111111, 0.5))
 
-    // Mouse (smoothed, global)
     const mouse = { x: 0, y: 0, tx: 0, ty: 0 }
-    function onMouseMove(e: MouseEvent) {
+    function onPointerMove(e: PointerEvent) {
+      if (isMobile) return
       mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2
       mouse.ty = -(e.clientY / window.innerHeight - 0.5) * 2
     }
-    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("pointermove", onPointerMove, { passive: true })
 
-    // Scroll-driven position
     let scrollY = 0
     function onScroll() {
       scrollY = window.scrollY
     }
     window.addEventListener("scroll", onScroll, { passive: true })
 
-    let frameId: number
+    // Task 16 — one system, section mood targets via IntersectionObserver
+    const ratios = new Map<SectionMoodId, number>()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = (entry.target as HTMLElement).dataset.mood as
+            | SectionMoodId
+            | undefined
+          if (!id) continue
+          ratios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0)
+        }
+        let best: SectionMoodId = "hero"
+        let bestRatio = -1
+        for (const { id } of sectionMoodOrder) {
+          const r = ratios.get(id) ?? 0
+          if (r > bestRatio) {
+            bestRatio = r
+            best = id
+          }
+        }
+        const mood = sectionMoods[best]
+        moodTargetRef.current.id = best
+        moodTargetRef.current.intensity = mood.intensity
+        moodTargetRef.current.speed = mood.speed
+        moodTargetRef.current.tint.set(mood.tint)
+      },
+      { threshold: [0.15, 0.35, 0.55, 0.75] }
+    )
+
+    const observed: Element[] = []
+    for (const { id, selector } of sectionMoodOrder) {
+      const el = document.querySelector(selector)
+      if (!el) continue
+      ;(el as HTMLElement).dataset.mood = id
+      observer.observe(el)
+      observed.push(el)
+    }
+
+    let frameId = 0
     const t0 = performance.now()
-    const pageH = () => document.documentElement.scrollHeight - window.innerHeight
+    const pageH = () =>
+      document.documentElement.scrollHeight - window.innerHeight
+    let pageVisible = document.visibilityState === "visible"
+
+    function onVisibility() {
+      pageVisible = document.visibilityState === "visible"
+    }
+    document.addEventListener("visibilitychange", onVisibility)
+
+    if (reducedRef.current) {
+      blobUniforms.uTime.value = 0
+      blobUniforms.uIntensity.value = 0.55
+      renderer.render(scene, camera)
+    }
 
     function animate() {
       frameId = requestAnimationFrame(animate)
-      const t = (performance.now() - t0) / 1000
+      if (!pageVisible) return
+
+      const t = ((performance.now() - t0) / 1000) * atmosphere.timeScale
+      const cur = moodCurrentRef.current
+      const tgt = moodTargetRef.current
+      cur.intensity += (tgt.intensity - cur.intensity) * 0.04
+      cur.speed += (tgt.speed - cur.speed) * 0.04
+      cur.tint.lerp(tgt.tint, 0.04)
 
       mouse.x += (mouse.tx - mouse.x) * 0.04
       mouse.y += (mouse.ty - mouse.y) * 0.04
 
-      // Scroll progress 0→1
       const sp = Math.min(scrollY / (pageH() || 1), 1)
 
       if (!reducedRef.current) {
         blobUniforms.uTime.value = t
-        blobUniforms.uMouse.value.set(mouse.x, mouse.y)
+        blobUniforms.uMouse.value.set(
+          isMobile ? 0 : mouse.x,
+          isMobile ? 0 : mouse.y
+        )
         blobUniforms.uScroll.value = sp
+        blobUniforms.uIntensity.value = cur.intensity * (isMobile ? 0.85 : 1)
+        blobUniforms.uSpeed.value = cur.speed * (isMobile ? 0.75 : 1)
+        blobUniforms.uMoodColor.value.copy(cur.tint)
+        blobUniforms.uMoodMix.value = isMobile ? 0.12 : 0.2
 
-        blob.rotation.y += 0.002 + mouse.x * 0.001
-        blob.rotation.x += 0.001 + mouse.y * 0.001
+        const rotScale = isMobile ? 0.5 : 1
+        blob.rotation.y += (0.002 + mouse.x * 0.001) * rotScale * cur.speed
+        blob.rotation.x += (0.001 + mouse.y * 0.001) * rotScale * cur.speed
 
-        // Move blob position based on scroll — drifts around the viewport
-        blob.position.x = Math.sin(sp * Math.PI * 2) * 1.2
-        blob.position.y = Math.cos(sp * Math.PI * 1.5) * 0.8 - sp * 0.5
+        blob.position.x = Math.sin(sp * Math.PI * 2) * (isMobile ? 0.7 : 1.2)
+        blob.position.y =
+          Math.cos(sp * Math.PI * 1.5) * (isMobile ? 0.45 : 0.8) - sp * 0.5
 
         glowMesh.position.copy(blob.position)
         glowMesh.scale.setScalar(1 + Math.sin(t * 0.8) * 0.05)
-        glowMat.opacity = 0.05 + Math.sin(t * 1.5) * 0.02
+        glowMat.opacity =
+          atmosphere.glowIntensity + Math.sin(t * 1.5) * 0.02
       }
 
       renderer.render(scene, camera)
     }
-    animate()
+
+    if (!reducedRef.current) {
+      animate()
+    }
 
     function onResize() {
       const nw = parent.clientWidth || window.innerWidth
@@ -223,11 +350,23 @@ export function BlobScene() {
     }
     window.addEventListener("resize", onResize)
 
+    parent.style.setProperty(
+      "--atmosphere-opacity",
+      String(isMobile ? atmosphere.opacityMobile : atmosphere.opacity)
+    )
+
     return () => {
       cancelAnimationFrame(frameId)
-      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onResize)
+      document.removeEventListener("visibilitychange", onVisibility)
+      observer.disconnect()
+      observed.forEach((el) => {
+        delete (el as HTMLElement).dataset.mood
+      })
+      // Task 18 — release WebGL context so remounts do not leak contexts
+      renderer.forceContextLoss()
       renderer.dispose()
       disposables.forEach((d) => d.dispose())
       uniformsRef.current = null
@@ -245,8 +384,11 @@ export function BlobScene() {
   }, [palette])
 
   return (
-    <div className="blob-scene-fixed" aria-hidden="true">
+    <div className="atmosphere-scene blob-scene-fixed" aria-hidden="true">
       <canvas ref={canvasRef} />
     </div>
   )
 }
+
+/** @deprecated Use AmbientAtmosphere — alias for existing imports */
+export const BlobScene = AmbientAtmosphere

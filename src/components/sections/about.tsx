@@ -4,8 +4,8 @@ import { motion, useInView } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { useRef } from "react"
 
+import { SectionReveal } from "@/components/motion/section-reveal"
 import {
-  FadeIn,
   TraceNode,
   TraceSequence,
   useHydratedReducedMotion,
@@ -147,7 +147,7 @@ export function About() {
         />
 
         <div className="about-workspace-layout">
-          <FadeIn className="about-workspace-copy-header">
+          <SectionReveal variant="body" className="about-workspace-copy-header">
             <p className="about-workspace-kicker">{kicker}</p>
             <h2 className="about-workspace-headline">
               <span className="about-workspace-headline-line editorial-display">
@@ -157,7 +157,7 @@ export function About() {
                 {headline.accent}
               </span>
             </h2>
-          </FadeIn>
+          </SectionReveal>
 
           <div className="about-workspace-aside-kicker">
             <span className="about-impact-float-badge">{impact.floatBadge}</span>
@@ -169,7 +169,7 @@ export function About() {
               aria-hidden="true"
             />
 
-            <div className="about-workspace-intro">
+            <SectionReveal variant="body" className="about-workspace-intro">
               <p className="about-workspace-lead">
                 {(section.description ?? "").split("\n").map((line) => (
                   <span key={line} className="about-workspace-lead-line">
@@ -178,7 +178,7 @@ export function About() {
                 ))}
               </p>
               <span className="about-workspace-rule" aria-hidden="true" />
-            </div>
+            </SectionReveal>
 
             <TraceSequence className="about-feature-list" gap={gap.facts}>
               {featureCards.map((card) => {
@@ -222,7 +222,7 @@ export function About() {
           </div>
 
           <aside className="about-workspace-aside">
-            <div className="about-impact-card">
+            <SectionReveal variant="visual" className="about-impact-card">
               <header className="about-impact-header">
                 <h3 className="about-impact-title">{impact.title}</h3>
                 <span className="about-impact-live">{impact.liveBadge}</span>
@@ -248,7 +248,7 @@ export function About() {
                   </div>
                 ))}
               </div>
-            </div>
+            </SectionReveal>
           </aside>
         </div>
       </div>

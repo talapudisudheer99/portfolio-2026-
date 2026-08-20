@@ -8,13 +8,10 @@ import { useEffect, useRef } from "react"
 import { FeaturedWorkMobileStage } from "@/components/sections/featured-work-mobile-stage"
 import { FeaturedWorkTabletStage } from "@/components/sections/featured-work-tablet-stage"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { duration } from "@/lib/motion"
+import { duration, parallax, rise } from "@/lib/motion"
 import type { Project } from "@/types"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
-
-/** ~6% travel — matches parallax.mid restraint */
-const PARALLAX_LAG = 28
 
 interface FeaturedWorkStageProps {
   featured: Project
@@ -38,13 +35,13 @@ export function FeaturedWorkStage({
   useGSAP(
     () => {
       const section = root.current
-      const parallax = parallaxRef.current
+      const stage = parallaxRef.current
       const enter = enterRef.current
       if (!section || !enter) return
 
       if (stillRef.current) {
-        if (parallax) {
-          gsap.set(parallax, { y: 0, clearProps: "transform" })
+        if (stage) {
+          gsap.set(stage, { y: 0, clearProps: "transform" })
         }
         gsap.set(enter, { autoAlpha: 1, y: 0, clearProps: "transform" })
         return
@@ -69,12 +66,13 @@ export function FeaturedWorkStage({
       })
 
       mmEnter.add("(min-width: 768px)", () => {
-        gsap.set(enter, { autoAlpha: 0, y: 18 })
+        gsap.set(enter, { autoAlpha: 0, y: rise.md, scale: 0.97 })
 
         gsap.to(enter, {
           autoAlpha: 1,
           y: 0,
-          duration: duration.copy,
+          scale: 1,
+          duration: duration.section,
           ease: "power3.out",
           scrollTrigger: {
             trigger: section,
@@ -85,29 +83,29 @@ export function FeaturedWorkStage({
         })
       })
 
-      if (!parallax) {
+      if (!stage) {
         return () => mmEnter.revert()
       }
 
       const mm = gsap.matchMedia()
       mm.add("(min-width: 768px)", () => {
         gsap.fromTo(
-          parallax,
-          { y: PARALLAX_LAG },
+          stage,
+          { y: parallax.stageLag },
           {
-            y: -PARALLAX_LAG,
+            y: -parallax.stageLag,
             ease: "none",
             scrollTrigger: {
               trigger: section,
               start: "top bottom",
               end: "bottom top",
-              scrub: 0.85,
+              scrub: 0.55,
             },
           }
         )
       })
       mm.add("(max-width: 767px)", () => {
-        gsap.set(parallax, { y: 0, clearProps: "transform" })
+        gsap.set(stage, { y: 0, clearProps: "transform" })
       })
 
       return () => {

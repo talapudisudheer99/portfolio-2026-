@@ -1,16 +1,9 @@
 import type { Metadata } from "next"
 import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google"
 
-import { Footer } from "@/components/layout/footer"
-import { Navbar } from "@/components/layout/navbar"
+import { MotionRoot } from "@/components/motion"
 import { PaletteProvider } from "@/components/palette-provider"
-import { BlobScene } from "@/components/shared/blob-scene"
-import { CursorInteraction } from "@/components/shared/cursor"
-import { ScrollGrain } from "@/components/shared/parallax"
-import { SmoothScroll } from "@/components/smooth-scroll"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/sonner"
-import { siteConfig } from "@/data/site"
 import { createSiteMetadata } from "@/lib/metadata"
 import { cn } from "@/lib/utils"
 
@@ -56,23 +49,7 @@ export default function RootLayout({
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
           <PaletteProvider>
-            <CursorInteraction />
-            <SmoothScroll>
-              <BlobScene />
-              <ScrollGrain />
-              <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-            >
-              {siteConfig.labels.skipToContent}
-            </a>
-            <Navbar />
-            <main id="main-content" className="relative z-1">
-              {children}
-            </main>
-            <Footer />
-            <Toaster richColors position="top-right" />
-            </SmoothScroll>
+            <MotionRoot>{children}</MotionRoot>
           </PaletteProvider>
         </ThemeProvider>
       </body>

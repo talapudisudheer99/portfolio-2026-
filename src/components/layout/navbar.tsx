@@ -7,6 +7,7 @@ import { ArrowDownToLine, Menu, X } from "lucide-react"
 
 import { PaletteSelect } from "@/components/layout/palette-select"
 import { siteConfig } from "@/data/site"
+import { duration, easeOut } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 const focus =
@@ -120,7 +121,7 @@ export function Navbar() {
           y: mobileOpen ? 0 : "-110%",
           opacity: mobileOpen ? 1 : 0,
         }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: duration.trace, ease: easeOut }}
       >
         <ul className="nav-mobile-links">
           {siteConfig.navLinks.map((link, i) => (
