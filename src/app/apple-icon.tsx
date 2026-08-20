@@ -9,35 +9,51 @@ export const size = {
 }
 export const contentType = "image/png"
 
-// iOS ignores SVG touch icons, so this mark is rendered as a PNG.
+/** iOS touch icon — molten metal mark matching the nav logo. */
 export default function AppleIcon() {
   return new ImageResponse(
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-        background: "#000000",
-        color: "#e0dedd",
-        fontSize: 118,
-        fontWeight: 700,
-        letterSpacing: "-0.05em",
-      }}
-    >
-      S
+    (
       <div
         style={{
-          width: 20,
-          height: 20,
-          marginLeft: 6,
-          marginTop: 48,
-          borderRadius: 999,
-          background: "#d84e55",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+          background: "#000000",
         }}
-      />
-    </div>,
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 132,
+            height: 132,
+            borderRadius: 999,
+            background: "linear-gradient(135deg, #8b6914 0%, #d4a024 48%, #f0d060 100%)",
+            color: "#000000",
+            fontSize: 78,
+            fontWeight: 700,
+            letterSpacing: "-0.05em",
+            fontFamily: "Georgia, 'Times New Roman', Times, serif",
+          }}
+        >
+          S
+          <div
+            style={{
+              width: 12,
+              height: 12,
+              marginLeft: 2,
+              marginTop: 28,
+              borderRadius: 999,
+              background: "#000000",
+              opacity: 0.55,
+            }}
+          />
+        </div>
+      </div>
+    ),
     {
       ...size,
     }

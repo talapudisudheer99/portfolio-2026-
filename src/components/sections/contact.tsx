@@ -47,8 +47,8 @@ export function Contact() {
 
   return (
     <SectionWrapper id="contact" className="section-rule">
-      <div className="content-grid gap-y-14">
-        <ScrollEmergence className="col-span-12">
+      <div className="content-grid items-center gap-y-10 md:gap-y-0">
+        <ScrollEmergence className="col-span-12 md:col-span-5">
           <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
           <MaskedLine display>
             <h2 className="editorial-display type-display max-w-[16ch] font-medium">
@@ -60,10 +60,8 @@ export function Contact() {
               {section.description}
             </p>
           </FadeIn>
-        </ScrollEmergence>
 
-        <ScrollEmergence className="col-span-12 mt-4 md:col-span-5">
-          <TraceRule className="mb-6 bg-border" />
+          <TraceRule className="mb-6 mt-10 bg-border" />
           <a
             href={`mailto:${contact.email}`}
             className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -81,13 +79,13 @@ export function Contact() {
           <SocialLinks links={socialLinks} className="mt-6" />
         </ScrollEmergence>
 
-        <ScrollEmergence className="col-span-12 md:col-span-6 md:col-start-7">
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="space-y-7"
-          aria-label="Contact form"
-          noValidate
-        >
+        <ScrollEmergence className="col-span-12 md:col-span-6 md:col-start-7 md:row-start-1 md:self-center">
+          <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="space-y-6"
+            aria-label="Contact form"
+            noValidate
+          >
           {fields.map((field) => {
             const error = errors[field.name]
             const isTextarea = field.name === "message"
@@ -108,7 +106,7 @@ export function Contact() {
                     placeholder={field.placeholder}
                     aria-invalid={Boolean(error)}
                     aria-describedby={error ? errorId : undefined}
-                    className="mt-2 min-h-32 resize-y rounded-none border-0 border-b border-input bg-transparent px-0 py-3 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    className="mt-2 min-h-32 resize-y rounded-none border-0 border-b border-border bg-transparent px-0 py-3 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
                     {...register(field.name)}
                   />
                 ) : (
@@ -118,7 +116,7 @@ export function Contact() {
                     placeholder={field.placeholder}
                     aria-invalid={Boolean(error)}
                     aria-describedby={error ? errorId : undefined}
-                    className="mt-2 h-12 rounded-none border-0 border-b border-input bg-transparent px-0 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    className="mt-2 h-12 rounded-none border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
                     {...register(field.name)}
                   />
                 )}

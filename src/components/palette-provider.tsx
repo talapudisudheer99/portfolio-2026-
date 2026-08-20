@@ -35,6 +35,15 @@ function applyPaletteTokens(palette: BlobPalette) {
   for (const [token, value] of Object.entries(palette.tokens)) {
     root.style.setProperty(token, value)
   }
+  // Keep form / input chrome in sync — not always listed in palette tokens.
+  const primary = palette.tokens["--primary"]
+  const border = palette.tokens["--border"]
+  if (primary && border) {
+    root.style.setProperty(
+      "--input",
+      `color-mix(in srgb, ${primary} 28%, ${border})`
+    )
+  }
 }
 
 export function PaletteProvider({

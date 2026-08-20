@@ -115,7 +115,7 @@
   --warning: #e2ad62;
   --border: #28220e;
   --border-light: #1c180a;
-  --input: #3a3218;
+  --input: color-mix(in srgb, var(--primary) 28%, var(--border));
   --ring: #d4a024;
   --sameward: #47b5d1;
   --sameward-dark: #06222b;
@@ -159,7 +159,7 @@
   --warning: #e2ad62;
   --border: #28220e;
   --border-light: #1c180a;
-  --input: #3a3218;
+  --input: color-mix(in srgb, var(--primary) 28%, var(--border));
   --ring: #d4a024;
   --sameward: #47b5d1;
   --sameward-dark: #06222b;
