@@ -1,6 +1,6 @@
 "use client"
 
-import { FadeIn } from "@/components/shared/motion"
+import { FadeIn, MaskedLine } from "@/components/shared/motion"
 import { cn } from "@/lib/utils"
 
 interface SectionHeaderProps {
@@ -10,6 +10,7 @@ interface SectionHeaderProps {
   align?: "left" | "center"
 }
 
+/** No outer FadeIn — callers own labels; title uses a masked line. */
 export function SectionHeader({
   title,
   description,
@@ -17,26 +18,39 @@ export function SectionHeader({
   align = "left",
 }: SectionHeaderProps) {
   return (
-    <FadeIn
+    <div
       className={cn(
-        "mb-10 md:mb-12",
+        "mb-12 grid gap-5 md:mb-16 md:grid-cols-12",
         align === "center" && "text-center",
         className
       )}
     >
-      <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-        {title}
-      </h2>
+      <MaskedLine
+        display
+        className={cn("md:col-span-7", align === "center" && "md:col-span-12")}
+      >
+        <h2 className="editorial-display type-title text-foreground">
+          {title}
+        </h2>
+      </MaskedLine>
       {description ? (
-        <p
+        <FadeIn
+          delay={0.1}
           className={cn(
-            "mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg",
-            align === "center" && "mx-auto"
+            "max-w-md self-end md:col-span-4 md:col-start-9",
+            align === "center" && "mx-auto md:col-span-8 md:col-start-3"
           )}
         >
-          {description}
-        </p>
+          <p
+            className={cn(
+              "type-lead text-muted-foreground",
+              align === "center" && "text-center"
+            )}
+          >
+            {description}
+          </p>
+        </FadeIn>
       ) : null}
-    </FadeIn>
+    </div>
   )
 }

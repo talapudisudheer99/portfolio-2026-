@@ -1,11 +1,12 @@
 "use client"
 
-import { Mail, MapPin, Phone } from "lucide-react"
+import { ArrowUpRight, MapPin } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
 
-import { FadeIn } from "@/components/shared/motion"
+import { FadeIn, MaskedLine, TraceRule } from "@/components/shared/motion"
+import { ScrollEmergence } from "@/components/shared/parallax"
 import { SocialLinks } from "@/components/shared/social-links"
-import { SectionHeader } from "@/components/shared/section-header"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,108 +17,143 @@ import { siteConfig } from "@/data/site"
 import { useContactForm } from "@/hooks/use-contact-form"
 
 export function Contact() {
-  const { section, fields, submitLabel, submittingLabel, successMessage, errorMessage } =
-    contactContent
+  const {
+    section,
+    fields,
+    submitLabel,
+    submittingLabel,
+    successMessage,
+    errorMessage,
+  } = contactContent
   const { contact, socialLinks } = siteConfig
   const { register, handleSubmit, onSubmit, isSubmitting, errors } =
     useContactForm()
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [statusMessage, setStatusMessage] = useState("")
 
-  async function handleFormSubmit(
-    values: Parameters<typeof onSubmit>[0]
-  ) {
+  async function handleFormSubmit(values: Parameters<typeof onSubmit>[0]) {
     try {
       await onSubmit(values)
+      setStatus("success")
+      setStatusMessage(successMessage)
       toast.success(successMessage)
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : errorMessage
-      )
+      const message = error instanceof Error ? error.message : errorMessage
+      setStatus("error")
+      setStatusMessage(message)
+      toast.error(message)
     }
   }
 
   return (
-    <SectionWrapper id="contact" className="bg-background-secondary/50">
-      <SectionHeader title={section.title} description={section.description} />
-
-      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
-        <FadeIn className="space-y-6">
-          <div className="space-y-4">
-            <a
-              href={`mailto:${contact.email}`}
-              className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Mail className="size-5 shrink-0 text-primary" aria-hidden="true" />
-              {contact.email}
-            </a>
-            <a
-              href={`tel:${contact.phone.replace(/\s/g, "")}`}
-              className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Phone className="size-5 shrink-0 text-primary" aria-hidden="true" />
-              {contact.phone}
-            </a>
-            <p className="flex items-center gap-3 text-sm text-muted-foreground">
-              <MapPin className="size-5 shrink-0 text-primary" aria-hidden="true" />
-              {contact.location}
+    <SectionWrapper id="contact" className="section-rule">
+      <div className="content-grid items-center gap-y-10 md:gap-y-0">
+        <ScrollEmergence className="col-span-12 md:col-span-5">
+          <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
+          <MaskedLine display>
+            <h2 className="editorial-display type-display max-w-[16ch] font-medium">
+              Have a product worth building?
+            </h2>
+          </MaskedLine>
+          <FadeIn delay={0.1}>
+            <p className="type-lead mt-6 max-w-lg text-muted-foreground">
+              {section.description}
             </p>
-          </div>
+          </FadeIn>
 
-          <SocialLinks links={socialLinks} />
-        </FadeIn>
+          <TraceRule className="mb-6 mt-10 bg-border" />
+          <a
+            href={`mailto:${contact.email}`}
+            className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          >
+            <span className="truncate">{contact.email}</span>
+            <ArrowUpRight
+              className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              aria-hidden="true"
+            />
+          </a>
+          <p className="type-ui mt-6 flex items-center gap-2 text-muted-foreground">
+            <MapPin className="size-4 text-primary" aria-hidden="true" />
+            {contact.location}
+          </p>
+          <SocialLinks links={socialLinks} className="mt-6" />
+        </ScrollEmergence>
 
-        <FadeIn delay={0.15}>
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="mx-auto w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8"
-          aria-label={section.title}
-          noValidate
-        >
-          <div className="space-y-5">
-            {fields.map((field) => {
-              const error = errors[field.name]
-              const isTextarea = field.name === "message"
+        <ScrollEmergence className="col-span-12 md:col-span-6 md:col-start-7 md:row-start-1 md:self-center">
+          <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="space-y-6"
+            aria-label="Contact form"
+            noValidate
+          >
+          {fields.map((field) => {
+            const error = errors[field.name]
+            const isTextarea = field.name === "message"
+            const errorId = `${field.name}-error`
 
-              return (
-                <div key={field.name} className="space-y-2">
-                  <Label htmlFor={field.name}>{field.label}</Label>
-                  {isTextarea ? (
-                    <Textarea
-                      id={field.name}
-                      rows={5}
-                      placeholder={field.placeholder}
-                      aria-invalid={Boolean(error)}
-                      className="min-h-[140px] rounded-[10px] px-4 py-3 text-[15px]"
-                      {...register(field.name)}
-                    />
-                  ) : (
-                    <Input
-                      id={field.name}
-                      type={field.name === "email" ? "email" : "text"}
-                      placeholder={field.placeholder}
-                      aria-invalid={Boolean(error)}
-                      className="h-12 rounded-[10px] px-4 text-[15px]"
-                      {...register(field.name)}
-                    />
-                  )}
-                  {error ? (
-                    <p className="text-sm text-destructive" role="alert">
-                      {error.message}
-                    </p>
-                  ) : null}
-                </div>
-              )
-            })}
-          </div>
+            return (
+              <div key={field.name}>
+                <Label
+                  htmlFor={field.name}
+                  className="type-meta text-muted-foreground"
+                >
+                  {field.label}
+                </Label>
+                {isTextarea ? (
+                  <Textarea
+                    id={field.name}
+                    rows={4}
+                    placeholder={field.placeholder}
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? errorId : undefined}
+                    className="mt-2 min-h-32 resize-y rounded-none border-0 border-b border-border bg-transparent px-0 py-3 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    {...register(field.name)}
+                  />
+                ) : (
+                  <Input
+                    id={field.name}
+                    type={field.name === "email" ? "email" : "text"}
+                    placeholder={field.placeholder}
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? errorId : undefined}
+                    className="mt-2 h-12 rounded-none border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    {...register(field.name)}
+                  />
+                )}
+                {error ? (
+                  <p
+                    id={errorId}
+                    className="type-ui mt-2 text-destructive"
+                    role="alert"
+                  >
+                    {error.message}
+                  </p>
+                ) : null}
+              </div>
+            )
+          })}
 
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="mt-6 h-11 w-full rounded-[10px] text-sm font-medium"
+            className="type-ui h-12 rounded-full px-7 font-bold"
           >
             {isSubmitting ? submittingLabel : submitLabel}
+            <ArrowUpRight className="size-4" aria-hidden="true" />
           </Button>
+          <p
+            role="status"
+            aria-live="polite"
+            className={
+              status === "error"
+                ? "type-ui text-destructive"
+                : "type-ui text-success"
+            }
+          >
+            {status === "idle" ? "" : statusMessage}
+          </p>
         </form>
-        </FadeIn>
+        </ScrollEmergence>
       </div>
     </SectionWrapper>
   )

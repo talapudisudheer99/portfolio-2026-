@@ -1,0 +1,39 @@
+---
+description: Portfolio redesign v2 — Sameward-first warm editorial portfolio; do not edit Sameward/TeamHub repo
+alwaysApply: true
+---
+
+# Portfolio 2026 — redesign v2 baseline
+
+Live site: https://sudheer-talapudi.vercel.app/  
+Flagship product to feature: https://sameward.com/  
+This repo only. Never modify `/Desktop/2026_Project_learning/teamhub-ai` from portfolio chats.
+
+## Goal
+
+Turn the portfolio into a modern, interview-winning editorial experience with
+one flagship case study (Sameward). Preserve content proof; replace the rejected
+boxed SaaS/dashboard presentation.
+
+## Direction locked after user review
+
+- Headline: Frontend-strong engineer who ships full product systems (still FE II / Senior FE target)
+- Visual language: bone paper / blue-black ink, one oxblood accent, expressive editorial typography
+- Layout: continuous canvas, asymmetric 12-column grid, full-bleed media, hairline rules
+- Never paint large rectangular backgrounds behind every section; avoid cards unless content is genuinely bounded
+- Remove Three.js/R3F/drei/GSAP; use restrained CSS/Framer motion only
+- Structure: Hero → Sameward → Capabilities → Experience → Profile → Contact
+- Drop/demote MERN capstone as equal peer; keep Phrontier confidential framing
+
+## Execution
+
+Follow the redesign v2 plan in `docs/phases/README.md` one phase at a time.
+Phase 00 content is preserved; visual phases 01–05 were reset after user review.
+
+## Content rule
+
+User-facing copy lives in `src/data/*.ts`. Keep Web3Forms, resume, SEO plumbing unless a phase says otherwise.
+
+## Communication
+
+Direct and concise. Prefer pointed updates. Expand only when implementing a phase.

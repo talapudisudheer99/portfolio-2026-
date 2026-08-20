@@ -1,27 +1,31 @@
+"use client"
+
 import Link from "next/link"
 
+import { ContentRail } from "@/components/shared/section-wrapper"
+import { ParallaxFooter } from "@/components/shared/parallax"
 import { siteConfig } from "@/data/site"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background-secondary">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+    <ParallaxFooter className="section-rule">
+      <ContentRail className="flex flex-col gap-7 py-8 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">
+          <p className="type-ui font-bold text-foreground">
             {siteConfig.footer.copyright}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="type-ui text-muted-foreground">
             {siteConfig.footer.tagline}
           </p>
         </div>
 
-        <ul className="flex flex-wrap items-center gap-4">
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-3">
           {siteConfig.footer.links.map((link) => (
             <li key={link.label}>
               {link.href.startsWith("/") ? (
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="type-ui rounded-sm font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   {...(link.href.endsWith(".pdf")
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
@@ -31,9 +35,10 @@ export function Footer() {
               ) : (
                 <a
                   href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  {...(link.href.startsWith("http")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  className="type-ui rounded-sm font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 >
                   {link.label}
                 </a>
@@ -41,7 +46,7 @@ export function Footer() {
             </li>
           ))}
         </ul>
-      </div>
-    </footer>
+      </ContentRail>
+    </ParallaxFooter>
   )
 }

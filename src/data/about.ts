@@ -1,19 +1,56 @@
+import { Code2, Layers, Rocket } from "lucide-react"
+
 import type { AboutContent } from "@/types"
 
 export const aboutContent: AboutContent = {
-  section: {
-    title: "About",
-    description: "From business foundations to production frontend engineering.",
+  kicker: "Behind the code",
+  headline: {
+    lead: "More than",
+    accent: "the screen.",
   },
-  paragraphs: [
-    "I started with a BBA background and transitioned into software through self-directed learning — building fundamentals in HTML, CSS, JavaScript, and React before moving into production frontend roles.",
-    "At Phrontier AI, I've spent 18+ months building frontend systems for an enterprise platform under active development — shipping dual Next.js applications with GraphQL, RTK Query, and real-time UI patterns.",
-    "I'm targeting Frontend Engineer II and Senior Frontend roles where I can contribute to scalable architecture, strong component design, and high-quality user experiences.",
+  section: {
+    title: "More than the screen",
+    description:
+      "Business thinking, strong frontend work, and full-stack ownership\nbehind the screen.",
+  },
+  featureCards: [
+    {
+      title: "Build Thoughtfully",
+      detail:
+        "Turning business needs into clean, scalable and\nmaintainable solutions.",
+      accent: "violet",
+      icon: Code2,
+    },
+    {
+      title: "Ship End-to-End",
+      detail:
+        "From clean architecture to production-ready\nsystems.",
+      accent: "cyan",
+      icon: Layers,
+    },
+    {
+      title: "Solve Real Problems",
+      detail:
+        "Creating smooth, performant and delightful\nexperiences.",
+      accent: "pink",
+      icon: Rocket,
+    },
   ],
-  highlights: [
-    { label: "Experience", value: "3 Years" },
-    { label: "Enterprise Platform", value: "18+ Months" },
-    { label: "Next.js Applications", value: "2 Production Apps" },
-    { label: "Location", value: "Hyderabad, India (Open to Remote)" },
+  impact: {
+    floatBadge: "Engineering Mindset",
+    title: "Engineering Impact",
+    liveBadge: "Live Systems",
+    stats: [
+      { value: "3+", label: "Years Experience" },
+      { value: "10+", label: "Products Shipped" },
+      { value: "∞", label: "Learning Mode" },
+    ],
+  },
+  radarAxes: [
+    { label: "Frontend", value: 0.92 },
+    { label: "Prod", value: 0.8 },
+    { label: "Performance", value: 0.85 },
+    { label: "Architecture", value: 0.9 },
+    { label: "Tools", value: 0.78 },
   ],
 }

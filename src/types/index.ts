@@ -27,11 +27,48 @@ export interface CtaLink {
   external?: boolean
 }
 
+export interface StackLayer {
+  layer: string
+  detail: string
+}
+
+/** The stack a hiring reader checks, shown under Capabilities. */
+export interface WorkingRange {
+  role: string
+  note: string
+  layers: StackLayer[]
+}
+
+/** One piece of the headline. Only a single segment should carry the accent. */
+export interface HeadlineSegment {
+  text: string
+  accent?: boolean
+  /** Start a new visual line in the hero. */
+  break?: boolean
+  /** Indent this line on the broken composition. */
+  offset?: boolean
+}
+
+/** One stratum of the hero product stack. */
+export interface HeroLayer {
+  label: string
+  detail: string
+}
+
 export interface HeroContent {
   badge: string
-  greeting: string
-  role: string
+  /** Small label above the headline. */
+  kicker: string
+  wordmark: string
+  surname: string
+  headline: HeadlineSegment[]
   tagline: string
+  availability: string
+  availabilityHref?: string
+  /** Eyebrow above the product stack. */
+  systemLabel: string
+  /** How a product is shipped — the hero motion object. */
+  layers: HeroLayer[]
   ctas: CtaLink[]
 }
 
@@ -85,14 +122,73 @@ export interface Project {
   id: string
   title: string
   description: string
-  stack: string[]
   liveUrl?: string
   githubUrl?: string
+  /** Sole homepage flagship when true */
+  featured?: boolean
+  subtitle?: string
+  problem?: string
+  /** Editorial beats for the problem statement (one line per beat). */
+  problemLines?: string[]
+  approachHeadline?: string
+  approachLead?: string
+  approachSteps?: ApproachStep[]
+  decisions?: string[]
+  /** @deprecated Use shippedFlow — kept for reference during migration */
+  buildList?: string[]
+  shippedFlowHub?: ShippedFlowHub
+  shippedFlow?: ShippedFlowNode[]
+}
+
+export interface ApproachStep {
+  title: string
+  detail: string
+}
+
+export type ShippedFlowIcon =
+  | "code"
+  | "shield"
+  | "database"
+  | "zap"
+  | "cloud"
+  | "sparkles"
+  | "test"
+  | "deploy"
+
+export type ShippedFlowAccent = "cyan" | "violet" | "green" | "purple" | "amber"
+
+export interface ShippedFlowArchitectureStep {
+  label: string
+  active?: boolean
+}
+
+export interface ShippedFlowNode {
+  id: string
+  index: number
+  title: string
+  detail: string
+  /** Primary tech line on the grid card. */
+  cardStack: string
+  /** Secondary feature line on the grid card. */
+  cardFeatures: string
+  icon: ShippedFlowIcon
+  accent: ShippedFlowAccent
+  description: string
+  bullets: string[]
+  architecture: ShippedFlowArchitectureStep[]
+  /** Other node ids this module connects to in the flow diagram. */
+  connectsTo: string[]
+}
+
+export interface ShippedFlowHub {
+  title: string
+  subtitle: string
 }
 
 export interface SkillGroup {
   id: string
   title: string
+  summary: string
   skills: string[]
 }
 
@@ -112,10 +208,42 @@ export interface AboutHighlight {
   value: string
 }
 
+export type AboutAccent = "violet" | "cyan" | "pink"
+
+export interface AboutFeatureCard {
+  title: string
+  detail: string
+  accent: AboutAccent
+  icon: import("lucide-react").LucideIcon
+}
+
+export interface AboutRadarAxis {
+  label: string
+  value: number
+}
+
+export interface AboutStat {
+  value: string
+  label: string
+}
+
+export interface AboutImpactPanel {
+  floatBadge: string
+  title: string
+  liveBadge: string
+  stats: AboutStat[]
+}
+
 export interface AboutContent {
+  kicker: string
+  headline: {
+    lead: string
+    accent: string
+  }
   section: SectionMeta
-  paragraphs: string[]
-  highlights: AboutHighlight[]
+  featureCards: AboutFeatureCard[]
+  impact: AboutImpactPanel
+  radarAxes: AboutRadarAxis[]
 }
 
 export interface ContactFormField {
@@ -135,11 +263,8 @@ export interface ContactContent {
 }
 
 export interface SectionContent {
-  about: SectionMeta
   skills: SectionMeta
   experience: SectionMeta
-  projects: SectionMeta
-  contact: SectionMeta
 }
 
 export interface ProjectActions {

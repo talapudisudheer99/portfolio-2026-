@@ -4,18 +4,21 @@ import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
-import { siteConfig } from "@/data/site"
+import { cn } from "@/lib/utils"
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: Readonly<{ className?: string }>) {
   const { resolvedTheme, setTheme } = useTheme()
 
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="ghost"
       size="icon"
-      className="relative size-10 rounded-[10px]"
-      aria-label={siteConfig.labels.toggleTheme}
+      className={cn(
+        "relative size-10 rounded-full text-muted-foreground hover:text-foreground",
+        className
+      )}
+      aria-label="Toggle color theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       <Sun className="size-[18px] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />

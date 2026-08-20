@@ -1,122 +1,151 @@
 "use client"
 
+import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Menu } from "lucide-react"
-import { motion } from "framer-motion"
+import { ArrowDownToLine, Menu, X } from "lucide-react"
 
-import { ResumeButton } from "@/components/shared/resume-button"
-import { ThemeToggle } from "@/components/shared/theme-toggle"
-import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { PaletteSelect } from "@/components/layout/palette-select"
 import { siteConfig } from "@/data/site"
 import { cn } from "@/lib/utils"
 
+const focus =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+
 export function Navbar() {
-  const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeHref, setActiveHref] = useState("")
 
   useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 16)
-    }
+    const sections = siteConfig.navLinks
+      .map((link) => document.querySelector<HTMLElement>(link.href))
+      .filter((section): section is HTMLElement => section !== null)
 
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+    if (!sections.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+
+        const id = visible[0]?.target.id
+        if (id) setActiveHref(`#${id}`)
+      },
+      { rootMargin: "-42% 0px -48% 0px", threshold: [0.12, 0.35, 0.6] }
+    )
+
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
   }, [])
 
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        "sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-300",
-        scrolled
-          ? "border-border/80 bg-background/90 shadow-sm"
-          : "border-transparent bg-background/70"
-      )}
-    >
-      <nav
-        aria-label="Main navigation"
-        className="mx-auto flex h-18 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8"
-      >
-        <Link
-          href="/"
-          className="text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-primary md:text-base"
-        >
-          {siteConfig.contact.name}
-        </Link>
+    <>
+      <header className="nav-header">
+        <nav aria-label="Main navigation" className="nav-pill">
+          <Link href="/" className={`nav-logo ${focus}`} data-cursor="Home">
+            S<span className="nav-logo-dot">.</span>
+          </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
-          <ul className="flex items-center gap-6">
-            {siteConfig.navLinks.map((link) => (
+          <span aria-hidden="true" className="nav-divider nav-divider--desktop" />
+
+          <ul className="nav-links">
+            {siteConfig.navLinks.map((link, i) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="group relative text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className={cn(
+                    "nav-link",
+                    focus,
+                    activeHref === link.href && "is-active"
+                  )}
+                  data-cursor={link.label}
+                  aria-current={activeHref === link.href ? "page" : undefined}
                 >
+                  <span className="nav-link-index">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
                 </a>
               </li>
             ))}
           </ul>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <ResumeButton resume={siteConfig.resume} size="sm" />
-          </div>
-        </div>
+          <span aria-hidden="true" className="nav-divider nav-divider--desktop" />
 
-        <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger
-              render={
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="size-10 rounded-[10px]"
-                  aria-label={siteConfig.labels.openMenu}
-                />
-              }
+          <div className="nav-right">
+            <PaletteSelect />
+            <a
+              href={siteConfig.resume.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`nav-resume ${focus}`}
+              data-cursor="Download"
             >
-              <Menu className="size-5" aria-hidden="true" />
-            </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-xs">
-              <SheetHeader>
-                <SheetTitle>{siteConfig.contact.name}</SheetTitle>
-              </SheetHeader>
-              <ul className="flex flex-col gap-1 px-4">
-                {siteConfig.navLinks.map((link) => (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex h-11 items-center rounded-[10px] px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-                      )}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <div className="px-4 pt-2">
-                <ResumeButton resume={siteConfig.resume} className="w-full" />
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </nav>
-    </motion.header>
+              <ArrowDownToLine className="size-3.5" aria-hidden="true" />
+              <span className="nav-resume-text">CV</span>
+            </a>
+
+            <button
+              type="button"
+              className="nav-mobile-toggle"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close menu" : siteConfig.labels.openMenu}
+            >
+              {mobileOpen ? (
+                <X className="size-4" />
+              ) : (
+                <Menu className="size-4" />
+              )}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <motion.div
+          className="nav-mobile-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <motion.div
+        className="nav-mobile-panel"
+        initial={false}
+        animate={{
+          y: mobileOpen ? 0 : "-110%",
+          opacity: mobileOpen ? 1 : 0,
+        }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <ul className="nav-mobile-links">
+          {siteConfig.navLinks.map((link, i) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="nav-mobile-link"
+              >
+                <span className="nav-mobile-index">{String(i + 1).padStart(2, "0")}</span>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a
+          href={siteConfig.resume.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-mobile-resume"
+        >
+          Download resume
+          <ArrowDownToLine className="size-4" aria-hidden="true" />
+        </a>
+      </motion.div>
+    </>
   )
 }

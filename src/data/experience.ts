@@ -2,15 +2,28 @@ import type { Experience } from "@/types"
 
 export const experience: Experience[] = [
   {
+    id: "sameward",
+    company: "Sameward",
+    role: "Independent product — frontend-strong full stack",
+    period: "2025 – Present",
+    bullets: [
+      "Designed and launched Sameward, a live workspace for team chat, planning, files, and AI help.",
+      "Built the Next.js web app and a separate realtime service for fast, secure messaging.",
+      "Built sign-in, team roles, file uploads, email flows, the database, and production deployment.",
+      "Covered core product flows with React Testing Library so messaging, sign-in, and Channel AI stay stable.",
+      "Changed the product from TeamHub to Sameward without putting live data or storage at risk.",
+    ],
+  },
+  {
     id: "phrontier-ai",
     company: "Phrontier AI",
     role: "Frontend Engineer",
-    period: "Jan 2025 – Present",
+    period: "Jan 2025 – Jul 2026",
     bullets: [
-      "Building frontend systems for an enterprise platform under active development using Next.js, TypeScript, and GraphQL.",
-      "Implemented scalable UI architecture across dual Next.js applications with shared patterns for data fetching and state management.",
-      "Integrated RTK Query and WebSocket-driven updates for responsive, real-time user experiences.",
-      "Collaborated on authentication flows, role-based access patterns, and production-ready component libraries.",
+      "Built reusable frontend systems for two Next.js apps used by an enterprise platform.",
+      "Connected GraphQL data, shared state, and common UI patterns across both apps.",
+      "Added live updates with WebSockets and built secure, role-based screens.",
+      "Kept shared components clear, consistent, and ready for production.",
     ],
   },
   {
@@ -19,9 +32,9 @@ export const experience: Experience[] = [
     role: "Frontend Developer",
     period: "Jul 2024 – Dec 2024",
     bullets: [
-      "Developed React-based interfaces with a focus on reusable components and maintainable UI patterns.",
-      "Worked with REST APIs and client-side state to deliver responsive, user-facing features.",
-      "Improved frontend performance and consistency through structured component design and code reviews.",
+      "Built React screens with reusable components and clear UI patterns.",
+      "Connected REST APIs and frontend state to deliver responsive product features.",
+      "Improved speed and consistency through better component structure and code reviews.",
     ],
   },
   {
@@ -30,9 +43,9 @@ export const experience: Experience[] = [
     role: "Frontend Developer",
     period: "Feb 2024 – Jul 2024",
     bullets: [
-      "Built responsive web interfaces using React and modern CSS workflows.",
-      "Translated design requirements into accessible, mobile-first UI implementations.",
-      "Supported feature delivery through close collaboration with backend and design stakeholders.",
+      "Built responsive web interfaces with React and modern CSS.",
+      "Turned designs into accessible screens that worked well on mobile.",
+      "Shipped product features with backend and design teams.",
     ],
   },
   {
@@ -41,9 +54,9 @@ export const experience: Experience[] = [
     role: "Web Development Intern",
     period: "May 2023 – Feb 2024",
     bullets: [
-      "Completed structured training in HTML, CSS, JavaScript, and React fundamentals.",
-      "Built practice projects to strengthen component-based architecture and responsive layout skills.",
-      "Established a foundation for transitioning into production frontend engineering roles.",
+      "Built web projects with HTML, CSS, JavaScript, and React.",
+      "Created reusable components and responsive layouts.",
+      "Turned product requirements into working frontend features.",
     ],
   },
 ]

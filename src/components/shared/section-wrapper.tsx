@@ -1,23 +1,50 @@
-import type { ReactNode } from "react"
+import type { ComponentPropsWithoutRef, ReactNode, Ref } from "react"
 
 import { cn } from "@/lib/utils"
 
-interface SectionWrapperProps {
-  id?: string
+interface SectionShellProps extends ComponentPropsWithoutRef<"section"> {
+  children: ReactNode
+  ref?: Ref<HTMLElement>
+}
+
+export function SectionShell({
+  children,
+  className,
+  ref,
+  ...props
+}: SectionShellProps) {
+  return (
+    <section ref={ref} className={cn("relative w-full", className)} {...props}>
+      {children}
+    </section>
+  )
+}
+
+interface ContentRailProps {
   children: ReactNode
   className?: string
 }
 
-export function SectionWrapper({ id, children, className }: SectionWrapperProps) {
+export function ContentRail({ children, className }: ContentRailProps) {
+  return <div className={cn("content-rail", className)}>{children}</div>
+}
+
+interface SectionWrapperProps extends SectionShellProps {
+  railClassName?: string
+}
+
+/** Convenience wrapper for standard editorial sections. */
+export function SectionWrapper({
+  children,
+  className,
+  railClassName,
+  ...props
+}: SectionWrapperProps) {
   return (
-    <section
-      id={id}
-      className={cn(
-        "mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8",
-        className
-      )}
-    >
-      {children}
-    </section>
+    <SectionShell className={className} {...props}>
+      <ContentRail className={cn("section-space", railClassName)}>
+        {children}
+      </ContentRail>
+    </SectionShell>
   )
 }

@@ -2,8 +2,9 @@ import type { ContactContent } from "@/types"
 
 export const contactContent: ContactContent = {
   section: {
-    title: "Contact",
-    description: "Open to frontend engineering opportunities — let's connect.",
+    title: "Have a product worth building?",
+    description:
+      "I work with teams that care about clear thinking, strong engineering, and useful software.",
   },
   fields: [
     {
@@ -19,7 +20,7 @@ export const contactContent: ContactContent = {
     {
       name: "message",
       label: "Message",
-      placeholder: "Tell me about the role or project...",
+      placeholder: "Tell me about the product, team, or challenge...",
     },
   ],
   submitLabel: "Send Message",

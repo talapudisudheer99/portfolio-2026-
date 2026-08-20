@@ -1,35 +1,304 @@
-import { ExperienceCard } from "@/components/shared/experience-card"
-import { StaggerContainer, StaggerItem } from "@/components/shared/motion"
-import { SectionHeader } from "@/components/shared/section-header"
+"use client"
+
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion"
+import { useEffect, useRef } from "react"
+
+import {
+  FadeIn,
+  MaskedLine,
+  useHydratedReducedMotion,
+} from "@/components/shared/motion"
+import { ScrollEmergence } from "@/components/shared/parallax"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { experience } from "@/data/experience"
 import { sections } from "@/data/sections"
+import { duration, easeOut } from "@/lib/motion"
+import { cn } from "@/lib/utils"
+import type { Experience as Role } from "@/types"
+
+const isCurrent = (period: string) => /present/i.test(period)
+
+/**
+ * Each row owns its trigger. A single parent stagger would fire every row the
+ * moment the list top entered view, so the lower roles would have finished
+ * animating long before the reader reached them.
+ */
+const rowViewport = { once: true, margin: "0px 0px -20% 0px" } as const
+
+const rowSequence = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
+}
+
+const rowPart = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: duration.trace, ease: easeOut },
+  },
+}
+
+const rowLead = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: duration.copy, ease: easeOut },
+  },
+}
+
+const rowNode = {
+  hidden: { scale: 0 },
+  visible: {
+    scale: 1,
+    transition: { duration: duration.micro, ease: easeOut },
+  },
+}
+
+const nodePulse = {
+  hidden: { scale: 1, opacity: 0 },
+  visible: {
+    scale: 3,
+    opacity: [0.5, 0],
+    transition: { duration: 1.1, ease: easeOut },
+  },
+}
+
+interface CountUpProps {
+  value: number
+  pad: number
+}
+
+/** Settles a figure rather than printing it, on the row's own entrance. */
+function CountUp({ value, pad }: CountUpProps) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true })
+  const prefersReducedMotion = useHydratedReducedMotion()
+  const count = useMotionValue(0)
+  const text = useTransform(count, (latest) =>
+    String(Math.round(latest)).padStart(pad, "0")
+  )
+
+  useEffect(() => {
+    if (!inView || prefersReducedMotion) return
+
+    const controls = animate(count, value, { duration: 1.1, ease: easeOut })
+    return () => controls.stop()
+  }, [count, inView, prefersReducedMotion, value])
+
+  if (prefersReducedMotion) {
+    return <span>{String(value).padStart(pad, "0")}</span>
+  }
+
+  return <motion.span ref={ref}>{text}</motion.span>
+}
 
 export function Experience() {
-  const { experience: experienceSection } = sections
+  const { experience: content } = sections
+  const railRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useHydratedReducedMotion()
+
+  const { scrollYProgress } = useScroll({
+    target: railRef,
+    offset: ["start 0.7", "end 0.7"],
+  })
+  const railScale = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001,
+  })
+
+  const years = experience
+    .flatMap((role) => role.period.match(/\d{4}/g) ?? [])
+    .map(Number)
+  const currentCount = experience.filter((r) => isCurrent(r.period)).length
 
   return (
-    <SectionWrapper id="experience" className="bg-background-secondary/50">
-      <SectionHeader
-        title={experienceSection.title}
-        description={experienceSection.description}
-      />
+    <SectionWrapper id="experience" className="section-rule">
+      <div className="content-grid gap-y-16">
+        {/* Sticky so the heading and career summary stay with the list. */}
+        <ScrollEmergence className="col-span-12 md:sticky md:top-24 md:col-span-4 md:self-start">
+          <MaskedLine display className="mt-0">
+            <h2 className="editorial-display type-title text-foreground">
+              {content.title}
+            </h2>
+          </MaskedLine>
 
-      <StaggerContainer className="relative space-y-6">
+          <FadeIn delay={0.1}>
+            <p className="type-lead mt-6 max-w-xs text-muted-foreground">
+              {content.description}
+            </p>
+
+            <dl className="mt-10 grid max-w-xs grid-cols-3 gap-4 border-t border-border pt-6">
+              <div>
+                <dt className="type-meta text-muted-foreground">
+                  Since
+                </dt>
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
+                  {Math.min(...years)}
+                </dd>
+              </div>
+              <div>
+                <dt className="type-meta text-muted-foreground">
+                  Roles
+                </dt>
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
+                  <CountUp value={experience.length} pad={2} />
+                </dd>
+              </div>
+              <div>
+                <dt className="type-meta text-muted-foreground">
+                  Current
+                </dt>
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-primary">
+                  <CountUp value={currentCount} pad={2} />
+                </dd>
+              </div>
+            </dl>
+          </FadeIn>
+        </ScrollEmergence>
+
         <div
+          ref={railRef}
+          className="relative col-span-12 md:col-span-7 md:col-start-6"
+        >
+          <span
+            aria-hidden="true"
+            className="absolute top-2 bottom-0 left-0 w-px bg-border"
+          />
+          {prefersReducedMotion ? null : (
+            <motion.span
+              aria-hidden="true"
+              style={{ scaleY: railScale }}
+              className="absolute top-2 bottom-0 left-0 w-px origin-top bg-primary"
+            />
+          )}
+
+          <ol>
+            {experience.map((role, index) => (
+              <ExperienceRow key={role.id} role={role} index={index} />
+            ))}
+          </ol>
+        </div>
+      </div>
+    </SectionWrapper>
+  )
+}
+
+interface ExperienceRowProps {
+  role: Role
+  index: number
+}
+
+function ExperienceRow({ role, index }: ExperienceRowProps) {
+  const prefersReducedMotion = useHydratedReducedMotion()
+  const current = isCurrent(role.period)
+
+  const meta = (
+    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      <span className="type-meta text-muted-foreground">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <span className="type-meta text-muted-foreground">
+        {role.period}
+      </span>
+      {current ? (
+        <span className="type-meta inline-flex items-center gap-1.5 text-primary">
+          <span className="size-1.5 rounded-full bg-primary" />
+          Now
+        </span>
+      ) : null}
+    </div>
+  )
+
+  const company = (
+    <h3 className="editorial-display type-section mt-3 font-medium text-foreground transition-colors group-hover:text-primary">
+      {role.company}
+    </h3>
+  )
+
+  const title = (
+    <p className="type-lead mt-2 font-semibold text-foreground-secondary">
+      {role.role}
+    </p>
+  )
+
+  const rowClass = "group relative pb-14 pl-8 last:pb-0 sm:pl-12"
+  const dotClass = cn(
+    "absolute top-2 left-0 size-2.5 -translate-x-1/2 rounded-full border-2 border-background",
+    current ? "bg-primary" : "bg-border"
+  )
+
+  if (prefersReducedMotion) {
+    return (
+      <li className={rowClass}>
+        <span aria-hidden="true" className={dotClass} />
+        {meta}
+        {company}
+        {title}
+        <ul className="mt-5 space-y-2.5">
+          {role.bullets.map((bullet) => (
+            <li
+              key={bullet}
+              className="type-ui relative pl-4 text-muted-foreground"
+            >
+              <span
+                aria-hidden="true"
+                className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
+              />
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </li>
+    )
+  }
+
+  return (
+    <motion.li
+      variants={rowSequence}
+      initial="hidden"
+      whileInView="visible"
+      viewport={rowViewport}
+      className={cn("reduce-show", rowClass)}
+    >
+      <motion.span aria-hidden="true" variants={rowNode} className={dotClass} />
+      {current ? (
+        <motion.span
           aria-hidden="true"
-          className="absolute top-2 bottom-2 left-4 hidden w-px bg-gradient-to-b from-primary/40 via-border to-transparent md:block"
+          variants={nodePulse}
+          className="absolute top-2 left-0 size-2.5 -translate-x-1/2 rounded-full bg-primary"
         />
-        {experience.map((item) => (
-          <StaggerItem key={item.id} className="relative md:pl-10">
+      ) : null}
+
+      <motion.div variants={rowPart}>{meta}</motion.div>
+      <motion.div variants={rowLead}>{company}</motion.div>
+      <motion.div variants={rowPart}>{title}</motion.div>
+
+      <motion.ul variants={rowSequence} className="mt-5 space-y-2.5">
+        {role.bullets.map((bullet) => (
+          <motion.li
+            key={bullet}
+            variants={rowPart}
+            className="type-ui relative pl-4 text-muted-foreground"
+          >
             <span
               aria-hidden="true"
-              className="absolute top-8 left-[13px] hidden size-2.5 rounded-full border-2 border-primary bg-background md:block"
+              className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
             />
-            <ExperienceCard experience={item} />
-          </StaggerItem>
+            {bullet}
+          </motion.li>
         ))}
-      </StaggerContainer>
-    </SectionWrapper>
+      </motion.ul>
+    </motion.li>
   )
 }
