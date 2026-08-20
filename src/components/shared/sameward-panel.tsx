@@ -10,10 +10,11 @@ import {
   Sparkles,
 } from "lucide-react"
 
+import { SamewardLogo } from "@/components/shared/sameward-logo"
+import { SamewardMessageContent } from "@/components/shared/sameward-message-content"
 import {
   SamewardAiReply,
   SamewardLine,
-  SamewardMessageReactions,
   SamewardOnlinePulse,
   SamewardPersonAvatar,
   SamewardTypingDots,
@@ -54,38 +55,42 @@ export function SamewardPanel({
       )}
     >
       <aside className="sameward-rail sameward-rail--nav">
-        <p className="sameward-brand editorial-display">SAMEWARD</p>
+        <div className="sameward-rail-body min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <div className="sameward-brand">
+            <SamewardLogo variant="horizontal" size={24} tone="onDark" />
+          </div>
 
-        <p className="sameward-kicker mt-5">Channels</p>
-        <ul className="mt-1.5 space-y-0.5">
-          {samewardChannels.map((channel) => {
-            const active = channel === "# general"
+          <p className="sameward-kicker mt-5">Channels</p>
+          <ul className="mt-1.5 space-y-0.5">
+            {samewardChannels.map((channel) => {
+              const active = channel === "# general"
 
-            return (
-              <li key={channel}>
-                <span
-                  className={cn("sameward-channel", active && "is-active")}
-                >
-                  {channel}
+              return (
+                <li key={channel}>
+                  <span
+                    className={cn("sameward-channel", active && "is-active")}
+                  >
+                    {channel}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+
+          <p className="sameward-kicker mt-5">Direct messages</p>
+          <ul className="mt-2 space-y-2">
+            {samewardMembers.map((member) => (
+              <li key={member.id} className="flex items-center gap-2">
+                <SamewardPersonAvatar person={member.id} live />
+                <span className="sameward-member-name truncate text-foreground-secondary">
+                  {member.name}
                 </span>
               </li>
-            )
-          })}
-        </ul>
+            ))}
+          </ul>
+        </div>
 
-        <p className="sameward-kicker mt-5">Direct messages</p>
-        <ul className="mt-2 space-y-2">
-          {samewardMembers.map((member) => (
-            <li key={member.id} className="flex items-center gap-2">
-              <SamewardPersonAvatar person={member.id} live />
-              <span className="sameward-member-name truncate text-foreground-secondary">
-                {member.name}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-auto flex items-center gap-2 border-t border-border pt-3">
+        <div className="sameward-rail-profile mt-auto flex shrink-0 items-center gap-2 border-t border-border pt-3">
           <SamewardPersonAvatar person="sudheer" live />
           <div className="min-w-0">
             <p className="sameward-member-name truncate">Sudheer</p>
@@ -98,7 +103,7 @@ export function SamewardPanel({
         <SamewardLine
           order={0}
           still={still}
-          className="sameward-thread-bar flex items-center justify-between border-b border-border px-4 py-2.5"
+          className="sameward-thread-bar shrink-0 flex items-center justify-between border-b border-border px-4 py-2.5"
         >
           <p className="type-micro text-foreground"># general</p>
           <span className="type-micro inline-flex items-center gap-2 text-muted-foreground lg:hidden">
@@ -108,7 +113,7 @@ export function SamewardPanel({
         </SamewardLine>
 
         <div className="sameward-thread-feed flex flex-1 flex-col px-4 py-3.5">
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-3.5 pb-1">
             {samewardMessages.map((message, index) => (
               <SamewardLine
                 key={`${message.id}-${index}`}
@@ -126,10 +131,7 @@ export function SamewardPanel({
                       {message.time}
                     </span>
                   </p>
-                  <p className="sameward-message-body mt-1 text-foreground-secondary">
-                    {message.body}
-                  </p>
-                  <SamewardMessageReactions reactions={message.reactions} />
+                  <SamewardMessageContent message={message} />
                 </div>
               </SamewardLine>
             ))}
@@ -145,7 +147,7 @@ export function SamewardPanel({
           still={still}
           className="sameward-thread-composer shrink-0 px-4 pb-3"
         >
-          <p className="type-micro mb-2 flex items-center gap-2 text-muted-foreground">
+          <p className="sameward-thread-typing type-micro flex items-center gap-2 text-muted-foreground">
             Aisha is typing
             <SamewardTypingDots still={still} />
           </p>
@@ -172,23 +174,19 @@ export function SamewardPanel({
         <ul className="mt-2 space-y-1.5">
           {samewardAiActions.map((action) => {
             const Icon = aiIcons[action.id]
-            const tone = samewardAiActionTone[action.accent as SamewardAiAccent]
+            const iconTone = samewardAiActionTone[action.accent as SamewardAiAccent]
 
             return (
               <li key={action.id}>
                 <span
-                  className={cn(
-                    "type-micro flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 font-semibold text-foreground-secondary",
-                    tone.box
-                  )}
+                  className="sameward-ai-action type-micro font-semibold text-foreground-secondary"
+                  data-accent={action.accent}
                 >
                   <span
-                    className={cn(
-                      "inline-flex size-6 shrink-0 items-center justify-center rounded-md",
-                      tone.icon
-                    )}
+                    className={cn("sameward-ai-action-icon", iconTone)}
+                    aria-hidden="true"
                   >
-                    <Icon className="size-3.5 stroke-[2]" aria-hidden="true" />
+                    <Icon className="size-3.5 stroke-[2]" />
                   </span>
                   {action.label}
                 </span>

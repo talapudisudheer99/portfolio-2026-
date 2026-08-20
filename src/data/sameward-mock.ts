@@ -27,69 +27,69 @@ export const samewardMembers = [
   { id: "rohit", name: "Rohit Singh", short: "Rohit", status: "Online" },
 ] as const
 
-export const samewardMessages = [
-  {
-    id: "sam",
-    name: "Sam Chen",
-    time: "9:41",
-    body: "Product sync at 10 — agenda shared.",
-    reactions: [{ emoji: "👍", count: 2 }],
-  },
-  {
-    id: "aisha",
-    name: "Aisha Patel",
-    time: "9:42",
-    body: "Deploy runbook for Friday: docs.northwind.dev",
-    reactions: [
-      { emoji: "🚀", count: 1 },
-      { emoji: "👀", count: 1 },
-    ],
-  },
+export type SamewardLinkPreview = {
+  host: string
+  title: string
+  description?: string
+}
+
+export type SamewardAttachment = {
+  name: string
+  kind: "pdf" | "image" | "file"
+  sizeLabel: string
+}
+
+export type SamewardMessage = {
+  id: SamewardPerson
+  name: string
+  time: string
+  body?: string
+  linkPreview?: SamewardLinkPreview
+  attachment?: SamewardAttachment
+  reactions: ReadonlyArray<{ emoji: string; count: number }>
+}
+
+/** Feed: (1) body + attachment + reactions · (2) link only · (3) Channel AI in panel */
+export const samewardMessages: readonly SamewardMessage[] = [
   {
     id: "rohit",
     name: "Rohit Singh",
     time: "9:44",
     body: "I pushed the notification debounce fix. QA build is ready.",
+    attachment: {
+      name: "qa-build-notes.pdf",
+      kind: "pdf",
+      sizeLabel: "248 KB",
+    },
     reactions: [{ emoji: "✅", count: 2 }],
   },
   {
-    id: "sam",
-    name: "Sam Chen",
-    time: "9:46",
-    body: "Nice. Let's ship after smoke test and update the release notes.",
-    reactions: [{ emoji: "👍", count: 1 }],
+    id: "aisha",
+    name: "Aisha Patel",
+    time: "9:42",
+    linkPreview: {
+      host: "docs.northwind.dev",
+      title: "Friday deploy runbook",
+      description: "Checklist, rollback steps, and owners for the release.",
+    },
+    reactions: [],
   },
-] as const
+]
 
 export const samewardAiActions = [
-  { id: "summarize", label: "Summarize", accent: "cyan" },
-  { id: "catch-up", label: "Catch up", accent: "violet" },
-  { id: "ask", label: "Ask", accent: "blue" },
-  { id: "draft", label: "Draft reply", accent: "pink" },
+  { id: "summarize", label: "Summarize", accent: "orange" },
+  { id: "catch-up", label: "Catch up", accent: "amber" },
+  { id: "ask", label: "Ask", accent: "lime" },
+  { id: "draft", label: "Draft reply", accent: "coral" },
 ] as const
 
 export type SamewardAiAccent = (typeof samewardAiActions)[number]["accent"]
 
-export const samewardAiActionTone: Record<
-  SamewardAiAccent,
-  { box: string; icon: string }
-> = {
-  cyan: {
-    box: "border-cyan-400/40 bg-cyan-400/10",
-    icon: "bg-cyan-400/25 text-cyan-400",
-  },
-  violet: {
-    box: "border-violet-400/40 bg-violet-400/10",
-    icon: "bg-violet-400/25 text-violet-400",
-  },
-  blue: {
-    box: "border-blue-400/40 bg-blue-400/10",
-    icon: "bg-blue-400/25 text-blue-400",
-  },
-  pink: {
-    box: "border-pink-400/40 bg-pink-400/10",
-    icon: "bg-pink-400/25 text-pink-400",
-  },
+export const samewardAiActionTone: Record<SamewardAiAccent, string> = {
+  orange: "text-[#ff9f4a]",
+  amber: "text-[#ffe066]",
+  lime: "text-[#c8ff63]",
+  coral: "text-[#ff7a7a]",
 }
 
 export const samewardMockTiming = {

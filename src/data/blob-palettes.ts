@@ -1,5 +1,6 @@
 export type BlobPaletteId =
   | "molten-metal"
+  | "obsidian-emerald"
   | "ice-fire"
   | "ember"
   | "neon-crimson"
@@ -51,6 +52,36 @@ export const blobPalettes: BlobPalette[] = [
       color3: 0xf0d060,
       glow: 0xd4a024,
       light: 0xf0d060,
+    },
+  },
+  {
+    id: "obsidian-emerald",
+    label: "Obsidian Emerald",
+    description: "Forest jewel + muted gold",
+    gradient: "linear-gradient(135deg, #0b3d2e, #1a6b4f, #c9a84c)",
+    swatch: "#1a6b4f",
+    tokens: {
+      "--primary": "#1a6b4f",
+      "--primary-inverted": "#0b3d2e",
+      "--primary-hover": "#248562",
+      "--primary-light": "#06140f",
+      "--primary-foreground": "#ffffff",
+      "--accent": "#c9a84c",
+      "--accent-foreground": "#000000",
+      "--accent-soft": "#06140f",
+      "--ring": "#1a6b4f",
+      "--realtime": "#1a6b4f",
+      "--ai": "#c9a84c",
+      "--ember-gradient": "linear-gradient(135deg, #0b3d2e, #1a6b4f, #c9a84c)",
+      "--border": "#14241c",
+      "--border-light": "#0e1813",
+    },
+    blob: {
+      color1: 0x1a6b4f,
+      color2: 0x040a08,
+      color3: 0xc9a84c,
+      glow: 0x1a6b4f,
+      light: 0xc9a84c,
     },
   },
   {

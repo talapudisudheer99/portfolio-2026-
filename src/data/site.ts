@@ -58,15 +58,14 @@ export const siteConfig: SiteConfig = {
     wordmark: "Sudheer",
     surname: "Talapudi",
     headline: [
-      { text: "From the first" },
-      { text: "screen", break: true, offset: true },
-      { text: "to a", break: true },
-      { text: "live", accent: true },
-      { text: "release." },
+      { text: "I built" },
+      { text: "Sameward", break: true, accent: true },
+      { text: "a live product system,", break: true },
+      { text: "end to end." },
     ],
     tagline:
-      "I take product ideas from the first screen to a live release. I build the interface, data flow, realtime features, sign-in, AI tools, and deployment.",
-    availability: "Sameward is live — built end to end",
+      "Frontend-strong engineer. Interface, realtime, auth, AI tools, and launch — shipped as one product, not a demo.",
+    availability: "Sameward is live",
     availabilityHref: "https://sameward.com/",
     systemLabel: "How a product ships",
     layers: [

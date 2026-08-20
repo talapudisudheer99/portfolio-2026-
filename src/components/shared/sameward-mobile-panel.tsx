@@ -2,10 +2,11 @@
 
 import { ArrowUp, Hash, Smile } from "lucide-react"
 
+import { SamewardLogo } from "@/components/shared/sameward-logo"
+import { SamewardMessageContent } from "@/components/shared/sameward-message-content"
 import {
   SamewardAiReply,
   SamewardLine,
-  SamewardMessageReactions,
   SamewardOnlinePulse,
   SamewardPersonAvatar,
   useSamewardMotion,
@@ -18,7 +19,6 @@ export function SamewardMobilePanel({
   className,
 }: Readonly<{ className?: string }>) {
   const still = useSamewardMotion()
-  const mobileMessages = samewardMessages.slice(0, 2)
 
   return (
     <figure
@@ -44,13 +44,18 @@ export function SamewardMobilePanel({
               3 online
             </p>
           </div>
-          <span className="sameward-mobile-brand shrink-0">SAMEWARD</span>
+          <SamewardLogo
+            variant="horizontal"
+            size={18}
+            tone="onDark"
+            className="sameward-mobile-brand shrink-0"
+          />
         </div>
       </SamewardLine>
 
       <div className="sameward-mobile-feed min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2.5">
         <div className="flex flex-col gap-2.5">
-          {mobileMessages.map((message, index) => (
+          {samewardMessages.map((message, index) => (
             <SamewardLine
               key={`${message.id}-${index}`}
               order={1 + index}
@@ -67,22 +72,19 @@ export function SamewardMobilePanel({
                     {message.time}
                   </span>
                 </p>
-                <p className="sameward-message-body mt-0.5 break-words text-foreground-secondary">
-                  {message.body}
-                </p>
-                <MessageReactionsCompact reactions={message.reactions} />
+                <SamewardMessageContent message={message} compact />
               </div>
             </SamewardLine>
           ))}
 
-          <SamewardLine order={1 + mobileMessages.length} still={still}>
+          <SamewardLine order={1 + samewardMessages.length} still={still}>
             <SamewardAiReply still={still} />
           </SamewardLine>
         </div>
       </div>
 
       <SamewardLine
-        order={2 + mobileMessages.length}
+        order={2 + samewardMessages.length}
         still={still}
         className="sameward-mobile-footer shrink-0 border-t border-border px-3 pb-2 pt-2"
       >
@@ -98,26 +100,5 @@ export function SamewardMobilePanel({
         <span className="sameward-mobile-home-indicator" aria-hidden="true" />
       </SamewardLine>
     </figure>
-  )
-}
-
-function MessageReactionsCompact({
-  reactions,
-}: Readonly<{
-  reactions: ReadonlyArray<{ emoji: string; count: number }>
-}>) {
-  if (!reactions.length) return null
-
-  return (
-    <ul className="sameward-reactions mt-1" aria-label="Reactions">
-      {reactions.slice(0, 2).map((reaction) => (
-        <li key={`${reaction.emoji}-${reaction.count}`}>
-          <span className="sameward-reaction">
-            <span aria-hidden="true">{reaction.emoji}</span>
-            <span>{reaction.count}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
   )
 }

@@ -56,9 +56,9 @@ export default function RootLayout({
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
           <PaletteProvider>
+            <CursorInteraction />
             <SmoothScroll>
               <BlobScene />
-              <CursorInteraction />
               <ScrollGrain />
               <a
               href="#main-content"
