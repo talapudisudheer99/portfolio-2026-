@@ -106,7 +106,7 @@ export function AmbientAtmosphere() {
       uScroll: { value: 0 },
       uIntensity: { value: sectionMoods.hero.intensity },
       uSpeed: { value: sectionMoods.hero.speed },
-      uMoodMix: { value: 0.22 },
+      uMoodMix: { value: atmosphere.moodMix },
       uMoodColor: { value: new THREE.Color(sectionMoods.hero.tint) },
       uColor1: { value: new THREE.Color(initialBlob.color1) },
       uColor2: { value: new THREE.Color(initialBlob.color2) },
@@ -136,13 +136,14 @@ export function AmbientAtmosphere() {
         vec3 pos = position;
         vec3 norm = normal;
 
-        float n = noise3d(pos * 1.2) * 0.25;
-        n += noise3d(pos * 2.5 + uTime * uSpeed * 0.3) * 0.12;
-        n += noise3d(pos * 5.0 - uTime * uSpeed * 0.2) * 0.06;
+        float n = noise3d(pos * 1.2) * 0.3;
+        n += noise3d(pos * 2.5 + uTime * uSpeed * 0.3) * 0.14;
+        n += noise3d(pos * 5.0 - uTime * uSpeed * 0.2) * 0.07;
+        n += sin(uScroll * 6.28318 + pos.y * 2.0) * 0.04;
 
-        float mx = uMouse.x * 0.15;
-        float my = uMouse.y * 0.15;
-        n += (norm.x * mx + norm.y * my) * 0.2;
+        float mx = uMouse.x * ${atmosphere.mouseInfluence.toFixed(2)};
+        float my = uMouse.y * ${atmosphere.mouseInfluence.toFixed(2)};
+        n += (norm.x * mx + norm.y * my) * 0.28;
 
         pos += norm * n;
         vDisplacement = n;
@@ -262,8 +263,13 @@ export function AmbientAtmosphere() {
         moodTargetRef.current.intensity = mood.intensity
         moodTargetRef.current.speed = mood.speed
         moodTargetRef.current.tint.set(mood.tint)
+        // Task 13 — journey continuity signal for CSS (subtle, no layout change)
+        document.documentElement.dataset.sectionMood = best
       },
-      { threshold: [0.15, 0.35, 0.55, 0.75] }
+      {
+        threshold: [0.1, 0.25, 0.4, 0.55, 0.7, 0.85],
+        rootMargin: "-8% 0px -28% 0px",
+      }
     )
 
     const observed: Element[] = []
@@ -299,12 +305,12 @@ export function AmbientAtmosphere() {
       const t = ((performance.now() - t0) / 1000) * atmosphere.timeScale
       const cur = moodCurrentRef.current
       const tgt = moodTargetRef.current
-      cur.intensity += (tgt.intensity - cur.intensity) * 0.04
-      cur.speed += (tgt.speed - cur.speed) * 0.04
-      cur.tint.lerp(tgt.tint, 0.04)
+      cur.intensity += (tgt.intensity - cur.intensity) * 0.05
+      cur.speed += (tgt.speed - cur.speed) * 0.05
+      cur.tint.lerp(tgt.tint, 0.05)
 
-      mouse.x += (mouse.tx - mouse.x) * 0.04
-      mouse.y += (mouse.ty - mouse.y) * 0.04
+      mouse.x += (mouse.tx - mouse.x) * 0.06
+      mouse.y += (mouse.ty - mouse.y) * 0.06
 
       const sp = Math.min(scrollY / (pageH() || 1), 1)
 
@@ -318,20 +324,25 @@ export function AmbientAtmosphere() {
         blobUniforms.uIntensity.value = cur.intensity * (isMobile ? 0.85 : 1)
         blobUniforms.uSpeed.value = cur.speed * (isMobile ? 0.75 : 1)
         blobUniforms.uMoodColor.value.copy(cur.tint)
-        blobUniforms.uMoodMix.value = isMobile ? 0.12 : 0.2
+        blobUniforms.uMoodMix.value = isMobile
+          ? atmosphere.moodMixMobile
+          : atmosphere.moodMix
 
-        const rotScale = isMobile ? 0.5 : 1
-        blob.rotation.y += (0.002 + mouse.x * 0.001) * rotScale * cur.speed
-        blob.rotation.x += (0.001 + mouse.y * 0.001) * rotScale * cur.speed
+        const rotScale = isMobile ? 0.55 : 1
+        blob.rotation.y += (0.0025 + mouse.x * 0.0014) * rotScale * cur.speed
+        blob.rotation.x += (0.0012 + mouse.y * 0.0012) * rotScale * cur.speed
+        blob.scale.setScalar(1 + Math.sin(t * 0.35) * 0.018 + sp * 0.04)
 
-        blob.position.x = Math.sin(sp * Math.PI * 2) * (isMobile ? 0.7 : 1.2)
+        const ampX = isMobile ? atmosphere.scrollX * 0.55 : atmosphere.scrollX
+        const ampY = isMobile ? atmosphere.scrollY * 0.55 : atmosphere.scrollY
+        blob.position.x = Math.sin(sp * Math.PI * 2) * ampX
         blob.position.y =
-          Math.cos(sp * Math.PI * 1.5) * (isMobile ? 0.45 : 0.8) - sp * 0.5
+          Math.cos(sp * Math.PI * 1.5) * ampY - sp * 0.65
 
         glowMesh.position.copy(blob.position)
-        glowMesh.scale.setScalar(1 + Math.sin(t * 0.8) * 0.05)
+        glowMesh.scale.setScalar(1 + Math.sin(t * 0.8) * 0.06)
         glowMat.opacity =
-          atmosphere.glowIntensity + Math.sin(t * 1.5) * 0.02
+          atmosphere.glowIntensity + Math.sin(t * 1.5) * 0.025
       }
 
       renderer.render(scene, camera)
@@ -365,6 +376,7 @@ export function AmbientAtmosphere() {
       observed.forEach((el) => {
         delete (el as HTMLElement).dataset.mood
       })
+      delete document.documentElement.dataset.sectionMood
       // Task 18 — release WebGL context so remounts do not leak contexts
       renderer.forceContextLoss()
       renderer.dispose()

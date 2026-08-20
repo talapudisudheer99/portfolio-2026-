@@ -245,6 +245,7 @@ function CapabilityCard({
           meta.fullWidth && "capabilities-workspace-card-inner--wide"
         )}
         data-accent={meta.accent}
+        data-cursor="Explore"
         tabIndex={0}
         onMouseEnter={() => onHover(true)}
         onMouseLeave={() => onHover(false)}

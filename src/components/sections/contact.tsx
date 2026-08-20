@@ -139,6 +139,7 @@ export function Contact() {
           <Button
             type="submit"
             disabled={isSubmitting}
+            data-cursor="Send"
             className="contact-submit type-ui h-12 rounded-full px-7 font-bold"
           >
             {isSubmitting ? submittingLabel : submitLabel}

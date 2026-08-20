@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { useRef } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
+import { MotionParallax } from "@/components/motion/parallax-layer"
 import {
   TraceNode,
   TraceSequence,
@@ -133,21 +134,27 @@ export function About() {
   return (
     <SectionWrapper id="about" className="about-section section-rule">
       <div className="about-workspace">
-        <span
+        <MotionParallax
+          as="span"
+          strength="bg"
           className="about-workspace-aurora about-workspace-aurora--left"
           aria-hidden="true"
         />
-        <span
+        <MotionParallax
+          as="span"
+          strength="decoration"
           className="about-workspace-aurora about-workspace-aurora--right"
           aria-hidden="true"
         />
-        <span
+        <MotionParallax
+          as="span"
+          strength="visual"
           className="about-workspace-aurora about-workspace-aurora--mid"
           aria-hidden="true"
         />
 
         <div className="about-workspace-layout">
-          <SectionReveal variant="body" className="about-workspace-copy-header">
+          <SectionReveal variant="body" delay={0.18} className="about-workspace-copy-header">
             <p className="about-workspace-kicker">{kicker}</p>
             <h2 className="about-workspace-headline">
               <span className="about-workspace-headline-line editorial-display">
@@ -164,12 +171,14 @@ export function About() {
           </div>
 
           <div className="about-workspace-copy-body">
-            <span
+            <MotionParallax
+              as="span"
+              strength="decoration"
               className="about-workspace-copy-aurora"
               aria-hidden="true"
             />
 
-            <SectionReveal variant="body" className="about-workspace-intro">
+            <SectionReveal variant="body" delay={0.28} y={20} className="about-workspace-intro">
               <p className="about-workspace-lead">
                 {(section.description ?? "").split("\n").map((line) => (
                   <span key={line} className="about-workspace-lead-line">
@@ -222,7 +231,7 @@ export function About() {
           </div>
 
           <aside className="about-workspace-aside">
-            <SectionReveal variant="visual" className="about-impact-card">
+            <SectionReveal variant="visual" delay={0.22} y={18} className="about-impact-card">
               <header className="about-impact-header">
                 <h3 className="about-impact-title">{impact.title}</h3>
                 <span className="about-impact-live">{impact.liveBadge}</span>

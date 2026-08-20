@@ -8,13 +8,14 @@ import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { duration, ease } from "@/lib/motion"
 
 /**
- * Phase 08 Task 5 — desktop custom cursor: small dot + ring + soft light.
- * No mobile. No reduced-motion. Refs only — no React state on pointermove.
+ * Phase 09 Task 14 — desktop cursor: dot + ring + light + subtle label.
+ * Labels from data-cursor (View / Explore / Download / →). No mobile / RM.
  */
 export function CursorInteraction() {
   const lightRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const dotRef = useRef<HTMLDivElement>(null)
+  const labelRef = useRef<HTMLDivElement>(null)
   const still = useHydratedReducedMotion()
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -30,24 +31,27 @@ export function CursorInteraction() {
     ).matches
     if (!isFine) return
 
-    const lightNode = lightRef.current as HTMLDivElement | null
-    const ringNode = ringRef.current as HTMLDivElement | null
-    const dotNode = dotRef.current as HTMLDivElement | null
-    if (!lightNode || !ringNode || !dotNode) return
+    const lightNode = lightRef.current
+    const ringNode = ringRef.current
+    const dotNode = dotRef.current
+    const labelNode = labelRef.current
+    if (!lightNode || !ringNode || !dotNode || !labelNode) return
 
     const lightEl: HTMLDivElement = lightNode
     const ringEl: HTMLDivElement = ringNode
     const dotEl: HTMLDivElement = dotNode
+    const labelEl: HTMLDivElement = labelNode
 
     const root = document.documentElement
     root.classList.add("cursor-live")
 
-    gsap.set([lightEl, ringEl, dotEl], {
+    gsap.set([lightEl, ringEl, dotEl, labelEl], {
       xPercent: -50,
       yPercent: -50,
       x: 0,
       y: 0,
     })
+    gsap.set(labelEl, { yPercent: 0, autoAlpha: 0 })
 
     const lightX = gsap.quickTo(lightEl, "x", {
       duration: 0.55,
@@ -67,12 +71,41 @@ export function CursorInteraction() {
     })
     const dotX = gsap.quickTo(dotEl, "x", { duration: 0.08, ease: "power3.out" })
     const dotY = gsap.quickTo(dotEl, "y", { duration: 0.08, ease: "power3.out" })
+    const labelX = gsap.quickTo(labelEl, "x", {
+      duration: 0.28,
+      ease: "power3.out",
+    })
+    const labelY = gsap.quickTo(labelEl, "y", {
+      duration: 0.28,
+      ease: "power3.out",
+    })
 
     let hovering = false
     let visible = false
+    let labelText = ""
 
-    function setHoverState(next: boolean) {
-      if (next === hovering) return
+    function setLabel(next: string) {
+      if (next === labelText) return
+      labelText = next
+      if (next) {
+        labelEl.textContent = next
+        gsap.to(labelEl, {
+          autoAlpha: 1,
+          duration: duration.micro,
+          ease: ease.hover,
+          overwrite: "auto",
+        })
+      } else {
+        gsap.to(labelEl, {
+          autoAlpha: 0,
+          duration: duration.micro,
+          ease: ease.hover,
+          overwrite: "auto",
+        })
+      }
+    }
+
+    function setHoverState(next: boolean, label = "") {
       hovering = next
 
       gsap.to(ringEl, {
@@ -98,6 +131,7 @@ export function CursorInteraction() {
 
       ringEl.classList.toggle("is-hover", next)
       dotEl.classList.toggle("is-hover", next)
+      setLabel(next ? label : "")
     }
 
     function showCursor(x: number, y: number) {
@@ -107,6 +141,8 @@ export function CursorInteraction() {
       ringY(y)
       dotX(x)
       dotY(y)
+      labelX(x + 18)
+      labelY(y + 22)
 
       if (!visible) {
         visible = true
@@ -125,6 +161,21 @@ export function CursorInteraction() {
       setHoverState(false)
     }
 
+    function resolveLabel(el: Element): string {
+      const tagged = el.closest("[data-cursor]")
+      if (tagged instanceof HTMLElement && tagged.dataset.cursor) {
+        return tagged.dataset.cursor
+      }
+      const link = el.closest("a")
+      if (link instanceof HTMLAnchorElement) {
+        if (link.target === "_blank") return "→"
+        if (link.getAttribute("href")?.startsWith("mailto:")) return "Write"
+        return "View"
+      }
+      if (el.closest("button, [role='button']")) return "Go"
+      return ""
+    }
+
     function onMove(e: PointerEvent) {
       showCursor(e.clientX, e.clientY)
 
@@ -134,7 +185,19 @@ export function CursorInteraction() {
       const interactive = target.closest(
         "a, button, [role='button'], [data-cursor], input, textarea, select"
       )
-      setHoverState(Boolean(interactive))
+      if (!interactive) {
+        if (hovering) setHoverState(false)
+        return
+      }
+
+      if (
+        interactive.matches("input, textarea, select, [contenteditable='true']")
+      ) {
+        if (hovering) setHoverState(false)
+        return
+      }
+
+      setHoverState(true, resolveLabel(interactive))
     }
 
     function onLeaveWindow(e: MouseEvent) {
@@ -162,6 +225,7 @@ export function CursorInteraction() {
       <div ref={lightRef} className="global-cursor-light" />
       <div ref={ringRef} className="global-cursor-ring" />
       <div ref={dotRef} className="global-cursor-dot" />
+      <div ref={labelRef} className="global-cursor-label" />
     </div>,
     document.body
   )
