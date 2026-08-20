@@ -3,12 +3,24 @@
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 
+import { usePalette } from "@/components/palette-provider"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { defaultBlobPaletteId, getBlobPalette } from "@/data/blob-palettes"
+
+const initialBlob = getBlobPalette(defaultBlobPaletteId).blob
 
 export function BlobScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { palette } = usePalette()
   const reducedMotion = useHydratedReducedMotion()
   const reducedRef = useRef(reducedMotion)
+  const uniformsRef = useRef<{
+    uColor1: { value: THREE.Color }
+    uColor2: { value: THREE.Color }
+    uColor3: { value: THREE.Color }
+  } | null>(null)
+  const glowMatRef = useRef<THREE.MeshBasicMaterial | null>(null)
+  const light2Ref = useRef<THREE.DirectionalLight | null>(null)
 
   useEffect(() => {
     reducedRef.current = reducedMotion
@@ -43,10 +55,11 @@ export function BlobScene() {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0, 0) },
       uScroll: { value: 0 },
-      uColor1: { value: new THREE.Color(0x00d4ff) },
-      uColor2: { value: new THREE.Color(0x0a0818) },
-      uColor3: { value: new THREE.Color(0xc850c0) },
+      uColor1: { value: new THREE.Color(initialBlob.color1) },
+      uColor2: { value: new THREE.Color(initialBlob.color2) },
+      uColor3: { value: new THREE.Color(initialBlob.color3) },
     }
+    uniformsRef.current = blobUniforms
 
     const blobVert = `
       uniform float uTime;
@@ -130,7 +143,7 @@ export function BlobScene() {
 
     const glowGeo = new THREE.SphereGeometry(1.8, 32, 32)
     const glowMat = new THREE.MeshBasicMaterial({
-      color: 0x00d4ff,
+      color: initialBlob.glow,
       transparent: true,
       opacity: 0.06,
       blending: THREE.AdditiveBlending,
@@ -140,13 +153,15 @@ export function BlobScene() {
     const glowMesh = new THREE.Mesh(glowGeo, glowMat)
     scene.add(glowMesh)
     disposables.push(glowGeo, glowMat)
+    glowMatRef.current = glowMat
 
     const light1 = new THREE.DirectionalLight(0xffffff, 1.5)
     light1.position.set(3, 2, 4)
     scene.add(light1)
-    const light2 = new THREE.DirectionalLight(0xc850c0, 0.8)
+    const light2 = new THREE.DirectionalLight(initialBlob.light, 0.8)
     light2.position.set(-2, -1, 2)
     scene.add(light2)
+    light2Ref.current = light2
     scene.add(new THREE.AmbientLight(0x111111, 0.5))
 
     // Mouse (smoothed, global)
@@ -215,8 +230,19 @@ export function BlobScene() {
       window.removeEventListener("resize", onResize)
       renderer.dispose()
       disposables.forEach((d) => d.dispose())
+      uniformsRef.current = null
+      glowMatRef.current = null
+      light2Ref.current = null
     }
   }, [])
+
+  useEffect(() => {
+    uniformsRef.current?.uColor1.value.set(palette.blob.color1)
+    uniformsRef.current?.uColor2.value.set(palette.blob.color2)
+    uniformsRef.current?.uColor3.value.set(palette.blob.color3)
+    glowMatRef.current?.color.set(palette.blob.glow)
+    light2Ref.current?.color.set(palette.blob.light)
+  }, [palette])
 
   return (
     <div className="blob-scene-fixed" aria-hidden="true">

@@ -5,7 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SplitText } from "gsap/SplitText"
 import { ArrowUpRight, Download, ExternalLink } from "lucide-react"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { siteConfig } from "@/data/site"
@@ -20,7 +20,9 @@ export function Hero() {
   const { hero } = siteConfig
   const still = useHydratedReducedMotion()
   const stillRef = useRef(still)
-  stillRef.current = still
+  useEffect(() => {
+    stillRef.current = still
+  }, [still])
   const root = useRef<HTMLElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const didAnimate = useRef(false)
@@ -70,11 +72,7 @@ export function Hero() {
         onSplit(self) {
           gsap.set(self.words, { force3D: true, autoAlpha: 0, y: 40 })
           headlineEl.querySelectorAll("[data-accent] .hero-word").forEach((el) => {
-            const h = el as HTMLElement
-            h.style.color = "#c850c0"
-            h.style.fontStyle = "italic"
-            h.style.fontWeight = "500"
-            h.style.fontFamily = "var(--font-display)"
+            el.classList.add("hero-accent-word")
           })
           tl.to(
             self.words,

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowDownToLine, Menu, X } from "lucide-react"
 
-import { ThemeToggle } from "@/components/shared/theme-toggle"
+import { PaletteSelect } from "@/components/layout/palette-select"
 import { siteConfig } from "@/data/site"
 import { cn } from "@/lib/utils"
 
@@ -74,7 +74,7 @@ export function Navbar() {
           <span aria-hidden="true" className="nav-divider nav-divider--desktop" />
 
           <div className="nav-right">
-            <ThemeToggle className="nav-theme-toggle" />
+            <PaletteSelect />
             <a
               href={siteConfig.resume.href}
               target="_blank"

@@ -3,6 +3,7 @@ import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google"
 
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
+import { PaletteProvider } from "@/components/palette-provider"
 import { BlobScene } from "@/components/shared/blob-scene"
 import { CursorInteraction } from "@/components/shared/cursor"
 import { ScrollGrain } from "@/components/shared/parallax"
@@ -54,23 +55,25 @@ export default function RootLayout({
     >
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
-          <SmoothScroll>
-            <BlobScene />
-            <CursorInteraction />
-            <ScrollGrain />
-            <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-          >
-            {siteConfig.labels.skipToContent}
-          </a>
-          <Navbar />
-          <main id="main-content" className="relative z-1">
-            {children}
-          </main>
-          <Footer />
-          <Toaster richColors position="top-right" />
-          </SmoothScroll>
+          <PaletteProvider>
+            <SmoothScroll>
+              <BlobScene />
+              <CursorInteraction />
+              <ScrollGrain />
+              <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+            >
+              {siteConfig.labels.skipToContent}
+            </a>
+            <Navbar />
+            <main id="main-content" className="relative z-1">
+              {children}
+            </main>
+            <Footer />
+            <Toaster richColors position="top-right" />
+            </SmoothScroll>
+          </PaletteProvider>
         </ThemeProvider>
       </body>
     </html>
