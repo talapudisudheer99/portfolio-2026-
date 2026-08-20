@@ -3,10 +3,11 @@
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
+import { FeaturedWorkMobileStage } from "@/components/sections/featured-work-mobile-stage"
+import { FeaturedWorkTabletStage } from "@/components/sections/featured-work-tablet-stage"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { SamewardPanel } from "@/components/shared/sameward-panel"
 import { duration } from "@/lib/motion"
 import type { Project } from "@/types"
 
@@ -26,7 +27,9 @@ export function FeaturedWorkStage({
 }: Readonly<FeaturedWorkStageProps>) {
   const still = useHydratedReducedMotion()
   const stillRef = useRef(still)
-  stillRef.current = still
+  useEffect(() => {
+    stillRef.current = still
+  }, [still])
 
   const root = useRef<HTMLElement>(null)
   const parallaxRef = useRef<HTMLDivElement>(null)
@@ -37,42 +40,80 @@ export function FeaturedWorkStage({
       const section = root.current
       const parallax = parallaxRef.current
       const enter = enterRef.current
-      if (!section || !parallax || !enter) return
+      if (!section || !enter) return
 
       if (stillRef.current) {
-        gsap.set([parallax, enter], { autoAlpha: 1, y: 0, clearProps: "transform" })
+        if (parallax) {
+          gsap.set(parallax, { y: 0, clearProps: "transform" })
+        }
+        gsap.set(enter, { autoAlpha: 1, y: 0, clearProps: "transform" })
         return
       }
 
-      gsap.set(enter, { autoAlpha: 0, y: 18 })
+      const mmEnter = gsap.matchMedia()
 
-      gsap.to(enter, {
-        autoAlpha: 1,
-        y: 0,
-        duration: duration.copy,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 82%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      })
+      mmEnter.add("(max-width: 767px)", () => {
+        gsap.set(enter, { autoAlpha: 0, y: 0 })
 
-      gsap.fromTo(
-        parallax,
-        { y: PARALLAX_LAG },
-        {
-          y: -PARALLAX_LAG,
-          ease: "none",
+        gsap.to(enter, {
+          autoAlpha: 1,
+          duration: duration.copy,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.85,
+            start: "top 82%",
+            toggleActions: "play none none none",
+            once: true,
           },
-        }
-      )
+        })
+      })
+
+      mmEnter.add("(min-width: 768px)", () => {
+        gsap.set(enter, { autoAlpha: 0, y: 18 })
+
+        gsap.to(enter, {
+          autoAlpha: 1,
+          y: 0,
+          duration: duration.copy,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 82%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        })
+      })
+
+      if (!parallax) {
+        return () => mmEnter.revert()
+      }
+
+      const mm = gsap.matchMedia()
+      mm.add("(min-width: 768px)", () => {
+        gsap.fromTo(
+          parallax,
+          { y: PARALLAX_LAG },
+          {
+            y: -PARALLAX_LAG,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.85,
+            },
+          }
+        )
+      })
+      mm.add("(max-width: 767px)", () => {
+        gsap.set(parallax, { y: 0, clearProps: "transform" })
+      })
+
+      return () => {
+        mmEnter.revert()
+        mm.revert()
+      }
     },
     { scope: root }
   )
@@ -83,25 +124,16 @@ export function FeaturedWorkStage({
       aria-label="Featured work"
       className="fd-section"
     >
-      {/* <header className="fd-showcase-head">
-        <p className="section-kicker text-muted-foreground">Flagship product</p>
-        <h2 className="fd-showcase-title">{_featured.title}</h2>
-        {_featured.subtitle ? (
-          <p className="fd-showcase-thesis">{_featured.subtitle}</p>
-        ) : null}
-      </header> */}
-
       <div className="fd-bleed">
-        <div ref={parallaxRef} className="fd-tablet-parallax">
-          <div className="fd-tablet-stage">
-            <div ref={enterRef} className="fd-tablet-body">
-              <div className="fd-tablet-chassis">
-                <div className="fd-tablet-screen">
-                  <SamewardPanel embedded />
-                </div>
-              </div>
-              <div className="fd-tablet-ground" aria-hidden="true" />
-            </div>
+        <div
+          ref={enterRef}
+          className="fd-showcase-stages flex w-full max-w-full flex-col items-center"
+        >
+          <div className="fd-showcase-tablet hidden w-full max-w-full md:block">
+            <FeaturedWorkTabletStage parallaxRef={parallaxRef} />
+          </div>
+          <div className="fd-showcase-mobile flex w-full max-w-full justify-center md:hidden">
+            <FeaturedWorkMobileStage />
           </div>
         </div>
       </div>

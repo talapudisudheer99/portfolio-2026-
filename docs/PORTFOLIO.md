@@ -133,9 +133,9 @@ src/
 │   ├── globals.css         # Design tokens & theme variables
 │   └── opengraph-image.tsx # Dynamic OG image
 ├── components/
-│   ├── layout/             # navbar, footer
-│   ├── sections/           # hero, about, skills, experience, projects, contact
-│   ├── shared/             # reusable wrappers (not shadcn primitives)
+│   ├── layout/             # navbar, footer, palette-select
+│   ├── sections/           # hero, projects, skills, experience, about, contact
+│   ├── shared/             # blob-scene, capabilities-workspace, sameward-panel, motion
 │   └── ui/                 # shadcn components
 ├── data/                   # SINGLE SOURCE OF TRUTH for content
 ├── hooks/                  # use-contact-form.ts
@@ -183,8 +183,26 @@ Tokens live in `src/app/globals.css`. Never hardcode hex values in components.
   breaks the scroll and was removed for exactly that reason.
 - The page has **one** dark climax (Profile/About). Adding more flattens it.
 
-**Typography:** Fraunces (`editorial-display`) for large statements, Manrope for
-body/UI, JetBrains Mono for small technical labels only.
+**Typography:** Serif-led editorial system — Fraunces (`--font-display`) for
+hero and section display type; Manrope (`--font-sans`) for body, nav, and UI;
+JetBrains Mono (`--font-mono`) for kickers and metadata at a 12px floor.
+Tokens and utilities live in `src/app/globals.css`; full spec in
+[Phase 06](./phases/06-typography-system/README.md).
+
+| Token | Size | Use |
+| ----- | ---- | --- |
+| `--text-display` | `clamp(2.75rem, 7vw, 5.5rem)` | Hero H1 |
+| `--text-title` | `clamp(2rem, 4.2vw, 3.75rem)` | Section H2 |
+| `--text-section` | `clamp(1.75rem, 3.2vw, 2.75rem)` | Job titles, subsections |
+| `--text-lead` | `clamp(1.0625rem, 1.35vw, 1.1875rem)` | Taglines, intros |
+| `--text-body` | `1rem` | Body copy (16px floor) |
+| `--text-ui` | `0.875rem` | Nav, buttons, footer |
+| `--text-meta` | `0.75rem` | Kickers, dates, labels |
+| `--text-micro` | `0.6875rem` | Sameward mockup UI only |
+
+Utility classes: `.type-display`, `.type-title`, `.type-section`, `.type-lead`,
+`.type-body`, `.type-ui`, `.type-meta`, `.type-micro`, `.editorial-display`,
+`.section-kicker`.
 
 **Motion:** `FadeIn` is the only reveal, plus a global `prefers-reduced-motion`
 kill-switch in `globals.css`. No WebGL, no scroll hijacking.

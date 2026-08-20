@@ -128,38 +128,38 @@ export function Experience() {
         {/* Sticky so the heading and career summary stay with the list. */}
         <ScrollEmergence className="col-span-12 md:sticky md:top-24 md:col-span-4 md:self-start">
           <MaskedLine display className="mt-0">
-            <h2 className="editorial-display text-[clamp(2.6rem,4.6vw,4.25rem)] leading-[0.9] font-medium text-foreground">
+            <h2 className="editorial-display type-title text-foreground">
               {content.title}
             </h2>
           </MaskedLine>
 
           <FadeIn delay={0.1}>
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="type-lead mt-6 max-w-xs text-muted-foreground">
               {content.description}
             </p>
 
             <dl className="mt-10 grid max-w-xs grid-cols-3 gap-4 border-t border-border pt-6">
               <div>
-                <dt className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+                <dt className="type-meta text-muted-foreground">
                   Since
                 </dt>
-                <dd className="editorial-display mt-2 text-3xl leading-none font-medium text-foreground">
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
                   {Math.min(...years)}
                 </dd>
               </div>
               <div>
-                <dt className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+                <dt className="type-meta text-muted-foreground">
                   Roles
                 </dt>
-                <dd className="editorial-display mt-2 text-3xl leading-none font-medium text-foreground">
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
                   <CountUp value={experience.length} pad={2} />
                 </dd>
               </div>
               <div>
-                <dt className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+                <dt className="type-meta text-muted-foreground">
                   Current
                 </dt>
-                <dd className="editorial-display mt-2 text-3xl leading-none font-medium text-primary">
+                <dd className="editorial-display type-section mt-2 leading-none font-medium text-primary">
                   <CountUp value={currentCount} pad={2} />
                 </dd>
               </div>
@@ -205,14 +205,14 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
 
   const meta = (
     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-      <span className="font-mono text-[10px] text-muted-foreground">
+      <span className="type-meta text-muted-foreground">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <span className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
+      <span className="type-meta text-muted-foreground">
         {role.period}
       </span>
       {current ? (
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-primary uppercase">
+        <span className="type-meta inline-flex items-center gap-1.5 text-primary">
           <span className="size-1.5 rounded-full bg-primary" />
           Now
         </span>
@@ -221,13 +221,13 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
   )
 
   const company = (
-    <h3 className="editorial-display mt-3 text-[clamp(1.9rem,3.2vw,2.9rem)] leading-[0.95] font-medium text-foreground transition-colors group-hover:text-primary">
+    <h3 className="editorial-display type-section mt-3 font-medium text-foreground transition-colors group-hover:text-primary">
       {role.company}
     </h3>
   )
 
   const title = (
-    <p className="mt-2 text-base font-semibold tracking-[-0.02em] text-foreground-secondary md:text-lg">
+    <p className="type-lead mt-2 font-semibold text-foreground-secondary">
       {role.role}
     </p>
   )
@@ -249,7 +249,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
           {role.bullets.map((bullet) => (
             <li
               key={bullet}
-              className="relative pl-4 text-sm leading-relaxed text-muted-foreground"
+              className="type-ui relative pl-4 text-muted-foreground"
             >
               <span
                 aria-hidden="true"
@@ -289,7 +289,7 @@ function ExperienceRow({ role, index }: ExperienceRowProps) {
           <motion.li
             key={bullet}
             variants={rowPart}
-            className="relative pl-4 text-sm leading-relaxed text-muted-foreground"
+            className="type-ui relative pl-4 text-muted-foreground"
           >
             <span
               aria-hidden="true"

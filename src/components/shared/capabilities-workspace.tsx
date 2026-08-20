@@ -2,15 +2,17 @@
 
 import { ArrowRight, Rocket } from "lucide-react"
 import Link from "next/link"
+import { useMemo, useState } from "react"
 
 import { FadeIn, TraceNode, TraceSequence } from "@/components/shared/motion"
 import {
   capabilitiesCta,
   capabilitiesHero,
   capabilityCardMeta,
-  layerDisplayNames,
   layerAccents,
+  layerDisplayNames,
   layerIcons,
+  layerToCapabilityId,
   workingRangeIntro,
 } from "@/data/capabilities-ui"
 import { skillGroups, workingRange } from "@/data/skills"
@@ -19,6 +21,27 @@ import { cn } from "@/lib/utils"
 import type { SkillGroup } from "@/types"
 
 export function CapabilitiesWorkspace() {
+  const [focusId, setFocusId] = useState<string | null>(null)
+
+  const capabilityByLayer = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const [layer, id] of Object.entries(layerToCapabilityId)) {
+      map.set(layer, id)
+    }
+    return map
+  }, [])
+
+  const setFocusFromLayer = (layer: string | null) => {
+    if (!layer) {
+      setFocusId(null)
+      return
+    }
+    setFocusId(capabilityByLayer.get(layer) ?? null)
+  }
+
+  const isDimmed = (id: string) => focusId !== null && focusId !== id
+  const isHighlighted = (id: string) => focusId === id
+
   return (
     <div className="capabilities-workspace">
       <span className="capabilities-workspace-aurora" aria-hidden="true" />
@@ -62,7 +85,7 @@ export function CapabilitiesWorkspace() {
                 const Icon = item.icon
                 return (
                   <li key={item.title} className="capabilities-workspace-range-row">
-                    <div className="capabilities-workspace-range-item">
+                    <div className="capabilities-workspace-range-item is-static">
                       <span
                         className="capabilities-workspace-range-icon"
                         data-accent={item.accent}
@@ -84,13 +107,34 @@ export function CapabilitiesWorkspace() {
               })}
 
               {workingRange.layers.map((row) => {
+                const capabilityId = capabilityByLayer.get(row.layer)
                 const Icon = layerIcons[row.layer]
                 const accent = layerAccents[row.layer]
+                const active = capabilityId ? isHighlighted(capabilityId) : false
+                const dimmed = capabilityId ? isDimmed(capabilityId) : false
                 const label = layerDisplayNames[row.layer] ?? row.layer
 
                 return (
                   <li key={row.layer} className="capabilities-workspace-range-row">
-                    <div className="capabilities-workspace-range-item">
+                    <button
+                      type="button"
+                      className={cn(
+                        "capabilities-workspace-range-item",
+                        active && "is-active",
+                        dimmed && "is-dimmed"
+                      )}
+                      data-accent={accent}
+                      onMouseEnter={() => setFocusFromLayer(row.layer)}
+                      onMouseLeave={() => setFocusId(null)}
+                      onFocus={() => setFocusFromLayer(row.layer)}
+                      onBlur={() => setFocusId(null)}
+                      onClick={() =>
+                        capabilityId &&
+                        document
+                          .getElementById(`capability-${capabilityId}`)
+                          ?.scrollIntoView({ behavior: "smooth", block: "center" })
+                      }
+                    >
                       <span
                         className="capabilities-workspace-range-icon"
                         data-accent={accent}
@@ -108,7 +152,7 @@ export function CapabilitiesWorkspace() {
                           {row.detail}
                         </span>
                       </span>
-                    </div>
+                    </button>
                   </li>
                 )
               })}
@@ -123,7 +167,14 @@ export function CapabilitiesWorkspace() {
             delayChildren={0.05}
           >
             {skillGroups.map((group, index) => (
-              <CapabilityCard key={group.id} group={group} index={index} />
+              <CapabilityCard
+                key={group.id}
+                group={group}
+                index={index}
+                dimmed={isDimmed(group.id)}
+                highlighted={isHighlighted(group.id)}
+                onHover={(hovered) => setFocusId(hovered ? group.id : null)}
+              />
             ))}
           </TraceSequence>
         </div>
@@ -152,7 +203,19 @@ export function CapabilitiesWorkspace() {
   )
 }
 
-function CapabilityCard({ group, index }: { group: SkillGroup; index: number }) {
+function CapabilityCard({
+  group,
+  index,
+  dimmed,
+  highlighted,
+  onHover,
+}: {
+  group: SkillGroup
+  index: number
+  dimmed: boolean
+  highlighted: boolean
+  onHover: (hovered: boolean) => void
+}) {
   const meta = capabilityCardMeta[group.id]
   if (!meta) return null
 
@@ -162,7 +225,9 @@ function CapabilityCard({ group, index }: { group: SkillGroup; index: number }) 
     <TraceNode
       className={cn(
         "capabilities-workspace-card",
-        meta.fullWidth && "capabilities-workspace-card--full"
+        meta.fullWidth && "capabilities-workspace-card--full",
+        dimmed && "is-dimmed",
+        highlighted && "is-highlighted"
       )}
     >
       <article
@@ -173,6 +238,11 @@ function CapabilityCard({ group, index }: { group: SkillGroup; index: number }) 
           meta.fullWidth && "capabilities-workspace-card-inner--wide"
         )}
         data-accent={meta.accent}
+        tabIndex={0}
+        onMouseEnter={() => onHover(true)}
+        onMouseLeave={() => onHover(false)}
+        onFocus={() => onHover(true)}
+        onBlur={() => onHover(false)}
       >
         <span className="capabilities-workspace-card-num">
           {String(index + 1).padStart(2, "0")}

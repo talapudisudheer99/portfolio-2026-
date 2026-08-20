@@ -51,12 +51,12 @@ export function Contact() {
         <ScrollEmergence className="col-span-12">
           <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
           <MaskedLine display>
-            <h2 className="editorial-display max-w-[16ch] text-[clamp(3rem,7vw,6.5rem)] leading-[0.9] font-medium">
+            <h2 className="editorial-display type-display max-w-[16ch] font-medium">
               Have a product worth building?
             </h2>
           </MaskedLine>
           <FadeIn delay={0.1}>
-            <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground md:text-base">
+            <p className="type-lead mt-6 max-w-lg text-muted-foreground">
               {section.description}
             </p>
           </FadeIn>
@@ -66,7 +66,7 @@ export function Contact() {
           <TraceRule className="mb-6 bg-border" />
           <a
             href={`mailto:${contact.email}`}
-            className="group inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 text-xl font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-2xl"
+            className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
             <span className="truncate">{contact.email}</span>
             <ArrowUpRight
@@ -74,7 +74,7 @@ export function Contact() {
               aria-hidden="true"
             />
           </a>
-          <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
+          <p className="type-ui mt-6 flex items-center gap-2 text-muted-foreground">
             <MapPin className="size-4 text-primary" aria-hidden="true" />
             {contact.location}
           </p>
@@ -97,7 +97,7 @@ export function Contact() {
               <div key={field.name}>
                 <Label
                   htmlFor={field.name}
-                  className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase"
+                  className="type-meta text-muted-foreground"
                 >
                   {field.label}
                 </Label>
@@ -125,7 +125,7 @@ export function Contact() {
                 {error ? (
                   <p
                     id={errorId}
-                    className="mt-2 text-sm text-destructive"
+                    className="type-ui mt-2 text-destructive"
                     role="alert"
                   >
                     {error.message}
@@ -138,7 +138,7 @@ export function Contact() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 rounded-full px-7 text-sm font-bold"
+            className="type-ui h-12 rounded-full px-7 font-bold"
           >
             {isSubmitting ? submittingLabel : submitLabel}
             <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -148,8 +148,8 @@ export function Contact() {
             aria-live="polite"
             className={
               status === "error"
-                ? "text-sm text-destructive"
-                : "text-sm text-success"
+                ? "type-ui text-destructive"
+                : "type-ui text-success"
             }
           >
             {status === "idle" ? "" : statusMessage}

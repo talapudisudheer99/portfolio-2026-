@@ -58,4 +58,4 @@ User-facing = Sameward. Legacy internal IDs may still say `teamhub` — that is 
 
 ## Phases
 
-Execute `docs/phases/README.md` in order.
+Execute `docs/phases/README.md` in order. Typography system: Phase 06.

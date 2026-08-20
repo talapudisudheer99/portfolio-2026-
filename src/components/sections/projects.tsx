@@ -26,57 +26,59 @@ export function Projects() {
   return (
     <SectionShell id="projects">
       <div className="projects-sameward-showcase">
-        <ContentRail className="projects-sameward-rail">
-          <FeaturedWorkStage
-            featured={featured}
-            liveDemoLabel={projectActions.liveDemo}
-          />
+        <div className="projects-sameward-stage">
+          <ContentRail className="projects-sameward-rail">
+            <FeaturedWorkStage
+              featured={featured}
+              liveDemoLabel={projectActions.liveDemo}
+            />
 
-          <div className="projects-inside-sync">
-            <div className="projects-inside-block content-grid">
-              <FadeIn className="projects-inside-kicker col-span-12">
-                <p className="section-kicker text-muted-foreground">
-                  Inside the product
-                </p>
-                <p className="projects-inside-live">
-                  <span className="projects-inside-live-dot" aria-hidden="true" />
-                  <span>Live</span>
-                </p>
-              </FadeIn>
+            <div className="projects-inside-sync">
+              <div className="projects-inside-block content-grid">
+                <FadeIn className="projects-inside-kicker col-span-12">
+                  <p className="section-kicker text-muted-foreground">
+                    Inside the product
+                  </p>
+                  <p className="projects-inside-live">
+                    <span className="projects-inside-live-dot" aria-hidden="true" />
+                    <span>Live</span>
+                  </p>
+                </FadeIn>
 
-              <ScrollEmergence className="projects-inside-heading col-span-12">
-                <TraceSequence
-                  className="projects-inside-steps grid grid-cols-1 gap-0 sm:grid-cols-3"
-                  gap={gap.nodes}
-                  delayChildren={0.1}
-                >
-                  {[
-                    ["01", "Talk", "Realtime channels"],
-                    ["02", "Plan", "Shared team context"],
-                    ["03", "Ask", "Grounded Channel AI"],
-                  ].map(([number, action, detail]) => (
-                    <TraceNode
-                      key={number}
-                      className="projects-flow-step projects-flow-step--inside group"
-                    >
-                      <div className="projects-flow-meta">
-                        <span className="projects-flow-num">
-                          {number}
-                        </span>
-                      </div>
-                      <p className="projects-flow-title">
-                        {action}
-                      </p>
-                      <p className="projects-flow-detail">
-                        {detail}
-                      </p>
-                    </TraceNode>
-                  ))}
-                </TraceSequence>
-              </ScrollEmergence>
+                <ScrollEmergence className="projects-inside-heading col-span-12">
+                  <TraceSequence
+                    className="projects-inside-steps grid grid-cols-1 gap-0 sm:grid-cols-3"
+                    gap={gap.nodes}
+                    delayChildren={0.1}
+                  >
+                    {[
+                      ["01", "Talk", "Realtime channels"],
+                      ["02", "Plan", "Shared team context"],
+                      ["03", "Ask", "Grounded Channel AI"],
+                    ].map(([number, action, detail]) => (
+                      <TraceNode
+                        key={number}
+                        className="projects-flow-step projects-flow-step--inside group"
+                      >
+                        <div className="projects-flow-meta">
+                          <span className="projects-flow-num">
+                            {number}
+                          </span>
+                        </div>
+                        <p className="projects-flow-title">
+                          {action}
+                        </p>
+                        <p className="projects-flow-detail">
+                          {detail}
+                        </p>
+                      </TraceNode>
+                    ))}
+                  </TraceSequence>
+                </ScrollEmergence>
+              </div>
             </div>
-          </div>
-        </ContentRail>
+          </ContentRail>
+        </div>
       </div>
 
       <ContentRail className="projects-case-section projects-case-section--problem">
@@ -110,14 +112,14 @@ export function Projects() {
               </MaskedLine>
             ) : null}
             {featured.approachLead ? (
-              <p className="projects-approach-lead mt-4 text-sm leading-relaxed text-muted-foreground md:max-w-[20ch] md:text-base">
+              <p className="projects-approach-lead type-lead mt-4 text-muted-foreground md:max-w-[20ch]">
                 {featured.approachLead}
               </p>
             ) : null}
           </FadeIn>
 
           <ScrollEmergence className="projects-approach-body col-span-12 md:col-span-8 md:col-start-5">
-            <p className="projects-approach-sync font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+            <p className="projects-approach-sync type-meta text-muted-foreground">
               <span className="text-sameward-ink">Problem</span>
               <span aria-hidden="true" className="mx-2 opacity-60">
                 ·

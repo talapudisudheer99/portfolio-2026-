@@ -2,7 +2,7 @@
 
 **Goal:** Replace the cool SaaS/dashboard language with a distinctive editorial
 system before rebuilding sections.  
-**Status:** ⬜ Ready to start
+**Status:** ✅ Done (typography completion moved to [Phase 06](../06-typography-system/README.md))
 
 ## Confirmed root cause (code audit)
 
@@ -41,9 +41,10 @@ The boxed look is structural, not only a color problem:
 - [ ] Keep Sameward Ocean Blue scoped to project media only
 - [ ] Default theme should not force dark; keep toggle, prefer system or light
   for first paint unless product decision says otherwise
-- [ ] Replace current heading font with an expressive variable serif; retain a
-  readable sans body face and lightweight mono metadata face
-- [ ] Use fluid type (`clamp`) for hero and section headings
+- [x] Replace current heading font with an expressive variable serif; retain a
+  readable sans body face and lightweight mono metadata face *(Fraunces + Manrope +
+  JetBrains — hierarchy finalized in Phase 06)*
+- [x] Use fluid type (`clamp`) for hero and section headings *(tokenized in Phase 06)*
 - [ ] Add layout primitives:
   - `SectionShell` — full-bleed `<section>` (optional subtle band, never a floating panel)
   - `ContentRail` — `max-w-*` + padding only for text/CTA columns

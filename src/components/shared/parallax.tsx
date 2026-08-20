@@ -248,7 +248,7 @@ export function ScrollCue({ className }: Readonly<ScrollCueProps>) {
       )}
       aria-hidden="true"
     >
-      <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
+      <span className="type-meta text-muted-foreground">
         Scroll
       </span>
       <span className="scroll-cue-line block h-8 w-px origin-top bg-border" />

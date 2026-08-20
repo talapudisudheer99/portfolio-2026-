@@ -24,7 +24,7 @@ export function SkillMarquee({
               key={`${skill}-${index}`}
               className="flex shrink-0 items-center gap-6 pl-6"
             >
-              <span className="font-mono text-xs tracking-[0.16em] text-foreground uppercase sm:text-sm">
+              <span className="type-meta text-foreground">
                 {skill}
               </span>
               <span className="text-primary">·</span>

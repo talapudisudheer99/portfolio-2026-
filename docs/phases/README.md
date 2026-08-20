@@ -18,7 +18,8 @@ Ops / env / deploy: [PORTFOLIO.md](../PORTFOLIO.md)
 | [02](./02-sameward-case-study/README.md) | Homepage + Sameward narrative | ✅ Done |
 | [03](./03-scroll-3d/README.md) | Lightweight interaction system | ✅ Done |
 | [04](./04-performance-a11y/README.md) | Responsive, performance & accessibility | ✅ Done |
-| [05](./05-ship/README.md) | Content QA and ship | ✅ Code complete (deploy pending) |
+| [05](./05-ship/README.md) | Content QA and ship | ✅ Done |
+| [06](./06-typography-system/README.md) | Typography system | 🔄 In progress |
 
 **Motion track (local experiment):** [docs/phases/motion/README.md](./motion/README.md) —
 Engineering Trace (masked lines, drawing rules, activating nodes). No WebGL /
@@ -76,7 +77,8 @@ dashboard.
 - Sameward Ocean Blue appears only inside Sameward media/diagrams. It is product
   content, not the portfolio chrome.
 - Expressive variable serif for large statements; neutral sans for body/UI;
-  mono only for tiny technical metadata.
+  mono only for technical metadata (12px floor on page chrome).
+- Full type scale and section assignments: [Phase 06](./06-typography-system/README.md).
 - Hairline rules, large whitespace, crop/overlap, and typographic scale create
   depth. No decorative card shadows, glass panels, or boxed sections.
 
@@ -92,14 +94,22 @@ dashboard.
 - Every section gets a distinct composition, but shared type, rules, and spacing
   make the page coherent.
 
-### Information architecture
+### Information architecture (current homepage)
 
-1. Hero — oversized positioning statement, concise proof, primary action.
-2. Sameward — strongest work immediately; visual-first editorial story.
-3. Capabilities — grouped proof, not a skill-card grid.
-4. Experience — clean chronology with selective bullets.
-5. Profile — condensed personal story and factual signals.
-6. Contact — large, direct closing statement and frictionless email/resume.
+`src/app/page.tsx` section order:
+
+1. **Hero** (`#hero`) — positioning statement, tagline, availability, CTAs.
+2. **Sameward / Projects** (`#projects`) — flagship case study: featured stage,
+   problem, approach, shipped flow, live product link.
+3. **Capabilities** (`#skills`) — glass workspace proof grid (not skill cards).
+4. **Experience** (`#experience`) — chronology with selective bullets + stats.
+5. **Profile / About** (`#about`) — personal story, highlights, dark climax band.
+6. **Contact** (`#contact`) — closing statement, email, Web3Forms form.
+
+Global chrome: floating pill navbar (palette picker, resume), footer, Fluid Blob
+background (`blob-scene.tsx`), smooth scroll, custom cursor.
+
+Typography spec: [Phase 06](./06-typography-system/README.md).
 
 ### Interaction rules
 

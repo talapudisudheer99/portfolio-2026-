@@ -29,7 +29,7 @@ export function SectionHeader({
         display
         className={cn("md:col-span-7", align === "center" && "md:col-span-12")}
       >
-        <h2 className="editorial-display text-[clamp(3rem,7vw,6.75rem)] leading-[0.88] font-medium text-foreground">
+        <h2 className="editorial-display type-title text-foreground">
           {title}
         </h2>
       </MaskedLine>
@@ -43,7 +43,7 @@ export function SectionHeader({
         >
           <p
             className={cn(
-              "text-sm leading-relaxed text-muted-foreground md:text-base",
+              "type-lead text-muted-foreground",
               align === "center" && "text-center"
             )}
           >

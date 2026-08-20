@@ -11,10 +11,10 @@ export function Footer() {
     <ParallaxFooter className="section-rule">
       <ContentRail className="flex flex-col gap-7 py-8 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <p className="text-sm font-bold text-foreground">
+          <p className="type-ui font-bold text-foreground">
             {siteConfig.footer.copyright}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="type-ui text-muted-foreground">
             {siteConfig.footer.tagline}
           </p>
         </div>
@@ -25,7 +25,7 @@ export function Footer() {
               {link.href.startsWith("/") ? (
                 <Link
                   href={link.href}
-                  className="rounded-sm text-xs font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                  className="type-ui rounded-sm font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   {...(link.href.endsWith(".pdf")
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
@@ -38,7 +38,7 @@ export function Footer() {
                   {...(link.href.startsWith("http")
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="rounded-sm text-xs font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                  className="type-ui rounded-sm font-semibold text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 >
                   {link.label}
                 </a>
