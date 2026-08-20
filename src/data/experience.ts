@@ -4,7 +4,7 @@ export const experience: Experience[] = [
   {
     id: "sameward",
     company: "Sameward",
-    role: "Independent product — frontend-strong full stack",
+    role: "Independent Product · Founder / Product Engineer",
     period: "2025 – Present",
     bullets: [
       "Designed and launched Sameward, a live workspace for team chat, planning, files, and AI help.",

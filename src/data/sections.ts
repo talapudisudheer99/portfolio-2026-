@@ -9,7 +9,7 @@ export const sections: SectionContent = {
   experience: {
     title: "Selected experience",
     description:
-      "I own a live product and have shipped frontend work across production teams.",
+      "I build production frontend systems and own Sameward end-to-end.",
   },
 }
 

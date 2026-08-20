@@ -41,8 +41,8 @@ export const aboutContent: AboutContent = {
     title: "Engineering Impact",
     liveBadge: "Live Systems",
     stats: [
-      { value: "3+", label: "Years Experience" },
-      { value: "10+", label: "Products Shipped" },
+      { value: "3+ Years", label: "Frontend Engineering" },
+      { value: "1 Live Product", label: "Built End-to-End" },
       { value: "∞", label: "Learning Mode" },
     ],
   },
