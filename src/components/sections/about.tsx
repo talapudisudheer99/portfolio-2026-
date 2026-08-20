@@ -235,7 +235,15 @@ export function About() {
               <div className="about-impact-stats">
                 {impact.stats.map((stat) => (
                   <div key={stat.label} className="about-impact-stat">
-                    <span className="about-impact-stat-value">{stat.value}</span>
+                    <span
+                      className={
+                        stat.value.length <= 2
+                          ? "about-impact-stat-value about-impact-stat-value--symbol"
+                          : "about-impact-stat-value"
+                      }
+                    >
+                      {stat.value}
+                    </span>
                     <span className="about-impact-stat-label">{stat.label}</span>
                   </div>
                 ))}
