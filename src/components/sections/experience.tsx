@@ -1,14 +1,15 @@
 "use client"
 
+import { useGSAP } from "@gsap/react"
 import {
   animate,
   motion,
   useInView,
   useMotionValue,
-  useScroll,
-  useSpring,
   useTransform,
 } from "framer-motion"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useEffect, useRef, useState } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
@@ -19,6 +20,8 @@ import { sections } from "@/data/sections"
 import { duration, easeOut, rise } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import type { Experience as Role } from "@/types"
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const isCurrent = (period: string) => /present/i.test(period)
 
@@ -92,23 +95,40 @@ function CountUp({ value, pad }: CountUpProps) {
   return <motion.span ref={ref}>{text}</motion.span>
 }
 
+/**
+ * Phase 09 Task 10 + 15 — progression via illumination;
+ * scroll rail owned by GSAP ScrollTrigger (not Framer useScroll).
+ */
 export function Experience() {
   const { experience: content } = sections
   const railRef = useRef<HTMLDivElement>(null)
+  const progressRef = useRef<HTMLSpanElement>(null)
   const prefersReducedMotion = useHydratedReducedMotion()
   const [activeId, setActiveId] = useState<string | null>(
     experience.find((r) => isCurrent(r.period))?.id ?? experience[0]?.id ?? null
   )
 
-  const { scrollYProgress } = useScroll({
-    target: railRef,
-    offset: ["start 0.7", "end 0.7"],
-  })
-  const railScale = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    restDelta: 0.001,
-  })
+  useGSAP(
+    () => {
+      const rail = railRef.current
+      const bar = progressRef.current
+      if (!rail || !bar || prefersReducedMotion) return
+
+      gsap.set(bar, { scaleY: 0, transformOrigin: "top center" })
+
+      gsap.to(bar, {
+        scaleY: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: rail,
+          start: "top 70%",
+          end: "bottom 70%",
+          scrub: 0.45,
+        },
+      })
+    },
+    { dependencies: [prefersReducedMotion], revertOnUpdate: true }
+  )
 
   const years = experience
     .flatMap((role) => role.period.match(/\d{4}/g) ?? [])
@@ -162,9 +182,9 @@ export function Experience() {
             className="absolute top-2 bottom-0 left-0 w-px bg-border"
           />
           {prefersReducedMotion ? null : (
-            <motion.span
+            <span
+              ref={progressRef}
               aria-hidden="true"
-              style={{ scaleY: railScale }}
               className="absolute top-2 bottom-0 left-0 w-px origin-top bg-primary"
             />
           )}

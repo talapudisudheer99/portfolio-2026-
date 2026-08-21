@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useInView } from "framer-motion"
-import { ArrowRight } from "lucide-react"
 import { useRef } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
@@ -45,7 +44,7 @@ function ProfileRadar({ axes }: { axes: AboutRadarAxis[] }) {
     <svg
       ref={ref}
       viewBox="0 0 320 320"
-      className="about-impact-radar"
+      className="about-hud-radar"
       aria-label="Engineering impact radar"
     >
       {gridLevels.map((level) => {
@@ -82,11 +81,11 @@ function ProfileRadar({ axes }: { axes: AboutRadarAxis[] }) {
       })}
 
       {still || !inView ? (
-        <path d={dataPath} className="about-impact-radar-shape" />
+        <path d={dataPath} className="about-hud-radar-shape" />
       ) : (
         <motion.path
           d={dataPath}
-          className="about-impact-radar-shape"
+          className="about-hud-radar-shape"
           initial={{ pathLength: 0, opacity: 0.4 }}
           animate={{ pathLength: 1, opacity: 1 }}
           transition={{ duration: 1.2, ease: easeOut }}
@@ -106,7 +105,7 @@ function ProfileRadar({ axes }: { axes: AboutRadarAxis[] }) {
             y={labelPoint.y}
             textAnchor={anchor}
             dominantBaseline="central"
-            className="about-impact-radar-label"
+            className="about-hud-radar-label"
           >
             {axis.label}
           </text>
@@ -119,138 +118,105 @@ function ProfileRadar({ axes }: { axes: AboutRadarAxis[] }) {
           cx={p.x}
           cy={p.y}
           r="4"
-          className="about-impact-radar-node"
+          className="about-hud-radar-node"
         />
       ))}
     </svg>
   )
 }
 
+/**
+ * Profile — two columns from 900px:
+ * left = header + feature list
+ * right = Engineering Impact
+ */
 export function About() {
   const { kicker, headline, section, featureCards, impact, radarAxes } =
     aboutContent
 
+  const lead = (section.description ?? "").replace(/\n/g, " ")
+
   return (
     <SectionWrapper id="about" className="about-section section-rule">
-      <div className="about-workspace">
-        <span
-          className="about-workspace-aurora about-workspace-aurora--left"
-          aria-hidden="true"
-        />
-        <span
-          className="about-workspace-aurora about-workspace-aurora--right"
-          aria-hidden="true"
-        />
-        <span
-          className="about-workspace-aurora about-workspace-aurora--mid"
-          aria-hidden="true"
-        />
-
-        <div className="about-workspace-layout">
-          <SectionReveal variant="body" className="about-workspace-copy-header">
-            <p className="about-workspace-kicker">{kicker}</p>
-            <h2 className="about-workspace-headline">
-              <span className="about-workspace-headline-line editorial-display">
+      <div className="about-brief">
+        <div className="about-brief-main">
+          <SectionReveal
+            variant="body"
+            delay={0.18}
+            className="about-brief-header"
+          >
+            <p className="about-brief-kicker">{kicker}</p>
+            <h2 className="about-brief-headline">
+              <span className="about-brief-headline-line editorial-display">
                 {headline.lead}
               </span>
-              <span className="about-workspace-headline-line editorial-display about-workspace-headline-line--gradient">
+              <span className="about-brief-headline-line editorial-display about-brief-headline-line--accent">
                 {headline.accent}
               </span>
             </h2>
+            <p className="about-brief-lead">{lead}</p>
           </SectionReveal>
 
-          <div className="about-workspace-aside-kicker">
-            <span className="about-impact-float-badge">{impact.floatBadge}</span>
-          </div>
-
-          <div className="about-workspace-copy-body">
-            <span
-              className="about-workspace-copy-aurora"
-              aria-hidden="true"
-            />
-
-            <SectionReveal variant="body" className="about-workspace-intro">
-              <p className="about-workspace-lead">
-                {(section.description ?? "").split("\n").map((line) => (
-                  <span key={line} className="about-workspace-lead-line">
-                    {line}
-                  </span>
-                ))}
-              </p>
-              <span className="about-workspace-rule" aria-hidden="true" />
-            </SectionReveal>
-
-            <TraceSequence className="about-feature-list" gap={gap.facts}>
-              {featureCards.map((card) => {
-                const Icon = card.icon
-                return (
-                  <TraceNode key={card.title}>
-                    <article
-                      className="about-feature-card"
-                      data-accent={card.accent}
-                    >
-                      <span className="about-feature-icon" aria-hidden="true">
-                        <Icon className="size-[1.05rem]" strokeWidth={1.5} />
-                      </span>
-                      <div className="about-feature-copy">
-                        <h3 className="about-feature-title">{card.title}</h3>
-                        <p className="about-feature-detail">
-                          {card.detail.split("\n").map((line) => (
-                            <span
-                              key={`${card.title}-${line}`}
-                              className="about-feature-detail-line"
-                            >
-                              {line}
-                            </span>
-                          ))}
-                        </p>
-                      </div>
+          <TraceSequence className="about-channel-list" gap={gap.facts}>
+            {featureCards.map((card, index) => {
+              const Icon = card.icon
+              return (
+                <TraceNode key={card.title}>
+                  <article
+                    className="about-channel"
+                    data-accent={card.accent}
+                  >
+                    <span className="about-channel-icon" aria-hidden="true">
+                      <Icon className="size-[1.05rem]" strokeWidth={1.5} />
+                    </span>
+                    <div className="about-channel-copy">
                       <span
-                        className="about-feature-arrow-wrap"
+                        className="about-channel-index"
                         aria-hidden="true"
                       >
-                        <ArrowRight
-                          className="about-feature-arrow"
-                          strokeWidth={1.75}
-                        />
+                        {String(index + 1).padStart(2, "0")}
                       </span>
-                    </article>
-                  </TraceNode>
-                )
-              })}
-            </TraceSequence>
+                      <h3 className="about-channel-title">{card.title}</h3>
+                      <p className="about-channel-detail">
+                        {card.detail.replace(/\n/g, " ")}
+                      </p>
+                    </div>
+                  </article>
+                </TraceNode>
+              )
+            })}
+          </TraceSequence>
+        </div>
+
+        <SectionReveal
+          variant="visual"
+          delay={0.22}
+          y={18}
+          className="about-hud"
+        >
+          <h3 className="sr-only">{impact.title}</h3>
+
+          <div className="about-hud-radar-wrap">
+            <ProfileRadar axes={radarAxes} />
           </div>
 
-          <aside className="about-workspace-aside">
-            <SectionReveal variant="visual" className="about-impact-card">
-              <header className="about-impact-header">
-                <h3 className="about-impact-title">{impact.title}</h3>
-                <span className="about-impact-live">{impact.liveBadge}</span>
-              </header>
-
-              <div className="about-impact-radar-wrap">
-                <ProfileRadar axes={radarAxes} />
+          <div className="about-hud-stats" role="list">
+            {impact.stats.map((stat) => (
+              <div key={stat.label} className="about-hud-stat" role="listitem">
+                <span
+                  className={
+                    stat.value.length <= 2
+                      ? "about-hud-stat-value about-hud-stat-value--symbol"
+                      : "about-hud-stat-value"
+                  }
+                >
+                  {stat.value}
+                </span>
+                <span className="about-hud-stat-label">{stat.label}</span>
               </div>
-
-              <div className="about-impact-stats">
-                {impact.stats.map((stat) => (
-                  <div key={stat.label} className="about-impact-stat">
-                    <span
-                      className={
-                        stat.value.length <= 2
-                          ? "about-impact-stat-value about-impact-stat-value--symbol"
-                          : "about-impact-stat-value"
-                      }
-                    >
-                      {stat.value}
-                    </span>
-                    <span className="about-impact-stat-label">{stat.label}</span>
-                  </div>
-                ))}
-              </div>
-            </SectionReveal>
-          </aside>
-        </div>
+            ))}
+          </div>
+        </SectionReveal>
       </div>
     </SectionWrapper>
   )

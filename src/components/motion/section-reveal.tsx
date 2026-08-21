@@ -31,7 +31,7 @@ interface SectionRevealProps {
 }
 
 /**
- * Phase 08 — one GSAP ScrollTrigger reveal language.
+ * Phase 09 — one GSAP ScrollTrigger reveal language.
  * opacity + transform only. Prefer over inventing per-section Framer enters.
  */
 export function SectionReveal({
@@ -51,27 +51,54 @@ export function SectionReveal({
       const el = ref.current
       if (!el || still) return
 
-      const from: gsap.TweenVars = { autoAlpha: 0, y: travel }
-      if (variant === "visual") {
-        from.scale = 0.97
-      }
+      const mm = gsap.matchMedia()
 
-      gsap.set(el, from)
-
-      gsap.to(el, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: config.duration,
-        delay,
-        ease: ease.reveal,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 88%",
-          toggleActions: "play none none none",
-          once: true,
-        },
+      mm.add("(max-width: 767px)", () => {
+        // Task 17 — shorter, simpler mobile reveals
+        gsap.fromTo(
+          el,
+          { autoAlpha: 0, y: Math.min(travel, 18) },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: duration.copy,
+            delay,
+            ease: ease.reveal,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 92%",
+              toggleActions: "play none none none",
+              once: true,
+            },
+          }
+        )
       })
+
+      mm.add("(min-width: 768px)", () => {
+        const from: gsap.TweenVars = { autoAlpha: 0, y: travel }
+        if (variant === "visual") {
+          from.scale = 0.97
+        }
+
+        gsap.set(el, from)
+
+        gsap.to(el, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: config.duration,
+          delay,
+          ease: ease.reveal,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 88%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        })
+      })
+
+      return () => mm.revert()
     },
     { dependencies: [still, delay, travel, variant] as const, revertOnUpdate: true }
   )

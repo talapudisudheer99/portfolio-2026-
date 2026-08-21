@@ -75,8 +75,8 @@ export function SamewardProductVisual({
           <span />
         </span>
         <span className="product-chrome-url">sameward.com</span>
-        <span className="type-micro inline-flex items-center gap-1.5 text-sameward-ink">
-          <span className="size-1.5 rounded-full bg-sameward-ink" />
+        <span className="type-micro inline-flex items-center gap-1.5 text-primary">
+          <span className="size-1.5 rounded-full bg-primary" />
           <span>Live</span>
         </span>
       </div>

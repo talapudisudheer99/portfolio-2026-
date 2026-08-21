@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { duration, ease, gap } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -17,8 +16,8 @@ interface ApproachActivateProps {
 }
 
 /**
- * Phase 08 Task 11 — technical approach step activation.
- * Number → title → detail. Uses existing markup only.
+ * Phase 09 Task 8 — scroll through three engineering decisions.
+ * Active step brightens; previous settle; next waits. Scrub-linked.
  */
 export function ApproachActivate({
   children,
@@ -46,67 +45,75 @@ export function ApproachActivate({
 
       const mm = gsap.matchMedia()
 
-      // Task 17 — mobile: settle to final state, no scrub/sequence cost
       mm.add("(max-width: 767px)", () => {
         gsap.set(nums, { autoAlpha: 1 })
         gsap.set(titles, { autoAlpha: 1 })
         gsap.set(details, { autoAlpha: 1, y: 0 })
+        gsap.set(steps, { autoAlpha: 1 })
         if (rule) gsap.set(rule, { scaleX: 1, clearProps: "transform" })
       })
 
       mm.add("(min-width: 768px)", () => {
-        gsap.set(nums, { autoAlpha: 0.35 })
-        gsap.set(titles, { autoAlpha: 0.4 })
-        gsap.set(details, { autoAlpha: 0, y: 10 })
+        gsap.set(steps, { autoAlpha: 0.35 })
+        gsap.set(nums, { autoAlpha: 0.3 })
+        gsap.set(titles, { autoAlpha: 0.35 })
+        gsap.set(details, { autoAlpha: 0, y: 14 })
         if (rule) gsap.set(rule, { scaleX: 0, transformOrigin: "left center" })
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: root,
-            start: "top 78%",
-            toggleActions: "play none none none",
-            once: true,
+            start: "top 72%",
+            end: "bottom 45%",
+            scrub: 0.85,
           },
         })
 
         if (rule) {
           tl.to(rule, {
             scaleX: 1,
-            duration: duration.trace,
-            ease: ease.reveal,
+            duration: 0.2,
+            ease: "none",
           })
         }
 
-        steps.forEach((_, i) => {
+        steps.forEach((step, i) => {
+          const at = i === 0 ? (rule ? ">" : 0) : ">"
+
+          // Activate current
           tl.to(
-            nums[i],
-            {
-              autoAlpha: 1,
-              duration: duration.micro,
-              ease: ease.reveal,
-            },
-            i === 0 ? (rule ? "-=0.05" : 0) : `+=${gap.nodes}`
+            step,
+            { autoAlpha: 1, duration: 0.18, ease: "none" },
+            at
           )
             .to(
+              nums[i],
+              { autoAlpha: 1, duration: 0.12, ease: "none" },
+              "<"
+            )
+            .to(
               titles[i],
-              {
-                autoAlpha: 1,
-                duration: duration.trace,
-                ease: ease.reveal,
-              },
-              "<+=0.04"
+              { autoAlpha: 1, duration: 0.14, ease: "none" },
+              "<+=0.02"
             )
             .to(
               details[i],
-              {
-                autoAlpha: 1,
-                y: 0,
-                duration: duration.copy,
-                ease: ease.reveal,
-              },
-              "<+=0.05"
+              { autoAlpha: 1, y: 0, duration: 0.18, ease: "none" },
+              "<+=0.03"
             )
+
+          // Settle previous steps (still readable, quieter)
+          if (i > 0) {
+            tl.to(
+              steps[i - 1],
+              { autoAlpha: 0.55, duration: 0.12, ease: "none" },
+              "<"
+            )
+          }
         })
+
+        // Hold final clarity
+        tl.to({}, { duration: 0.15 })
       })
 
       return () => mm.revert()

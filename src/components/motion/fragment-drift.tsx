@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { duration, ease } from "@/lib/motion"
+import { ease } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -19,9 +19,8 @@ interface FragmentDriftProps {
 }
 
 /**
- * Phase 08 Task 10 — content-driven problem motion.
- * Existing Talk / Plan / Ask nodes drift apart on enter, then settle together.
- * Typography/transform only — no new UI.
+ * Phase 09 Task 7 — fragmentation → unification (content-driven).
+ * Talk / Plan / Ask drift apart, then converge as scroll resolves context.
  */
 export function FragmentDrift({
   children,
@@ -45,36 +44,52 @@ export function FragmentDrift({
       const mm = gsap.matchMedia()
 
       mm.add("(min-width: 768px)", () => {
-        const offsets = items.map((_, i) => {
-          const mid = (items.length - 1) / 2
-          return (i - mid) * 18
-        })
+        const mid = (items.length - 1) / 2
+        const offsets = items.map((_, i) => (i - mid) * 44)
 
         gsap.set(items, {
           x: (i) => offsets[i] ?? 0,
-          autoAlpha: 0.55,
+          y: (i) => ((i - mid) % 2 === 0 ? -10 : 12),
+          autoAlpha: 0.42,
+          filter: "blur(1.5px)",
         })
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: root,
-            start: "top 80%",
-            end: "top 35%",
-            scrub: 0.85,
+            start: "top 85%",
+            end: "top 28%",
+            scrub: 0.95,
           },
         })
 
+        // Peak fragmentation mid-scroll, then unify
         tl.to(items, {
+          x: (i) => (offsets[i] ?? 0) * 1.15,
+          y: (i) => (((i - mid) % 2 === 0 ? -10 : 12) * 1.2),
+          autoAlpha: 0.55,
+          filter: "blur(2px)",
+          ease: "none",
+          duration: 0.35,
+        }).to(items, {
           x: 0,
+          y: 0,
           autoAlpha: 1,
-          duration: duration.section,
+          filter: "blur(0px)",
           ease: ease.cinematic,
-          stagger: { each: 0.04, from: "center" },
+          stagger: { each: 0.03, from: "center" },
+          duration: 0.65,
         })
       })
 
       mm.add("(max-width: 767px)", () => {
-        gsap.set(items, { x: 0, autoAlpha: 1, clearProps: "transform" })
+        gsap.set(items, {
+          x: 0,
+          y: 0,
+          autoAlpha: 1,
+          filter: "none",
+          clearProps: "transform,filter",
+        })
       })
 
       return () => mm.revert()

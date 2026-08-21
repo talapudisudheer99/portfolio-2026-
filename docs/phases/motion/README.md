@@ -1,14 +1,16 @@
-# Motion system — Engineering Trace (vocabulary) + Phase 08 (orchestration)
+# Motion system — Engineering Trace (vocabulary) + Phase 09 (calibration)
 
 > **UI is frozen.** Do not redesign sections.  
-> **Complete:** [Phase 08 — Global Motion + Interaction System](../08-global-motion-system/README.md).  
-> Phase 07 token cleanup is **superseded** by Phase 08.
+> **Complete:** [Phase 09 — Motion Calibration](../09-motion-calibration/README.md).  
+> Phase 08 shipped the system; Phase 09 calibrated **perceived** cinematic quality.  
+> Phase 07 token cleanup remains **superseded**.
 
 | Track | Role | Status |
 |-------|------|--------|
 | Engineering Trace | Reveal vocabulary (`MaskedLine`, `TraceNode`, …) | ✅ Implemented |
 | [07](../07-motion-unification/README.md) | Token alignment / double-enter cleanup | ⚠️ Superseded |
-| **[08](../08-global-motion-system/README.md)** | **Global motion + atmosphere + scroll** | ✅ Done |
+| [08](../08-global-motion-system/README.md) | Global motion + atmosphere + scroll | ✅ Done |
+| **[09](../09-motion-calibration/README.md)** | **Calibration + cinematic polish** | ✅ Done |
 
 ## Concept
 
@@ -33,8 +35,8 @@ Do not animate the same element with GSAP + Framer + Three.
 | `TraceNode` / `TraceSequence` | Lists / nodes |
 | `FadeIn` / `SectionArrive` | Supporting copy / blocks |
 
-Tokens: `src/lib/motion.ts`. Phase 08 may expand durations (micro / UI /
-section / cinematic) without inventing a second token file.
+Tokens: `src/lib/motion.ts`. Phase 09 calibrates durations / travel / mood mix
+against perception — do not invent a second token file.
 
 ## Explicitly rejected
 

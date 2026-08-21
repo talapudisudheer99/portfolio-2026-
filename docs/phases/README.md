@@ -22,14 +22,14 @@ Ops / env / deploy: [PORTFOLIO.md](../PORTFOLIO.md)
 | [06](./06-typography-system/README.md) | Typography system | ✅ Done |
 | [07](./07-motion-unification/README.md) | Motion unification (token pass) | ⚠️ Superseded |
 | [08](./08-global-motion-system/README.md) | **Global motion + interaction system** | ✅ Done |
+| [09](./09-motion-calibration/README.md) | **Motion calibration + cinematic polish** | ✅ Done |
 
-**UI is locked.** Visual redesign phases 01–06 are done. Do not change layout,
-typography, copy, or product mocks.
+**UI is locked** for layout, copy, and product mocks. Typography families follow
+[Phase 06](./06-typography-system/README.md) (Space Grotesk + Inter + JetBrains Mono).
 
-**Motion track:** [docs/phases/08-global-motion-system/README.md](./08-global-motion-system/README.md)
-is the source of truth. One coherent motion layer (Lenis + GSAP ScrollTrigger +
-one Three atmosphere + Framer micro). Phase 07 was a token/cleanup pass and did
-not deliver the cinematic system — use Phase 08 tasks 0–19 in order.
+**Motion track:** [docs/phases/09-motion-calibration/README.md](./09-motion-calibration/README.md)
+— Phase 09 complete. Phase 08 shipped the system; Phase 09 calibrated perceived
+cinematic quality (UI still locked).
 
 Engineering Trace reveal primitives remain in
 [docs/phases/motion/README.md](./motion/README.md) as vocabulary notes only.
@@ -69,7 +69,8 @@ Sources:
 - [Portfolio: dashboard to editorial](https://abdulkadersafi.com/blog/i-redesigned-my-portfolio-from-tech-dashboard-to-editorial):
   warm canvas, one accent, magazine rows, no endless cards or gradient hero.
 - [2026 typography guidance](https://madegooddesigns.com/web-typography-trends-2026/):
-  expressive serif display type, neutral sans body, fluid type with `clamp()`.
+  fluid type with `clamp()`; this portfolio uses geometric space display
+  (Space Grotesk) rather than editorial serif to match the cinematic dark world.
 - [Recruiter scan guidance](https://showproof.io/guides/how-recruiters-read-developer-portfolios/):
   role/value proposition and strongest project must be obvious immediately.
 
@@ -85,7 +86,7 @@ dashboard.
 - One portfolio accent only: oxblood `#8E2B3A` light / `#CF5C63` dark.
 - Sameward Ocean Blue appears only inside Sameward media/diagrams. It is product
   content, not the portfolio chrome.
-- Expressive variable serif for large statements; neutral sans for body/UI;
+- Geometric space display (Space Grotesk) for large statements; Inter for body/UI;
   mono only for technical metadata (12px floor on page chrome).
 - Full type scale and section assignments: [Phase 06](./06-typography-system/README.md).
 - Hairline rules, large whitespace, crop/overlap, and typographic scale create

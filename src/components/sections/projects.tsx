@@ -45,7 +45,7 @@ export function Projects() {
 
                 <div className="projects-inside-heading col-span-12">
                   <FragmentDrift
-                    className="projects-inside-steps grid grid-cols-1 gap-0 sm:grid-cols-3"
+                    className="projects-inside-steps grid grid-cols-1 gap-0 lg:grid-cols-3"
                     itemSelector=".projects-flow-step--inside"
                   >
                     {[
@@ -82,14 +82,14 @@ export function Projects() {
         <div className="content-grid gap-y-10 md:gap-y-12">
           <SectionReveal
             variant="label"
-            className="projects-case-kicker col-span-12 md:col-span-3 md:self-start"
+            className="projects-case-kicker col-span-12 lg:col-span-3 lg:self-start"
           >
             <TraceRule className="projects-section-rule projects-section-rule--kicker mb-6 bg-border" />
             <p className="section-kicker text-primary">The problem</p>
           </SectionReveal>
 
           <EditorialWordReveal
-            className="projects-problem-statement col-span-12 md:col-span-8 md:col-start-5"
+            className="projects-problem-statement col-span-12 lg:col-span-8 lg:col-start-5"
             lines={
               featured.problemLines ??
               featured.problem?.match(/[^.!?]+[.!?]+/g)?.map((line) => line.trim()) ??
@@ -103,10 +103,10 @@ export function Projects() {
         <div className="content-grid gap-y-10 md:gap-y-12">
           <SectionReveal
             variant="label"
-            className="projects-case-kicker col-span-12 md:col-span-3 md:self-start"
+            className="projects-case-kicker col-span-12 lg:col-span-3 lg:self-start"
           >
             <TraceRule className="projects-section-rule projects-section-rule--kicker mb-6 bg-border" />
-            <p className="section-kicker text-sameward-ink">The approach</p>
+            <p className="section-kicker text-primary">The approach</p>
             {featured.approachHeadline ? (
               <MaskedLine display delay={0.06}>
                 <h3 className="projects-approach-headline editorial-display mt-5">
@@ -115,15 +115,15 @@ export function Projects() {
               </MaskedLine>
             ) : null}
             {featured.approachLead ? (
-              <p className="projects-approach-lead type-lead mt-4 text-muted-foreground md:max-w-[20ch]">
+              <p className="projects-approach-lead type-lead mt-4 text-muted-foreground lg:max-w-[20ch]">
                 {featured.approachLead}
               </p>
             ) : null}
           </SectionReveal>
 
-          <div className="projects-approach-body col-span-12 md:col-span-8 md:col-start-5">
+          <div className="projects-approach-body col-span-12 lg:col-span-8 lg:col-start-5">
             <p className="projects-approach-sync type-meta text-muted-foreground">
-              <span className="text-sameward-ink">Problem</span>
+              <span className="text-primary">Problem</span>
               <span aria-hidden="true" className="mx-2 opacity-60">
                 ·
               </span>
@@ -134,7 +134,7 @@ export function Projects() {
                 className="projects-approach-activate-rule"
                 aria-hidden="true"
               />
-              <div className="projects-approach-steps grid gap-0 sm:grid-cols-3 sm:gap-6 lg:gap-8">
+              <div className="projects-approach-steps grid gap-0 grid-cols-1 lg:grid-cols-3 lg:gap-8">
                 {(featured.approachSteps ?? []).map((step, index) => (
                   <div
                     key={step.title}

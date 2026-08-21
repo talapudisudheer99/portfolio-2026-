@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react"
 
+import { MotionParallax } from "@/components/motion/parallax-layer"
 import { SamewardPanel } from "@/components/shared/sameward-panel"
 
 interface FeaturedWorkTabletStageProps {
@@ -12,7 +13,7 @@ export function FeaturedWorkTabletStage({
   parallaxRef,
 }: Readonly<FeaturedWorkTabletStageProps>) {
   return (
-    <div ref={parallaxRef} className="fd-tablet-parallax">
+    <div ref={parallaxRef} className="fd-tablet-parallax" data-cursor="View">
       <div className="fd-tablet-stage">
         <div className="fd-tablet-body">
           <div className="fd-tablet-chassis">
@@ -28,7 +29,11 @@ export function FeaturedWorkTabletStage({
               <SamewardPanel embedded />
             </div>
           </div>
-          <div className="fd-tablet-ground" aria-hidden="true" />
+          <MotionParallax
+            strength="bg"
+            className="fd-tablet-ground"
+            aria-hidden="true"
+          />
         </div>
       </div>
     </div>

@@ -18,21 +18,21 @@ export const aboutContent: AboutContent = {
       title: "Build Thoughtfully",
       detail:
         "Turning business needs into clean, scalable and\nmaintainable solutions.",
-      accent: "violet",
+      accent: "gold",
       icon: Code2,
     },
     {
       title: "Ship End-to-End",
       detail:
         "From clean architecture to production-ready\nsystems.",
-      accent: "cyan",
+      accent: "amber",
       icon: Layers,
     },
     {
       title: "Solve Real Problems",
       detail:
         "Creating smooth, performant and delightful\nexperiences.",
-      accent: "pink",
+      accent: "ember",
       icon: Rocket,
     },
   ],

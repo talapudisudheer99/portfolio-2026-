@@ -7,14 +7,16 @@ import { SplitText } from "gsap/SplitText"
 import { ArrowUpRight, Download, ExternalLink } from "lucide-react"
 import { useEffect, useRef } from "react"
 
+import { MotionParallax } from "@/components/motion/parallax-layer"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { siteConfig } from "@/data/site"
 import { duration, ease } from "@/lib/motion"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText)
 
-const REACH = 180
-const PUSH = 22
+/** Soft magnetic depth — Level 3 must not overpower Level 1 atmosphere */
+const REACH = 160
+const PUSH = 10
 
 export function Hero() {
   const { hero } = siteConfig
@@ -38,6 +40,7 @@ export function Hero() {
       const prefersStill = stillRef.current
 
       const contentEl = section.querySelector("[data-h-content]") as HTMLElement
+      const cueEl = section.querySelector("[data-h-cue]") as HTMLElement | null
       const allTargets =
         "[data-h-kicker], [data-h-tagline], [data-h-status], [data-h-cta]"
 
@@ -49,26 +52,30 @@ export function Hero() {
       gsap.set(allTargets, {
         autoAlpha: 0,
         y: (_i, el) => {
-          if (el.matches("[data-h-kicker]")) return 16
-          if (el.matches("[data-h-tagline]")) return 18
-          if (el.matches("[data-h-status]")) return 14
-          return 10
+          if (el.matches("[data-h-tagline]")) return 28
+          if (el.matches("[data-h-status]")) return 22
+          return 18
         },
       })
-      gsap.set(headlineEl, { autoAlpha: 1 })
+      gsap.set(headlineEl, { autoAlpha: 1, scale: 0.985 })
+      if (cueEl) gsap.set(cueEl, { autoAlpha: 0, y: 12 })
       contentEl.style.visibility = "visible"
 
       const finePointer = window.matchMedia(
         "(hover: hover) and (pointer: fine)"
       ).matches
 
+      // Phase 09 Task 5 — one assemble timeline, then calm
       const tl = gsap.timeline({ defaults: { ease: ease.reveal } })
 
-      tl.from("[data-h-kicker]", {
-        y: 16,
-        autoAlpha: 0,
-        duration: duration.copy,
-      })
+      const kickerEl = section.querySelector("[data-h-kicker]")
+      if (kickerEl) {
+        tl.fromTo(
+          kickerEl,
+          { y: 28, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: duration.copy }
+        )
+      }
 
       const split = SplitText.create(headlineEl, {
         type: "words",
@@ -77,7 +84,12 @@ export function Hero() {
         wordsClass: "hero-word",
         aria: "none",
         onSplit(self) {
-          gsap.set(self.words, { force3D: true, autoAlpha: 0, y: 36 })
+          gsap.set(self.words, {
+            force3D: true,
+            autoAlpha: 0,
+            y: 56,
+            filter: "blur(6px)",
+          })
           headlineEl
             .querySelectorAll("[data-accent] .hero-word")
             .forEach((el) => {
@@ -88,11 +100,20 @@ export function Hero() {
             {
               y: 0,
               autoAlpha: 1,
+              filter: "blur(0px)",
               duration: duration.hero,
-              stagger: { each: 0.035, from: "start" },
+              stagger: { each: 0.05, from: "start" },
               ease: "power4.out",
+              onComplete: () => {
+                gsap.set(self.words, { clearProps: "filter" })
+              },
             },
-            "-=0.12"
+            kickerEl ? "-=0.08" : 0
+          )
+          tl.to(
+            headlineEl,
+            { scale: 1, duration: duration.section, ease: ease.cinematic },
+            "<+=0.15"
           )
         },
       })
@@ -100,12 +121,12 @@ export function Hero() {
       tl.to(
         "[data-h-tagline]",
         { y: 0, autoAlpha: 1, duration: duration.copy },
-        "-=0.28"
+        "-=0.35"
       )
         .to(
           "[data-h-status]",
           { y: 0, autoAlpha: 1, duration: duration.copy },
-          "-=0.22"
+          "-=0.28"
         )
         .to(
           "[data-h-cta]",
@@ -113,44 +134,56 @@ export function Hero() {
             y: 0,
             autoAlpha: 1,
             duration: duration.ui,
-            stagger: 0.05,
+            stagger: 0.07,
           },
-          "-=0.18"
+          "-=0.2"
         )
 
+      if (cueEl) {
+        tl.to(
+          cueEl,
+          { y: 0, autoAlpha: 1, duration: duration.ui },
+          "-=0.05"
+        )
+      }
+
       gsap.to(headlineEl, {
-        yPercent: -12,
+        yPercent: -14,
         ease: "none",
         scrollTrigger: {
           trigger: section,
           start: "top top",
           end: "bottom top",
-          scrub: 0.6,
+          scrub: 0.75,
         },
       })
 
       gsap.to("[data-h-content]", {
         autoAlpha: 0,
-        yPercent: -8,
+        yPercent: -10,
         ease: "none",
         scrollTrigger: {
           trigger: section,
           start: "35% top",
           end: "85% top",
-          scrub: 0.6,
+          scrub: 0.75,
         },
       })
 
-      if (!finePointer) return
+      if (!finePointer) {
+        return () => {
+          split.revert()
+        }
+      }
 
       const words = gsap.utils.toArray<HTMLElement>(".hero-word")
       let centers: { x: number; y: number }[] = []
 
       const xTo = words.map((n) =>
-        gsap.quickTo(n, "x", { duration: 0.45, ease: "power3.out" })
+        gsap.quickTo(n, "x", { duration: 0.5, ease: "power3.out" })
       )
       const yTo = words.map((n) =>
-        gsap.quickTo(n, "y", { duration: 0.45, ease: "power3.out" })
+        gsap.quickTo(n, "y", { duration: 0.5, ease: "power3.out" })
       )
 
       function cacheCenters() {
@@ -209,16 +242,23 @@ export function Hero() {
         data-h-content=""
         style={{ visibility: "hidden" }}
       >
-        <p data-h-kicker="" className="hero-kicker">
-          <span className="hero-kicker-dot" aria-hidden="true" />
-          {hero.kicker}
-        </p>
+        {hero.kicker ? (
+          <p data-h-kicker="" className="hero-kicker">
+            <span className="hero-kicker-dot" aria-hidden="true" />
+            {hero.kicker}
+          </p>
+        ) : null}
 
         <h1 ref={headlineRef} className="hero-headline">
           {hero.headline.map((seg, i) => (
             <span key={i}>
               {seg.break && <br />}
-              <span data-accent={seg.accent ? "" : undefined}>{seg.text}</span>{" "}
+              <span
+                data-accent={seg.accent ? "" : undefined}
+                data-nowrap={seg.nowrap ? "" : undefined}
+              >
+                {seg.text}
+              </span>{" "}
             </span>
           ))}
         </h1>
@@ -265,9 +305,13 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="hero-scroll-cue" aria-hidden="true">
-        <div className="hero-scroll-line" />
-      </div>
+      <MotionParallax
+        strength="decoration"
+        className="hero-scroll-cue"
+        aria-hidden="true"
+      >
+        <div data-h-cue="" className="hero-scroll-line" />
+      </MotionParallax>
     </section>
   )
 }

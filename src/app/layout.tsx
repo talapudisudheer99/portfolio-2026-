@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google"
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google"
 
 import { MotionRoot } from "@/components/motion"
 import { PaletteProvider } from "@/components/palette-provider"
@@ -9,15 +9,15 @@ import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-const fraunces = Fraunces({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  variable: "--font-space-grotesk",
   display: "swap",
 })
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  variable: "--font-inter",
   display: "swap",
 })
 
@@ -41,8 +41,8 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        fraunces.variable,
-        manrope.variable,
+        spaceGrotesk.variable,
+        inter.variable,
         jetbrainsMono.variable
       )}
     >

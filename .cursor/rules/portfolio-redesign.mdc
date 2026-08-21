@@ -1,5 +1,5 @@
 ---
-description: Portfolio 2026 — UI locked; Phase 08 global motion; never edit Sameward/TeamHub repo
+description: Portfolio 2026 — UI locked; Phase 09 motion calibration; never edit Sameward/TeamHub repo
 alwaysApply: true
 ---
 
@@ -11,8 +11,10 @@ This repo only. Never modify `/Desktop/2026_Project_learning/teamhub-ai` from po
 
 ## Goal
 
-Interview-winning editorial portfolio with Sameward as the flagship case study.
-**UI is locked.** Active work is global motion + interaction — not redesign.
+Interview-winning cinematic portfolio with Sameward as the flagship case study.
+**UI is locked** (layout/copy/palette). Type stack is cosmic geometric:
+**Space Grotesk** (display) · **Inter** (body/UI) · **JetBrains Mono** (meta).
+Active work is motion **calibration** — not redesign, not new architecture.
 
 ## Direction locked
 
@@ -24,9 +26,9 @@ Interview-winning editorial portfolio with Sameward as the flagship case study.
 
 ## Execution
 
-Follow `docs/phases/README.md`. Active: **Phase 08**  
-[`docs/phases/08-global-motion-system/README.md`](docs/phases/08-global-motion-system/README.md)  
-One task at a time. UI/copy/layout/mocks are frozen.
+Follow `docs/phases/README.md`. Active motion track: **Phase 09 complete**  
+[`docs/phases/09-motion-calibration/README.md`](docs/phases/09-motion-calibration/README.md)  
+UI/copy/layout/mocks remain frozen. Calibrate perception — do not assume “exists in code” means “works visually.”
 
 ## Content rule
 

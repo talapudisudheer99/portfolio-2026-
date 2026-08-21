@@ -23,8 +23,8 @@ interface MotionParallaxProps {
 }
 
 /**
- * Phase 08 Task 7 — GSAP ScrollTrigger parallax for decoration / visuals.
- * Do not wrap primary content. Mobile: no travel.
+ * Phase 09 Task 4 — GSAP ScrollTrigger parallax for decoration / visuals.
+ * Do not wrap primary content. Tablet: reduced travel. Mobile: none.
  */
 export function MotionParallax({
   children,
@@ -45,7 +45,7 @@ export function MotionParallax({
 
       const mm = gsap.matchMedia()
 
-      mm.add("(min-width: 768px)", () => {
+      mm.add("(min-width: 1024px)", () => {
         gsap.fromTo(
           el,
           { y: travel },
@@ -56,7 +56,25 @@ export function MotionParallax({
               trigger: el,
               start: "top bottom",
               end: "bottom top",
-              scrub: 0.65,
+              scrub: 0.7,
+            },
+          }
+        )
+      })
+
+      mm.add("(min-width: 768px) and (max-width: 1023px)", () => {
+        const mid = travel * 0.55
+        gsap.fromTo(
+          el,
+          { y: mid },
+          {
+            y: -mid,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.75,
             },
           }
         )
