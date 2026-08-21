@@ -45,6 +45,8 @@ export interface HeadlineSegment {
   accent?: boolean
   /** Start a new visual line in the hero. */
   break?: boolean
+  /** Keep this segment on one line (no mid-phrase wrap). */
+  nowrap?: boolean
   /** Indent this line on the broken composition. */
   offset?: boolean
 }
@@ -57,8 +59,8 @@ export interface HeroLayer {
 
 export interface HeroContent {
   badge: string
-  /** Small label above the headline. */
-  kicker: string
+  /** Small label above the headline. Optional — omit for a cleaner hero. */
+  kicker?: string
   wordmark: string
   surname: string
   headline: HeadlineSegment[]
@@ -208,7 +210,7 @@ export interface AboutHighlight {
   value: string
 }
 
-export type AboutAccent = "violet" | "cyan" | "pink"
+export type AboutAccent = "gold" | "amber" | "ember"
 
 export interface AboutFeatureCard {
   title: string

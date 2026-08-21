@@ -1,8 +1,8 @@
 # Phase 06 — Typography system
 
-**Goal:** Replace fragmented per-component font sizes with a serif-led editorial
-type system aligned to the bone / blue-black / oxblood theme.  
-**Status:** 🔄 In progress  
+**Goal:** Unified type scale for the cinematic space portfolio — geometric
+display + neutral body + mono metadata, aligned to the dark gold universe.  
+**Status:** ✅ Complete (families updated for space theme)  
 **Prerequisite:** Phases 00–05 shipped to `main` (stable baseline).
 
 Full ops context: [PORTFOLIO.md](../../PORTFOLIO.md) · Phase index:
@@ -12,20 +12,22 @@ Full ops context: [PORTFOLIO.md](../../PORTFOLIO.md) · Phase index:
 
 ## Why this phase exists
 
-The site is visually stable, but typography still reads as **assembled**, not
-**authored**:
+Typography must feel like one authored system, not assembled scraps — and it
+must match the **space / mission-control visual world** (not an editorial
+magazine).
 
-1. **Hierarchy inversion** — docs say Fraunces owns large statements, but the hero
-   headline uses Manrope 800; Fraunces appears only on accent words.
-2. **Scale fragmentation** — `globals.css` contains dozens of one-off sizes
-   (`0.62rem`, `9px`, `10px`, bespoke `clamp()` per block) instead of tokens.
-3. **Kicker inconsistency** — hero kicker uses sans uppercase; section kickers
-   use mono uppercase; capabilities kickers sit at 10px.
-4. **Dashboard density** — metadata labels below 12px conflict with Phase 01’s
-   rejection of small-type SaaS patterns.
+Historical issues this phase solved:
+
+1. **Hierarchy inversion** — display type not owning large statements.
+2. **Scale fragmentation** — one-off sizes instead of tokens.
+3. **Kicker inconsistency** — mixed sans/mono eyebrows.
+4. **Dashboard density** — metadata below 12px.
+5. **Theme mismatch (2026 update)** — soft serif (Fraunces) fought the
+   cinematic starfield / craft / atmosphere language. Replaced with geometric
+   space grotesk.
 
 This phase does **not** change copy, palette behaviour, or layout shells. It
-unifies font roles, sizes, and line heights across the live homepage sections.
+owns font families, roles, sizes, and line heights.
 
 ---
 
@@ -53,24 +55,36 @@ inside product frames.
 
 ---
 
-## New typography system (locked spec)
+## Typography system (locked spec)
 
-### Font stack (unchanged families, stricter roles)
+### Font stack
 
-| Token | Family | Role |
-| ----- | ------ | ---- |
-| `--font-display` | **Fraunces** (+ Georgia fallback) | Hero headline, section titles, job titles, stat numbers, accent display lines |
-| `--font-heading` / `--font-sans` | **Manrope** | Body copy, taglines, nav, buttons, form fields, UI labels |
-| `--font-mono` | **JetBrains Mono** | Kickers, dates, indices, tech metadata, mockup chrome labels |
+Loaded in `src/app/layout.tsx` via `next/font/google`.
+
+| Token | Family | CSS var | Role |
+| ----- | ------ | ------- | ---- |
+| `--font-display` / `--font-heading` | **Space Grotesk** | `--font-space-grotesk` | Hero headline, section titles, job titles, stat numbers, accent display lines, logo mark |
+| `--font-sans` | **Inter** | `--font-inter` | Body copy, taglines, nav links, buttons, form fields, UI labels |
+| `--font-mono` | **JetBrains Mono** | `--font-jetbrains` | Kickers, dates, indices, tech metadata, mockup chrome labels |
+
+**Why these families (research summary):**
+
+- Modern cosmic / dark product UIs favor **geometric grotesks** over costume
+  sci-fi display faces (Orbitron / Audiowide) and soft editorial serifs.
+- **Space Grotesk** — geometric with mono DNA; common on tech portfolios and
+  dark-mode brand systems; reads “space / engineered” without HUD costume.
+- **Inter** — screen-optimized neutral body for long reading on dark canvas.
+- **JetBrains Mono** — retained for mission-style metadata (already on-theme).
+- Avoided as primary display: Orbitron, Audiowide, full-page monospace HUD.
 
 **Rules:**
 
-- Serif leads **presence** (H1, H2, H3 display moments).
-- Sans leads **function** (paragraphs, nav, CTAs, form controls).
+- Space Grotesk leads **presence** (H1, H2, H3 display moments).
+- Inter leads **function** (paragraphs, nav, CTAs, form controls).
 - Mono leads **metadata only** — all kickers/eyebrows use mono, including hero.
 - Do **not** tie font family to palette picker; palette affects colour tokens only.
-- Fraunces variable axes: `"SOFT" 50`, `"WONK" 1` on `.editorial-display` and
-  display headlines.
+- No Fraunces axes (`SOFT` / `WONK`). Space Grotesk has no true italic — accent
+  words use **weight 600 + ember gradient**, not faux italic.
 
 ### Type scale (CSS custom properties)
 
@@ -89,33 +103,33 @@ inside product frames.
 
 | Class | Applies |
 | ----- | ------- |
-| `.editorial-display` | Fraunces + variable axes + display tracking (base serif hook) |
+| `.editorial-display` | Space Grotesk display hook + tracking (class name kept for stability) |
 | `.type-display` | Display size/leading — hero + largest moments |
 | `.type-title` | Section H2 scale |
 | `.type-section` | Subsection / job title scale |
-| `.type-lead` | Manrope lead body |
-| `.type-body` | Manrope 16px body |
-| `.type-ui` | Manrope UI chrome |
+| `.type-lead` | Inter lead body |
+| `.type-body` | Inter 16px body |
+| `.type-ui` | Inter UI chrome |
 | `.type-meta` | Mono kicker/metadata |
 | `.type-micro` | Mono mockup labels |
-| `.type-accent` | Gradient italic accent words (hero + gradient headline lines) |
+| `.type-accent` | Gradient semibold accent words (hero + gradient headline lines) |
 | `.section-kicker` | Extends `.type-meta` — shared eyebrow |
 
 ### Accent typography
 
 - Hero accent segments and gradient headline lines use `var(--ember-gradient)` via
   `.type-accent` / `.hero-accent-word` / `*--gradient` modifiers.
+- Accents are **semibold Space Grotesk + gradient**, not italic serif.
 - One gradient accent moment per section maximum (already the pattern).
-- Dark canvas: body copy uses `font-weight: 450` equivalent (`500` on Manrope) for
-  readability over the Fluid Blob background.
+- Dark canvas: body uses Inter `font-weight: 400` for readability over atmosphere.
 
 ### Section-by-section assignment
 
 #### Hero (`#hero`)
 
-- Kicker → `.section-kicker` / `.type-meta` (mono, not sans)
-- Headline → `.type-display.editorial-display` (Fraunces primary)
-- Accent words → `.type-accent` (italic gradient)
+- Kicker → `.section-kicker` / `.type-meta` (mono)
+- Headline → `.type-display.editorial-display` (Space Grotesk)
+- Accent words → `.type-accent` (semibold gradient)
 - Tagline → `.type-lead`
 - Status → `.type-meta`
 - CTAs → `.type-ui` + existing button weights
@@ -133,7 +147,7 @@ inside product frames.
 - Section/sidebar kickers → `.type-meta` at 12px (not 10px)
 - Headline lines → `.editorial-display` + `--text-title` clamp
 - Hero description → `.type-lead`
-- Card titles → Manrope semibold `.type-ui`
+- Card / rock titles → Space Grotesk via `.editorial-display` or Inter semibold `.type-ui`
 - Card summary → `.type-body` at `--text-ui` size
 - Marquee labels → `.type-meta`
 
@@ -143,7 +157,7 @@ inside product frames.
 - Stat labels → `.type-meta`
 - Stat values → `.editorial-display.type-section`
 - Job title → `.type-section.editorial-display`
-- Company line → Manrope semibold `.type-lead`
+- Company line → Inter semibold `.type-lead`
 - Bullets → `.type-body` via `--text-ui` for density
 
 #### About (`#about`)
@@ -156,19 +170,19 @@ inside product frames.
 
 - Kicker → `.section-kicker`
 - Closing headline → `.type-title.editorial-display`
-- Email link → `.type-section` weight on sans (functional, not serif)
+- Email link → `.type-section` weight on Inter (functional)
 - Form labels → `.type-meta`
 
 #### Navbar / Footer
 
-- Logo → Manrope 800 (UI mark, not editorial)
-- Nav links → `.type-ui`
+- Logo → Space Grotesk 800 (UI mark)
+- Nav links → `.type-ui` (Inter)
 - Nav index → `.type-meta`
 - Footer → `.type-ui` / `.type-body`
 
 ---
 
-## Implementation tasks (execute in order)
+## Implementation tasks
 
 ### Task 1 — Documentation ✅
 
@@ -176,40 +190,25 @@ inside product frames.
 - [x] Update `docs/phases/README.md` (phase table + IA)
 - [x] Update `docs/PORTFOLIO.md` typography + architecture sections
 - [x] Mark Phase 01 typography items as superseded by Phase 06
+- [x] Space-theme family swap documented (Space Grotesk + Inter + JetBrains Mono)
 
-### Task 2 — `src/app/globals.css` tokens & utilities
+### Task 2 — `src/app/globals.css` tokens & utilities ✅
 
 - [x] Add `--text-*`, `--leading-*`, `--tracking-*` to `@theme inline`
 - [x] Add `.type-*` utility classes in `@layer utilities`
-- [x] Extend `.editorial-display` to consume display tracking token
+- [x] `.editorial-display` consumes display tracking (no serif axes)
 - [x] Unify `.section-kicker` with `.type-meta`
 - [x] Dark-theme body weight/tracking tweak in `@layer base`
 
-### Task 3 — `globals.css` section blocks
+### Task 3 — `globals.css` section blocks ✅
 
-- [x] Hero (`.hero-kicker`, `.hero-headline`, `.hero-tagline`, `.hero-status`)
-- [x] Projects (problem, approach, shipped, inside-sync)
-- [x] Capabilities workspace (kickers, headline, cards, CTA)
-- [x] About workspace
-- [x] Experience (component-level; no dedicated globals block)
-- [x] Contact (component-level)
-- [x] Navbar / footer
+- [x] Hero, Projects, Capabilities, About, Experience, Contact, Navbar / footer
 - [x] Replace page-chrome `9px` / `10px` with `--text-meta`; mockup UI uses `--text-micro`
 
-### Task 4 — Components (remove inline typography)
+### Task 4 — Components ✅
 
-- [x] `shared/section-header.tsx`
-- [x] `sections/experience.tsx`
-- [x] `sections/projects.tsx`
-- [x] `sections/contact.tsx`
-- [x] `sections/about.tsx` (class hooks only if needed)
-- [x] `shared/capabilities-workspace.tsx`
-- [x] `shared/skill-marquee.tsx`
-- [x] `shared/parallax.tsx`
-- [x] `shared/sameward-product-visual.tsx` (micro only)
-- [x] `shared/sameward-panel.tsx` (micro only)
-- [x] `layout/footer.tsx`
-- [x] `app/opengraph-image.tsx` (align OG type with display token)
+- [x] Section + shared components hooked to type utilities
+- [x] `layout.tsx` loads Space Grotesk + Inter + JetBrains Mono
 
 ### Task 5 — Verify
 
@@ -223,17 +222,17 @@ inside product frames.
 
 ## Acceptance criteria
 
-- Hero headline is **Fraunces-led**; accent words remain gradient italic.
+- Hero headline is **Space Grotesk–led**; accent words are **semibold + ember gradient** (no italic serif).
 - Every kicker/eyebrow on the page uses **mono at 12px minimum**.
 - Body copy never renders below **16px** outside mockup frames.
 - Section titles pull from **`--text-title`** or **`--text-display`**, not ad-hoc
   `clamp()` in TSX.
-- No new font files; Fraunces + Manrope + JetBrains Mono only.
-- Typography feels like an **engineering journal**, not a SaaS dashboard.
+- Font families: **Space Grotesk + Inter + JetBrains Mono** only (via `next/font`).
+- Typography feels like a **cinematic space product system**, not a magazine editorial or SaaS dashboard.
 
 ## Out of scope
 
-- Changing font families (Instrument Serif A/B is a future experiment branch).
+- Costume sci-fi display faces (Orbitron, Audiowide) as primary type.
 - Palette-driven font swapping.
 - Sameward tablet interior layout redesign.
 - Light theme reintroduction (site is dark-first with forced dark theme).

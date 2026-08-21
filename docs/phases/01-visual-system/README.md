@@ -41,9 +41,9 @@ The boxed look is structural, not only a color problem:
 - [ ] Keep Sameward Ocean Blue scoped to project media only
 - [ ] Default theme should not force dark; keep toggle, prefer system or light
   for first paint unless product decision says otherwise
-- [x] Replace current heading font with an expressive variable serif; retain a
-  readable sans body face and lightweight mono metadata face *(Fraunces + Manrope +
-  JetBrains — hierarchy finalized in Phase 06)*
+- [x] Geometric space display + neutral body + mono metadata *(Space Grotesk +
+  Inter + JetBrains — hierarchy finalized in Phase 06; serif Fraunces retired
+  for space-theme alignment)*
 - [x] Use fluid type (`clamp`) for hero and section headings *(tokenized in Phase 06)*
 - [ ] Add layout primitives:
   - `SectionShell` — full-bleed `<section>` (optional subtle band, never a floating panel)

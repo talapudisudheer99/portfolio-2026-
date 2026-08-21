@@ -183,10 +183,10 @@ Tokens live in `src/app/globals.css`. Never hardcode hex values in components.
   breaks the scroll and was removed for exactly that reason.
 - The page has **one** dark climax (Profile/About). Adding more flattens it.
 
-**Typography:** Serif-led editorial system — Fraunces (`--font-display`) for
-hero and section display type; Manrope (`--font-sans`) for body, nav, and UI;
-JetBrains Mono (`--font-mono`) for kickers and metadata at a 12px floor.
-Tokens and utilities live in `src/app/globals.css`; full spec in
+**Typography:** Cosmic geometric system — Space Grotesk (`--font-display` /
+`--font-heading`) for hero and section display type; Inter (`--font-sans`) for
+body, nav, and UI; JetBrains Mono (`--font-mono`) for kickers and metadata at a
+12px floor. Tokens and utilities live in `src/app/globals.css`; full spec in
 [Phase 06](./phases/06-typography-system/README.md).
 
 | Token | Size | Use |

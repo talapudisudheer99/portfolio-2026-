@@ -85,7 +85,7 @@ export function Contact() {
         >
           <form
             onSubmit={handleSubmit(handleFormSubmit)}
-            className="contact-form space-y-6"
+            className="contact-form"
             aria-label="Contact form"
             noValidate
           >
@@ -95,21 +95,21 @@ export function Contact() {
             const errorId = `${field.name}-error`
 
             return (
-              <div key={field.name}>
+              <div key={field.name} className="contact-field">
                 <Label
                   htmlFor={field.name}
-                  className="type-meta text-muted-foreground"
+                  className="contact-label"
                 >
                   {field.label}
                 </Label>
                 {isTextarea ? (
                   <Textarea
                     id={field.name}
-                    rows={4}
+                    rows={5}
                     placeholder={field.placeholder}
                     aria-invalid={Boolean(error)}
                     aria-describedby={error ? errorId : undefined}
-                    className="mt-2 min-h-32 resize-y rounded-none border-0 border-b border-border bg-transparent px-0 py-3 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    className="contact-control contact-control--area"
                     {...register(field.name)}
                   />
                 ) : (
@@ -119,14 +119,14 @@ export function Contact() {
                     placeholder={field.placeholder}
                     aria-invalid={Boolean(error)}
                     aria-describedby={error ? errorId : undefined}
-                    className="mt-2 h-12 rounded-none border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    className="contact-control"
                     {...register(field.name)}
                   />
                 )}
                 {error ? (
                   <p
                     id={errorId}
-                    className="type-ui mt-2 text-destructive"
+                    className="contact-field-error"
                     role="alert"
                   >
                     {error.message}
@@ -140,7 +140,9 @@ export function Contact() {
             type="submit"
             disabled={isSubmitting}
             data-cursor="Send"
-            className="contact-submit type-ui h-12 rounded-full px-7 font-bold"
+            variant="default"
+            size="lg"
+            className="contact-submit"
           >
             {isSubmitting ? submittingLabel : submitLabel}
             <ArrowUpRight className="size-4" aria-hidden="true" />
@@ -150,8 +152,10 @@ export function Contact() {
             aria-live="polite"
             className={
               status === "error"
-                ? "type-ui text-destructive"
-                : "type-ui text-success"
+                ? "contact-status contact-status--error"
+                : status === "success"
+                  ? "contact-status contact-status--success"
+                  : "contact-status"
             }
           >
             {status === "idle" ? "" : statusMessage}

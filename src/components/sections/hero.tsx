@@ -52,7 +52,6 @@ export function Hero() {
       gsap.set(allTargets, {
         autoAlpha: 0,
         y: (_i, el) => {
-          if (el.matches("[data-h-kicker]")) return 28
           if (el.matches("[data-h-tagline]")) return 28
           if (el.matches("[data-h-status]")) return 22
           return 18
@@ -69,11 +68,14 @@ export function Hero() {
       // Phase 09 Task 5 — one assemble timeline, then calm
       const tl = gsap.timeline({ defaults: { ease: ease.reveal } })
 
-      tl.fromTo(
-        "[data-h-kicker]",
-        { y: 28, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: duration.copy }
-      )
+      const kickerEl = section.querySelector("[data-h-kicker]")
+      if (kickerEl) {
+        tl.fromTo(
+          kickerEl,
+          { y: 28, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: duration.copy }
+        )
+      }
 
       const split = SplitText.create(headlineEl, {
         type: "words",
@@ -102,8 +104,11 @@ export function Hero() {
               duration: duration.hero,
               stagger: { each: 0.05, from: "start" },
               ease: "power4.out",
+              onComplete: () => {
+                gsap.set(self.words, { clearProps: "filter" })
+              },
             },
-            "-=0.08"
+            kickerEl ? "-=0.08" : 0
           )
           tl.to(
             headlineEl,
@@ -237,16 +242,23 @@ export function Hero() {
         data-h-content=""
         style={{ visibility: "hidden" }}
       >
-        <p data-h-kicker="" className="hero-kicker">
-          <span className="hero-kicker-dot" aria-hidden="true" />
-          {hero.kicker}
-        </p>
+        {hero.kicker ? (
+          <p data-h-kicker="" className="hero-kicker">
+            <span className="hero-kicker-dot" aria-hidden="true" />
+            {hero.kicker}
+          </p>
+        ) : null}
 
         <h1 ref={headlineRef} className="hero-headline">
           {hero.headline.map((seg, i) => (
             <span key={i}>
               {seg.break && <br />}
-              <span data-accent={seg.accent ? "" : undefined}>{seg.text}</span>{" "}
+              <span
+                data-accent={seg.accent ? "" : undefined}
+                data-nowrap={seg.nowrap ? "" : undefined}
+              >
+                {seg.text}
+              </span>{" "}
             </span>
           ))}
         </h1>

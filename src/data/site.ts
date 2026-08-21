@@ -54,14 +54,13 @@ export const siteConfig: SiteConfig = {
   ],
   hero: {
     badge: "Sudheer Talapudi · Hyderabad · Onsite / Hybrid / Remote",
-    kicker: "Frontend engineer",
     wordmark: "Sudheer",
     surname: "Talapudi",
     headline: [
       { text: "I built" },
       { text: "Sameward", break: true, accent: true },
       { text: "a live product system,", break: true },
-      { text: "end to end." },
+      { text: "end to end.", break: true, nowrap: true },
     ],
     tagline:
       "Frontend-strong engineer. Interface, realtime, auth, AI tools, and launch — shipped as one product, not a demo.",
