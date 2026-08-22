@@ -435,7 +435,7 @@ function buildAstronautRelief(disposables: Disposable[]): {
   const root = new THREE.Group()
   root.name = "prop-astronaut"
   const accent = {
-    value: new THREE.Color(getBlobPalette("molten-metal").blob.color1),
+    value: new THREE.Color(getBlobPalette("ice-fire").blob.color1),
   }
 
   const mat = new THREE.MeshBasicMaterial({
@@ -794,11 +794,11 @@ export function createSpaceProps(
 
     // —— Ringed system ——
     const sysL = layout.system
-    let sysTx =
+    const sysTx =
       sysL.x +
       Math.cos(t * 0.32) * floatAmp * 1.15 +
       mouse.x * 0.018 * breath
-    let sysTy =
+    const sysTy =
       sysL.y +
       Math.sin(t * 0.28) * floatAmp +
       mouse.y * 0.012 * breath
@@ -821,11 +821,11 @@ export function createSpaceProps(
     rocks.forEach((rock, i) => {
       const L = layout.rocks[i] ?? layout.rocks[0]!
       const phase = i * 1.7
-      let tx =
+      const tx =
         L.x +
         Math.sin(t * (0.25 + i * 0.06) + phase) * floatAmp * 0.9 -
         mouse.x * 0.012 * breath
-      let ty =
+      const ty =
         L.y +
         Math.cos(t * (0.22 + i * 0.05) + phase) * floatAmp * 0.8 +
         mouse.y * 0.01 * breath

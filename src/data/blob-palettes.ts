@@ -236,10 +236,14 @@ export const blobPalettes: BlobPalette[] = [
   },
 ]
 
-export const defaultBlobPaletteId: BlobPaletteId = "molten-metal"
+export const defaultBlobPaletteId: BlobPaletteId = "ice-fire"
 
 export function getBlobPalette(id: BlobPaletteId): BlobPalette {
-  return blobPalettes.find((palette) => palette.id === id) ?? blobPalettes[0]
+  return (
+    blobPalettes.find((palette) => palette.id === id) ??
+    blobPalettes.find((palette) => palette.id === defaultBlobPaletteId) ??
+    blobPalettes[0]
+  )
 }
 
 export function isBlobPaletteId(value: string): value is BlobPaletteId {

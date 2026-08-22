@@ -85,8 +85,8 @@
 }
 
 /*
- * Default: Option E — Molten Metal (bronze → gold).
- * Runtime palettes (A–D) override tokens on <html> via PaletteProvider.
+ * Default: Ice & Fire (cyan → magenta → red).
+ * Runtime palettes override tokens on <html> via PaletteProvider.
  */
 :root {
   color-scheme: dark;
@@ -101,23 +101,23 @@
   --card-foreground: #edf0f5;
   --popover: #0a0906;
   --popover-foreground: #edf0f5;
-  --primary: #d4a024;
-  --primary-inverted: #8b6914;
-  --primary-foreground: #000000;
-  --primary-hover: #e8b430;
-  --primary-light: #1e1608;
+  --primary: #00d4ff;
+  --primary-inverted: #0088a8;
+  --primary-foreground: #ffffff;
+  --primary-hover: #33dfff;
+  --primary-light: #061a20;
   --secondary: #14120c;
   --secondary-foreground: #edf0f5;
   --muted: #14120c;
-  --accent: #f0d060;
-  --accent-foreground: #000000;
+  --accent: #c850c0;
+  --accent-foreground: #ffffff;
   --destructive: #ff8c82;
   --success: #6fc39b;
   --warning: #e2ad62;
-  --border: #28220e;
-  --border-light: #1c180a;
+  --border: #1a1e2a;
+  --border-light: #121520;
   --input: color-mix(in srgb, var(--primary) 28%, var(--border));
-  --ring: #d4a024;
+  --ring: #00d4ff;
   --sameward: #47b5d1;
   --sameward-dark: #06222b;
   --sameward-ink: #5cc0da;
@@ -131,13 +131,13 @@
   --motion-section: 720ms;
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --ember-gradient: linear-gradient(135deg, #8b6914, #d4a024, #f0d060);
+  --ember-gradient: linear-gradient(135deg, #00d4ff, #c850c0, #ff4040);
 
   --surface: #0c0a06;
   --surface-elevated: #18150c;
-  --accent-soft: #1e1608;
-  --realtime: #d4a024;
-  --ai: #f0d060;
+  --accent-soft: #0d1520;
+  --realtime: #00d4ff;
+  --ai: #c850c0;
 }
 
 .dark {
@@ -152,34 +152,34 @@
   --card-foreground: #edf0f5;
   --popover: #0a0906;
   --popover-foreground: #edf0f5;
-  --primary: #d4a024;
-  --primary-inverted: #8b6914;
-  --primary-foreground: #000000;
-  --primary-hover: #e8b430;
-  --primary-light: #1e1608;
+  --primary: #00d4ff;
+  --primary-inverted: #0088a8;
+  --primary-foreground: #ffffff;
+  --primary-hover: #33dfff;
+  --primary-light: #061a20;
   --secondary: #14120c;
   --secondary-foreground: #edf0f5;
   --muted: #14120c;
-  --accent: #f0d060;
-  --accent-foreground: #000000;
+  --accent: #c850c0;
+  --accent-foreground: #ffffff;
   --destructive: #ff8c82;
   --success: #6fc39b;
   --warning: #e2ad62;
-  --border: #28220e;
-  --border-light: #1c180a;
+  --border: #1a1e2a;
+  --border-light: #121520;
   --input: color-mix(in srgb, var(--primary) 28%, var(--border));
-  --ring: #d4a024;
+  --ring: #00d4ff;
   --sameward: #47b5d1;
   --sameward-dark: #06222b;
   --sameward-ink: #5cc0da;
 
-  --ember-gradient: linear-gradient(135deg, #8b6914, #d4a024, #f0d060);
+  --ember-gradient: linear-gradient(135deg, #00d4ff, #c850c0, #ff4040);
 
   --surface: #0c0a06;
   --surface-elevated: #18150c;
-  --accent-soft: #1e1608;
-  --realtime: #d4a024;
-  --ai: #f0d060;
+  --accent-soft: #0d1520;
+  --realtime: #00d4ff;
+  --ai: #c850c0;
 }
 
 @layer base {
@@ -4461,9 +4461,10 @@
 
 .hero-word {
   display: inline-block;
-  will-change: transform;
-  /* Prevent blur filter leftovers between lines */
-  backface-visibility: hidden;
+}
+
+.hero-boot-word {
+  display: inline;
 }
 
 .hero-tagline {

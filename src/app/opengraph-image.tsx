@@ -36,7 +36,7 @@ export default function OpenGraphImage() {
           style={{
             position: "absolute",
             inset: 28,
-            border: "1px solid #28220e",
+            border: "1px solid #1a1e2a",
             display: "flex",
           }}
         />
@@ -49,7 +49,7 @@ export default function OpenGraphImage() {
             fontSize: 18,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#d4a024",
+            color: "#00d4ff",
             fontFamily: "ui-monospace, monospace",
           }}
         >
@@ -64,7 +64,7 @@ export default function OpenGraphImage() {
               fontWeight: 500,
               letterSpacing: "0.04em",
               textTransform: "uppercase",
-              color: "#f0d060",
+              color: "#00d4ff",
             }}
           >
             {contact.name}
@@ -98,7 +98,7 @@ export default function OpenGraphImage() {
             fontSize: 16,
             letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: "#8b6914",
+            color: "#c850c0",
             fontFamily: "ui-monospace, monospace",
           }}
         >

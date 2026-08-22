@@ -30,14 +30,14 @@ export default function AppleIcon() {
             width: 148,
             height: 148,
             borderRadius: 999,
-            border: "6px solid #d4a024",
+            border: "6px solid #00d4ff",
           }}
         />
         <div
           style={{
             display: "flex",
             position: "absolute",
-            color: "#f0d060",
+            color: "#00d4ff",
             fontSize: 72,
             fontWeight: 600,
             letterSpacing: "0.08em",
