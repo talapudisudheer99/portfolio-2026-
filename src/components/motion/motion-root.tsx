@@ -4,7 +4,6 @@ import type { ReactNode } from "react"
 
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
-import { AtmosphereReadyProvider } from "@/components/shared/atmosphere-ready"
 import { AmbientAtmosphere } from "@/components/shared/blob-scene"
 import { CursorInteraction } from "@/components/shared/cursor"
 import { ScrollGrain } from "@/components/shared/parallax"
@@ -18,16 +17,12 @@ interface MotionRootProps {
 }
 
 /**
- * Phase 08 Task 1 — global motion layer shell.
- * CONTENT (children + chrome) stays separate from MOTION / WEBGL owners.
- *
- * Mount order:
- * Cursor (portal) → Lenis → Atmosphere + Space field + Grain → UI chrome → page
- * Navbar is absolute inside Lenis so it scrolls away with the page (not sticky).
+ * Global motion layer. Content stays separate from WebGL / scroll owners.
+ * Navbar lives inside Lenis so it scrolls with the page.
  */
 export function MotionRoot({ children }: Readonly<MotionRootProps>) {
   return (
-    <AtmosphereReadyProvider>
+    <>
       <CursorInteraction />
       <SmoothScroll>
         <AmbientAtmosphere />
@@ -46,6 +41,6 @@ export function MotionRoot({ children }: Readonly<MotionRootProps>) {
         <Footer />
         <Toaster richColors position="top-right" />
       </SmoothScroll>
-    </AtmosphereReadyProvider>
+    </>
   )
 }

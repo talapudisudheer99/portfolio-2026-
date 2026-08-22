@@ -4,8 +4,7 @@ import { useEffect, useRef } from "react"
 import * as THREE from "three"
 
 import { usePalette } from "@/components/palette-provider"
-import { useAtmosphereReady } from "@/components/shared/atmosphere-ready"
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import {
   getMoonPaletteLook,
   type MoonPaletteLook,
@@ -31,15 +30,8 @@ export function AmbientAtmosphere() {
   const reducedMotion = useHydratedReducedMotion()
   const reducedRef = useRef(reducedMotion)
   const { paletteId } = usePalette()
-  const { markReady } = useAtmosphereReady()
-  const markReadyRef = useRef(markReady)
   const paletteRef = useRef<BlobPaletteId>(paletteId)
   const lookRef = useRef<MoonPaletteLook>(getMoonPaletteLook(paletteId))
-  const sunRef = useRef<THREE.DirectionalLight | null>(null)
-  const fillRef = useRef<THREE.DirectionalLight | null>(null)
-  const rimRef = useRef<THREE.DirectionalLight | null>(null)
-  const ambientRef = useRef<THREE.AmbientLight | null>(null)
-  const moonRef = useRef<MoonMesh | null>(null)
   const applyLookRef = useRef<((look: MoonPaletteLook) => void) | null>(null)
   const moodTargetRef = useRef<{
     id: SectionMoodId
@@ -67,10 +59,6 @@ export function AmbientAtmosphere() {
   }, [reducedMotion])
 
   useEffect(() => {
-    markReadyRef.current = markReady
-  }, [markReady])
-
-  useEffect(() => {
     paletteRef.current = paletteId
     const look = getMoonPaletteLook(paletteId)
     lookRef.current = look
@@ -90,9 +78,9 @@ export function AmbientAtmosphere() {
       isMobile ||
       window.matchMedia("(max-width: 1023px)").matches ||
       window.innerHeight >= window.innerWidth * 0.95
-    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2.25)
-    // High tessellation — bump needs dense mesh or crater edges soften
-    const segments = isMobile ? 160 : 320
+    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.75)
+    // First paint: enough for limb, not a 320-seg compile stall
+    const segments = isMobile ? 96 : 160
 
     let renderer: THREE.WebGLRenderer
     try {
@@ -113,7 +101,6 @@ export function AmbientAtmosphere() {
           failIfMajorPerformanceCaveat: false,
         })
       } catch {
-        markReadyRef.current()
         return
       }
     }
@@ -121,7 +108,6 @@ export function AmbientAtmosphere() {
     const gl = renderer.getContext()
     if (!gl) {
       renderer.dispose()
-      markReadyRef.current()
       return
     }
 
@@ -150,31 +136,22 @@ export function AmbientAtmosphere() {
     const sun = new THREE.DirectionalLight(0xfff5e8, 2.35)
     sun.position.set(4.0, 1.9, 3.7)
     scene.add(sun)
-    sunRef.current = sun
 
     const fill = new THREE.DirectionalLight(0x9aadc8, 0.34)
     fill.position.set(-3.8, -0.6, 2.2)
     scene.add(fill)
-    fillRef.current = fill
 
     const ambient = new THREE.AmbientLight(0x101218, 0.13)
     scene.add(ambient)
-    ambientRef.current = ambient
 
     const rim = new THREE.DirectionalLight(0xc5d0e0, 0.2)
     rim.position.set(-2.4, 0.5, 3.8)
     scene.add(rim)
-    rimRef.current = rim
 
-    // Margin props share moon lights — no second WebGL scene
-    const spaceProps = hideProps
-      ? null
-      : createSpaceProps(disposables, { aspect: w / Math.max(h, 1) })
-    if (spaceProps) scene.add(spaceProps.group)
+    // Margin props share moon lights — attached after first moon frame
+    let spaceProps: ReturnType<typeof createSpaceProps> | null = null
 
     const loader = new THREE.TextureLoader()
-    const colorUrl = isMobile ? "/moon/color-2k.jpg" : "/moon/color-4k.jpg"
-    const bumpUrl = "/moon/displacement-2k.jpg"
     const maxAniso = renderer.capabilities.getMaxAnisotropy()
 
     let cancelled = false
@@ -207,89 +184,153 @@ export function AmbientAtmosphere() {
     applyLookRef.current = applyLook
     applyLook(getMoonPaletteLook(paletteRef.current))
 
-    if (!atmosphere.moonEnabled) {
-      // Props-only mode — skip moon mesh/textures, still unlock hero
-      renderer.render(scene, camera)
-      revealAtmosphere()
-    } else {
-      Promise.all([loader.loadAsync(colorUrl), loader.loadAsync(bumpUrl)])
-        .then(([colorMap, bumpMap]) => {
-          if (cancelled) {
-            colorMap.dispose()
-            bumpMap.dispose()
-            return
-          }
+    function revealAtmosphere() {
+      if (cancelled) return
+      parent.classList.add("is-ready")
+    }
 
-          colorMap.colorSpace = THREE.SRGBColorSpace
-          colorMap.anisotropy = maxAniso
-          colorMap.wrapS = colorMap.wrapT = THREE.ClampToEdgeWrapping
-          colorMap.generateMipmaps = true
-          colorMap.minFilter = THREE.LinearMipmapLinearFilter
-          colorMap.magFilter = THREE.LinearFilter
+    function attachSpaceProps() {
+      if (cancelled || hideProps || spaceProps) return
+      spaceProps = createSpaceProps(disposables, {
+        aspect: w / Math.max(h, 1),
+      })
+      scene.add(spaceProps.group)
+      spaceProps.setPalette(paletteRef.current)
+    }
 
-          // Height as bump + micro-roughness — crater rims catch light differently
-          bumpMap.colorSpace = THREE.NoColorSpace
-          bumpMap.anisotropy = maxAniso
-          bumpMap.wrapS = bumpMap.wrapT = THREE.ClampToEdgeWrapping
-          bumpMap.generateMipmaps = true
-          bumpMap.minFilter = THREE.LinearMipmapLinearFilter
-          bumpMap.magFilter = THREE.LinearFilter
+    function setupColorMap(tex: THREE.Texture) {
+      tex.colorSpace = THREE.SRGBColorSpace
+      tex.anisotropy = maxAniso
+      tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping
+      tex.generateMipmaps = true
+      tex.minFilter = THREE.LinearMipmapLinearFilter
+      tex.magFilter = THREE.LinearFilter
+    }
 
-          disposables.push(colorMap, bumpMap)
+    function setupBumpMap(tex: THREE.Texture) {
+      tex.colorSpace = THREE.NoColorSpace
+      tex.anisotropy = maxAniso
+      tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping
+      tex.generateMipmaps = true
+      tex.minFilter = THREE.LinearMipmapLinearFilter
+      tex.magFilter = THREE.LinearFilter
+    }
 
-          const look = lookRef.current
-          const geo = new THREE.SphereGeometry(1.55, segments, segments)
-          try {
-            geo.computeTangents()
-          } catch {
-            /* bump still works without explicit tangents */
-          }
-
-          const mat = new THREE.MeshStandardMaterial({
-            map: colorMap,
-            bumpMap,
-            bumpScale: isMobile ? look.bumpScale * 0.75 : look.bumpScale,
-            displacementMap: bumpMap,
-            displacementScale: isMobile ? 0.022 : 0.038,
-            displacementBias: -0.01,
-            roughnessMap: bumpMap,
-            roughness: look.roughness,
-            metalness: 0.02,
-            color: look.albedo,
-            flatShading: false,
-            envMapIntensity: 0,
-          })
-          mat.customProgramCacheKey = () => "moon-relief-v2"
-          mat.onBeforeCompile = (shader) => {
-            shader.fragmentShader = shader.fragmentShader.replace(
-              "#include <map_fragment>",
-              /* glsl */ `
+    function applyMoonRelief(mat: THREE.MeshStandardMaterial) {
+      mat.customProgramCacheKey = () => "moon-relief-v2"
+      mat.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <map_fragment>",
+          /* glsl */ `
             #include <map_fragment>
             diffuseColor.rgb = pow(max(diffuseColor.rgb, vec3(0.0)), vec3(0.94));
             diffuseColor.rgb = (diffuseColor.rgb - 0.5) * 1.08 + 0.5;
             `
-            )
-          }
+        )
+      }
+    }
 
-          moon = new THREE.Mesh(geo, mat) as MoonMesh
-          moon.rotation.set(
-            THREE.MathUtils.degToRad(6),
-            THREE.MathUtils.degToRad(-28),
-            THREE.MathUtils.degToRad(3)
-          )
-          // Avoid z-fighting shimmer on dense mesh
-          moon.frustumCulled = true
-          root.add(moon)
-          moonRef.current = moon
-          disposables.push(geo, mat)
+    function mountMoon(colorMap: THREE.Texture) {
+      if (cancelled) {
+        colorMap.dispose()
+        return
+      }
+      setupColorMap(colorMap)
+      disposables.push(colorMap)
 
-          renderer.render(scene, camera)
-          revealAtmosphere()
+      const look = lookRef.current
+      const geo = new THREE.SphereGeometry(1.55, segments, segments)
+      const mat = new THREE.MeshStandardMaterial({
+        map: colorMap,
+        roughness: look.roughness,
+        metalness: 0.02,
+        color: look.albedo,
+        flatShading: false,
+        envMapIntensity: 0,
+      })
+      applyMoonRelief(mat)
+
+      moon = new THREE.Mesh(geo, mat) as MoonMesh
+      moon.rotation.set(
+        THREE.MathUtils.degToRad(6),
+        THREE.MathUtils.degToRad(-28),
+        THREE.MathUtils.degToRad(3)
+      )
+      moon.frustumCulled = true
+      root.add(moon)
+      disposables.push(geo, mat)
+
+      renderer.render(scene, camera)
+      revealAtmosphere()
+    }
+
+    function applyBump(bumpMap: THREE.Texture) {
+      if (cancelled || !moon) {
+        bumpMap.dispose()
+        return
+      }
+      setupBumpMap(bumpMap)
+      const prev = moon.material.bumpMap
+      const look = lookRef.current
+      moon.material.bumpMap = bumpMap
+      moon.material.bumpScale = isMobile
+        ? look.bumpScale * 0.75
+        : look.bumpScale
+      moon.material.displacementMap = bumpMap
+      moon.material.displacementScale = isMobile ? 0.022 : 0.038
+      moon.material.displacementBias = -0.01
+      moon.material.roughnessMap = bumpMap
+      moon.material.needsUpdate = true
+      disposables.push(bumpMap)
+      if (prev && prev !== bumpMap) prev.dispose()
+    }
+
+    function swapColor(next: THREE.Texture) {
+      if (cancelled || !moon) {
+        next.dispose()
+        return
+      }
+      setupColorMap(next)
+      const prev = moon.material.map
+      moon.material.map = next
+      moon.material.needsUpdate = true
+      disposables.push(next)
+      if (prev && prev !== next) prev.dispose()
+    }
+
+    if (!atmosphere.moonEnabled) {
+      renderer.render(scene, camera)
+      revealAtmosphere()
+      attachSpaceProps()
+    } else {
+      // 1k first (~136kb) so the limb exists with the hero — then upgrade.
+      loader
+        .loadAsync("/moon/color-1k.jpg")
+        .then((colorMap) => {
+          mountMoon(colorMap)
+          const idle =
+            "requestIdleCallback" in window
+              ? window.requestIdleCallback.bind(window)
+              : (cb: () => void) => window.setTimeout(cb, 180)
+          idle(() => attachSpaceProps())
+
+          const hiColor = isMobile
+            ? "/moon/color-2k.jpg"
+            : "/moon/color-4k.jpg"
+          loader.loadAsync(hiColor).then(swapColor).catch(() => {})
+          loader
+            .loadAsync("/moon/displacement-1k.jpg")
+            .then((lo) => {
+              applyBump(lo)
+              return loader.loadAsync("/moon/displacement-2k.jpg")
+            })
+            .then(applyBump)
+            .catch(() => {})
         })
         .catch(() => {
           if (cancelled) return
           const look = lookRef.current
-          const geo = new THREE.SphereGeometry(1.32, 96, 96)
+          const geo = new THREE.SphereGeometry(1.32, 64, 64)
           const mat = new THREE.MeshStandardMaterial({
             color: look.albedo,
             roughness: 0.95,
@@ -297,23 +338,16 @@ export function AmbientAtmosphere() {
           })
           moon = new THREE.Mesh(geo, mat) as MoonMesh
           root.add(moon)
-          moonRef.current = moon
           disposables.push(geo, mat)
           renderer.render(scene, camera)
           revealAtmosphere()
+          attachSpaceProps()
         })
     }
 
-    function revealAtmosphere() {
-      if (cancelled) return
-      parent.classList.add("is-ready")
-      markReadyRef.current()
-    }
-
-    // Never leave the page waiting forever if textures hang
     const revealFailsafe = window.setTimeout(() => {
       if (!cancelled) revealAtmosphere()
-    }, 2200)
+    }, 900)
 
     const mouse = { x: 0, y: 0, tx: 0, ty: 0 }
     function onPointerMove(e: PointerEvent) {
@@ -538,7 +572,6 @@ export function AmbientAtmosphere() {
       window.clearTimeout(revealFailsafe)
       applyLookRef.current = null
       parent.classList.remove("is-ready")
-      delete document.documentElement.dataset.atmosphere
       cancelAnimationFrame(frameId)
       window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("scroll", onScroll)
@@ -554,11 +587,6 @@ export function AmbientAtmosphere() {
       delete document.documentElement.dataset.sectionMood
       renderer.dispose()
       disposables.forEach((d) => d.dispose())
-      moonRef.current = null
-      sunRef.current = null
-      fillRef.current = null
-      rimRef.current = null
-      ambientRef.current = null
     }
   }, [])
 
@@ -572,6 +600,3 @@ export function AmbientAtmosphere() {
     </div>
   )
 }
-
-/** @deprecated Use AmbientAtmosphere — alias for existing imports */
-export const BlobScene = AmbientAtmosphere

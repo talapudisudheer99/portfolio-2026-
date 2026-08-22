@@ -5,8 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
-import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { ease } from "@/lib/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -14,13 +13,11 @@ gsap.registerPlugin(useGSAP, ScrollTrigger)
 interface FragmentDriftProps {
   children: ReactNode
   className?: string
-  /** Selector for children that should drift (default: direct children) */
   itemSelector?: string
 }
 
 /**
- * Phase 09 Task 7 — fragmentation → unification (content-driven).
- * Talk / Plan / Ask drift apart, then converge as scroll resolves context.
+ * Talk / Plan / Ask — sequential HUD lock, not scrubbed drift.
  */
 export function FragmentDrift({
   children,
@@ -41,58 +38,19 @@ export function FragmentDrift({
 
       if (items.length < 2) return
 
-      const mm = gsap.matchMedia()
-
-      mm.add("(min-width: 768px)", () => {
-        const mid = (items.length - 1) / 2
-        const offsets = items.map((_, i) => (i - mid) * 44)
-
-        gsap.set(items, {
-          x: (i) => offsets[i] ?? 0,
-          y: (i) => ((i - mid) % 2 === 0 ? -10 : 12),
-          autoAlpha: 0.42,
-          filter: "blur(1.5px)",
-        })
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root,
-            start: "top 85%",
-            end: "top 28%",
-            scrub: 0.95,
-          },
-        })
-
-        // Peak fragmentation mid-scroll, then unify
-        tl.to(items, {
-          x: (i) => (offsets[i] ?? 0) * 1.15,
-          y: (i) => (((i - mid) % 2 === 0 ? -10 : 12) * 1.2),
-          autoAlpha: 0.55,
-          filter: "blur(2px)",
-          ease: "none",
-          duration: 0.35,
-        }).to(items, {
-          x: 0,
-          y: 0,
-          autoAlpha: 1,
-          filter: "blur(0px)",
-          ease: ease.cinematic,
-          stagger: { each: 0.03, from: "center" },
-          duration: 0.65,
-        })
+      gsap.set(items, { opacity: 0.18 })
+      gsap.to(items, {
+        opacity: 1,
+        duration: 0.06,
+        ease: "steps(1)",
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: root,
+          start: "top 82%",
+          once: true,
+          toggleActions: "play none none none",
+        },
       })
-
-      mm.add("(max-width: 767px)", () => {
-        gsap.set(items, {
-          x: 0,
-          y: 0,
-          autoAlpha: 1,
-          filter: "none",
-          clearProps: "transform,filter",
-        })
-      })
-
-      return () => mm.revert()
     },
     { dependencies: [still, itemSelector], revertOnUpdate: true }
   )

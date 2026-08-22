@@ -64,7 +64,7 @@ Lower levels must never visually overpower higher levels.
 
 | Task | What shipped |
 |------|----------------|
-| 2 | `scrollFeel` tokens; Lenis `1.08` / wheel `0.88` — authored, not laggy |
+| 2 | `scrollFeel` tokens; Lenis `0.92` / wheel `0.94` — authored, not laggy |
 | 3 | Stronger mood mix (0.34), glow, scroll orbit, mouse influence; clearer section deltas |
 | 4 | Depth bands raised; tablet half-travel; parallax on hero cue, about auroras, tablet ground |
 | 5 | Hero assemble timeline (blur→clear words, longer stagger); softer magnetic PUSH |
@@ -98,6 +98,11 @@ Lower levels must never visually overpower higher levels.
 ## Complete
 
 Phase 09 calibration finished. UI unchanged — motion more perceptible and cohesive.
+
+**Production UX (post-09):** hero type starts on hydrate. Atmosphere loads
+`/moon/color-1k.jpg` first (~136KB), then upgrades to 2K/4K. Cursor hotspot is
+set in `pointermove` (no lerp). `AtmosphereReadyProvider` was removed so moon
+ready no longer re-renders the whole tree.
 
 After each task (historical process): implement only that task → run app → inspect → fix → then next.
 

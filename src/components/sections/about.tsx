@@ -7,8 +7,8 @@ import { SectionReveal } from "@/components/motion/section-reveal"
 import {
   TraceNode,
   TraceSequence,
-  useHydratedReducedMotion,
 } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { aboutContent } from "@/data/about"
 import { easeOut, gap } from "@/lib/motion"

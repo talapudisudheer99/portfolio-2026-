@@ -133,5 +133,5 @@ export const moonPaletteLooks: Record<BlobPaletteId, MoonPaletteLook> = {
 }
 
 export function getMoonPaletteLook(id: BlobPaletteId): MoonPaletteLook {
-  return moonPaletteLooks[id] ?? moonPaletteLooks["molten-metal"]
+  return moonPaletteLooks[id] ?? moonPaletteLooks["ice-fire"]
 }

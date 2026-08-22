@@ -1,14 +1,9 @@
-// import { ArrowUpRight } from "lucide-react"
-
 import { FeaturedWorkStage } from "@/components/sections/featured-work-stage"
 import { FragmentDrift } from "@/components/motion/fragment-drift"
 import { ApproachActivate } from "@/components/motion/approach-activate"
 import { SectionReveal } from "@/components/motion/section-reveal"
-import {
-  EditorialWordReveal,
-  MaskedLine,
-  TraceRule,
-} from "@/components/shared/motion"
+import { HudWordReveal } from "@/components/motion/hud-word-reveal"
+import { MaskedLine, TraceRule } from "@/components/shared/motion"
 import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { projects } from "@/data/projects"
 import { projectActions } from "@/data/sections"
@@ -88,7 +83,7 @@ export function Projects() {
             <p className="section-kicker text-primary">The problem</p>
           </SectionReveal>
 
-          <EditorialWordReveal
+          <HudWordReveal
             className="projects-problem-statement col-span-12 lg:col-span-8 lg:col-start-5"
             lines={
               featured.problemLines ??

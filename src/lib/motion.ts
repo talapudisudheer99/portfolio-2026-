@@ -37,8 +37,8 @@ export const duration = {
  * One instance; GSAP ticker still owns raf.
  */
 export const scrollFeel = {
-  duration: 1.08,
-  wheelMultiplier: 0.88,
+  duration: 0.92,
+  wheelMultiplier: 0.94,
   touchMultiplier: 1,
   syncTouchLerp: 0.1,
 } as const
@@ -231,13 +231,3 @@ export const traceRowChild = {
     transition: { duration: duration.trace, ease: easeOut },
   },
 }
-
-/** @deprecated Prefer gap / duration.trace */
-export const stagger = {
-  fast: gap.facts,
-  base: gap.nodes,
-  slow: gap.rows,
-} as const
-
-export const staggerParent = traceParent
-export const staggerChild = traceNodeChild

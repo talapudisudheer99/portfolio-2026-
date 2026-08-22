@@ -26,13 +26,19 @@ export function bindLenisToScrollTrigger(lenis: Lenis) {
 
   const refresh = () => ScrollTrigger.refresh()
   refresh()
-  window.addEventListener("resize", refresh)
+  let resizeTimer = 0
+  const onResize = () => {
+    window.clearTimeout(resizeTimer)
+    resizeTimer = window.setTimeout(refresh, 150)
+  }
+  window.addEventListener("resize", onResize)
   window.addEventListener("load", refresh)
 
   return () => {
     lenis.off("scroll", onScroll)
     gsap.ticker.remove(tick)
-    window.removeEventListener("resize", refresh)
+    window.clearTimeout(resizeTimer)
+    window.removeEventListener("resize", onResize)
     window.removeEventListener("load", refresh)
   }
 }

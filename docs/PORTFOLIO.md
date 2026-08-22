@@ -308,8 +308,7 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 ### Dark mode toggle not working
 
 - Use the sun/moon button in the navbar
-- Theme follows the system preference by default and is stored via `next-themes`
-  as a `class` on `<html>`
+- Theme is forced dark (`class="dark"` on `<html>` via layout + next-themes)
 
 ### Push to GitHub fails (auth)
 
@@ -333,7 +332,7 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 
 | Path                       | Purpose                                                      |
 | -------------------------- | ------------------------------------------------------------ |
-| `public/`                  | Static files (`favicon.svg`, `apple-icon.svg`, `resume.pdf`) |
+| `public/`                  | Static files (`favicon.svg`, `resume.pdf`, `/moon`, `/space`) |
 | `docs/PORTFOLIO.md`        | This file — project & debug documentation                    |
 | `src/app/`                 | Next.js App Router entry, layout, global styles              |
 | `src/components/layout/`   | Navbar, footer                                               |
@@ -341,7 +340,7 @@ Common fixes: missing env at build time is OK for static pages; fix any TypeScri
 | `src/components/shared/`   | Reusable layout/content wrappers                             |
 | `src/components/ui/`       | shadcn/ui primitives                                         |
 | `src/data/`                | All portfolio copy & config                                  |
-| `src/hooks/`               | `use-contact-form` (Web3Forms)                               |
+| `src/hooks/`               | `use-contact-form`, `use-hydrated-reduced-motion` |
 | `src/lib/`                 | Utilities, metadata builder, site URL                        |
 | `src/types/`               | Shared TypeScript interfaces                                 |
 | `.env.example`             | Documented env var template                                  |

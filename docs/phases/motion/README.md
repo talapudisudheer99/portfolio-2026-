@@ -33,7 +33,7 @@ Do not animate the same element with GSAP + Framer + Three.
 | `MaskedLine` | Editorial headings (CSS mask rise) |
 | `TraceRule` | Hairlines |
 | `TraceNode` / `TraceSequence` | Lists / nodes |
-| `FadeIn` / `SectionArrive` | Supporting copy / blocks |
+| `FadeIn` | Supporting copy / blocks |
 
 Tokens: `src/lib/motion.ts`. Phase 09 calibrates durations / travel / mood mix
 against perception — do not invent a second token file.
