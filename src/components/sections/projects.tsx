@@ -130,31 +130,23 @@ export function Projects() {
               System
             </p>
             <ApproachActivate>
-              <span
-                className="projects-approach-activate-rule"
-                aria-hidden="true"
-              />
-              <div className="projects-approach-steps grid gap-0 grid-cols-1 lg:grid-cols-3 lg:gap-8">
+              <div className="projects-approach-steps">
                 {(featured.approachSteps ?? []).map((step, index) => (
                   <div
                     key={step.title}
-                    className="projects-flow-step projects-flow-step--approach group"
+                    className="projects-approach-card projects-flow-step--approach group"
                   >
-                    <div className="projects-flow-meta">
-                      <span className="projects-flow-num">0{index + 1}</span>
+                    <span className="projects-approach-card-num">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div className="projects-approach-card-body">
+                      <p className="projects-approach-card-title">
+                        {step.title}
+                      </p>
+                      <p className="projects-approach-card-detail">
+                        {step.detail}
+                      </p>
                     </div>
-                    <p
-                      className={
-                        index === (featured.approachSteps?.length ?? 0) - 1
-                          ? "projects-flow-title projects-flow-title--accent"
-                          : "projects-flow-title"
-                      }
-                    >
-                      {step.title}
-                    </p>
-                    <p className="projects-flow-detail projects-flow-detail--approach">
-                      {step.detail}
-                    </p>
                   </div>
                 ))}
               </div>

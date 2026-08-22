@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google"
+import { Inter, JetBrains_Mono, Michroma } from "next/font/google"
 
 import { MotionRoot } from "@/components/motion"
+import { PaletteInitScript } from "@/components/palette-init-script"
 import { PaletteProvider } from "@/components/palette-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { createSiteMetadata } from "@/lib/metadata"
@@ -9,9 +10,11 @@ import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-const spaceGrotesk = Space_Grotesk({
+/** Aerospace HUD display — Eurostile/Microgramma lineage (SpaceX-style panels). */
+const michroma = Michroma({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-michroma",
   display: "swap",
 })
 
@@ -41,11 +44,35 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        spaceGrotesk.variable,
+        "dark",
+        michroma.variable,
         inter.variable,
         jetbrainsMono.variable
       )}
     >
+      <head>
+        <PaletteInitScript />
+        <link
+          rel="preload"
+          href="/moon/color-4k.jpg"
+          as="image"
+          type="image/jpeg"
+          media="(min-width: 768px)"
+        />
+        <link
+          rel="preload"
+          href="/moon/color-2k.jpg"
+          as="image"
+          type="image/jpeg"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          href="/moon/displacement-2k.jpg"
+          as="image"
+          type="image/jpeg"
+        />
+      </head>
       <body className="min-h-svh font-sans antialiased">
         <ThemeProvider>
           <PaletteProvider>

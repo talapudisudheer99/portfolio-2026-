@@ -150,22 +150,22 @@ export function Experience() {
               {content.description}
             </p>
 
-            <dl className="mt-10 grid max-w-xs grid-cols-3 gap-4 border-t border-border pt-6">
-              <div>
+            <dl className="experience-stats mt-10 grid max-w-sm grid-cols-3 gap-x-6 gap-y-2 border-t border-border pt-6">
+              <div className="experience-stat min-w-0">
                 <dt className="type-meta text-muted-foreground">Since</dt>
-                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
+                <dd className="experience-stat-value mt-2 text-foreground">
                   {Math.min(...years)}
                 </dd>
               </div>
-              <div>
+              <div className="experience-stat min-w-0">
                 <dt className="type-meta text-muted-foreground">Roles</dt>
-                <dd className="editorial-display type-section mt-2 leading-none font-medium text-foreground">
+                <dd className="experience-stat-value mt-2 text-foreground">
                   <CountUp value={experience.length} pad={2} />
                 </dd>
               </div>
-              <div>
+              <div className="experience-stat min-w-0">
                 <dt className="type-meta text-muted-foreground">Current</dt>
-                <dd className="editorial-display type-section mt-2 leading-none font-medium text-primary">
+                <dd className="experience-stat-value experience-stat-value--accent mt-2">
                   <CountUp value={currentCount} pad={2} />
                 </dd>
               </div>
@@ -194,7 +194,11 @@ export function Experience() {
               <ExperienceRow
                 key={role.id}
                 role={role}
-                index={index}
+                displayIndex={
+                  experience
+                    .slice(0, index + 1)
+                    .filter((r) => !isCurrent(r.period)).length
+                }
                 illuminated={activeId === role.id}
                 muted={activeId !== null && activeId !== role.id}
                 setActiveId={setActiveId}
@@ -209,7 +213,7 @@ export function Experience() {
 
 interface ExperienceRowProps {
   role: Role
-  index: number
+  displayIndex: number
   illuminated: boolean
   muted: boolean
   setActiveId: (id: string) => void
@@ -217,7 +221,7 @@ interface ExperienceRowProps {
 
 function ExperienceRow({
   role,
-  index,
+  displayIndex,
   illuminated,
   muted,
   setActiveId,
@@ -236,21 +240,24 @@ function ExperienceRow({
 
   const meta = (
     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-      <span className="type-meta text-muted-foreground">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-      <span className="type-meta text-muted-foreground">{role.period}</span>
       {current ? (
         <span className="type-meta inline-flex items-center gap-1.5 text-primary">
           <span className="size-1.5 rounded-full bg-primary" />
           Now
         </span>
-      ) : null}
+      ) : (
+        <>
+          <span className="type-meta text-muted-foreground">
+            {String(displayIndex).padStart(2, "0")}
+          </span>
+          <span className="type-meta text-muted-foreground">{role.period}</span>
+        </>
+      )}
     </div>
   )
 
   const company = (
-    <h3 className="editorial-display type-section mt-3 font-medium text-foreground transition-colors group-hover:text-primary">
+    <h3 className="editorial-display type-section mt-3 text-foreground transition-colors group-hover:text-primary">
       {role.company}
     </h3>
   )

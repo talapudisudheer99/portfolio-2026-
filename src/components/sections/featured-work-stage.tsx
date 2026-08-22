@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react"
 import { FeaturedWorkMobileStage } from "@/components/sections/featured-work-mobile-stage"
 import { FeaturedWorkTabletStage } from "@/components/sections/featured-work-tablet-stage"
 import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { duration, parallax, rise } from "@/lib/motion"
+import { parallax } from "@/lib/motion"
 import type { Project } from "@/types"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -19,7 +19,7 @@ interface FeaturedWorkStageProps {
 }
 
 /**
- * Phase 09 Task 6 — Sameward as a physical object: enter depth + scrub + tilt.
+ * Sameward tablet — opens with scroll (depth → frame), then light lag + tilt.
  * Product UI unchanged.
  */
 export function FeaturedWorkStage({
@@ -47,50 +47,74 @@ export function FeaturedWorkStage({
         if (stage) {
           gsap.set(stage, { y: 0, clearProps: "transform" })
         }
-        gsap.set(enter, { autoAlpha: 1, y: 0, scale: 1, clearProps: "transform" })
+        gsap.set(enter, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          clearProps: "filter,transform",
+        })
         return
       }
 
       const mmEnter = gsap.matchMedia()
 
+      // Mobile — soft rise + fade (no heavy 3D)
       mmEnter.add("(max-width: 767px)", () => {
-        gsap.set(enter, { autoAlpha: 0, y: 0 })
-
-        gsap.to(enter, {
-          autoAlpha: 1,
-          duration: duration.copy,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 82%",
-            toggleActions: "play none none none",
-            once: true,
-          },
-        })
-      })
-
-      mmEnter.add("(min-width: 768px)", () => {
         gsap.set(enter, {
-          autoAlpha: 0,
-          y: rise.lg,
-          scale: 0.965,
-          filter: "brightness(0.92)",
+          autoAlpha: 0.2,
+          y: 48,
+          scale: 0.92,
+          transformOrigin: "50% 90%",
+          force3D: true,
         })
 
         gsap.to(enter, {
           autoAlpha: 1,
           y: 0,
           scale: 1,
-          filter: "brightness(1)",
-          duration: duration.cinematic,
-          ease: "power3.out",
+          ease: "none",
           scrollTrigger: {
             trigger: section,
-            start: "top 84%",
-            toggleActions: "play none none none",
-            once: true,
+            start: "top 95%",
+            end: "top 45%",
+            scrub: 0.7,
           },
         })
+      })
+
+      // Tablet / desktop — physical open: deep → framed as it enters
+      mmEnter.add("(min-width: 768px)", () => {
+        gsap.set(enter, {
+          transformOrigin: "50% 88%",
+          transformPerspective: 1400,
+          force3D: true,
+        })
+
+        gsap.fromTo(
+          enter,
+          {
+            autoAlpha: 0.1,
+            y: 110,
+            scale: 0.58,
+            rotateX: 14,
+            filter: "brightness(0.72)",
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            rotateX: 0,
+            filter: "brightness(1)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 95%",
+              end: "top 32%",
+              scrub: 0.8,
+            },
+          }
+        )
       })
 
       const mm = gsap.matchMedia()
@@ -98,13 +122,13 @@ export function FeaturedWorkStage({
         mm.add("(min-width: 1024px)", () => {
           gsap.fromTo(
             stage,
-            { y: parallax.stageLag },
+            { y: parallax.stageLag * 0.45 },
             {
-              y: -parallax.stageLag,
+              y: -parallax.stageLag * 0.45,
               ease: "none",
               scrollTrigger: {
                 trigger: section,
-                start: "top bottom",
+                start: "top 40%",
                 end: "bottom top",
                 scrub: 0.7,
               },
@@ -116,7 +140,6 @@ export function FeaturedWorkStage({
         })
       }
 
-      // Pointer depth on chassis — desktop only (tablet keeps mock fully in frame)
       const chassis = section.querySelector(
         ".fd-tablet-chassis"
       ) as HTMLElement | null

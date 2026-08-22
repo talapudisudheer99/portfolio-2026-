@@ -1,20 +1,22 @@
 "use client"
 
-import type { RefObject } from "react"
+import type { Ref, RefObject } from "react"
 
 import { MotionParallax } from "@/components/motion/parallax-layer"
 import { SamewardPanel } from "@/components/shared/sameward-panel"
 
 interface FeaturedWorkTabletStageProps {
   parallaxRef?: RefObject<HTMLDivElement | null>
+  stageRef?: Ref<HTMLDivElement | null>
 }
 
 export function FeaturedWorkTabletStage({
   parallaxRef,
+  stageRef,
 }: Readonly<FeaturedWorkTabletStageProps>) {
   return (
     <div ref={parallaxRef} className="fd-tablet-parallax" data-cursor="View">
-      <div className="fd-tablet-stage">
+      <div ref={stageRef} className="fd-tablet-stage">
         <div className="fd-tablet-body">
           <div className="fd-tablet-chassis">
             <div className="fd-tablet-chrome" aria-hidden="true">

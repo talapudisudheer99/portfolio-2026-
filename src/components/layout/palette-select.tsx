@@ -14,18 +14,44 @@ import { cn } from "@/lib/utils"
 function Swatch({
   gradient,
   className,
-}: Readonly<{ gradient: string; className?: string }>) {
+  useActiveToken = false,
+}: Readonly<{
+  gradient?: string
+  className?: string
+  /** Nav trigger: follow CSS tokens from boot script (no gold→green flash). */
+  useActiveToken?: boolean
+}>) {
   return (
     <span
       aria-hidden="true"
       className={cn("nav-palette-swatch", className)}
-      style={{ background: gradient }}
+      style={
+        useActiveToken
+          ? { background: "var(--ember-gradient)" }
+          : { background: gradient }
+      }
     />
   )
 }
 
 export function PaletteSelect() {
-  const { palette, paletteId, setPaletteId } = usePalette()
+  const { palette, paletteId, setPaletteId, ready } = usePalette()
+
+  // CSS token swatch is correct from first paint (boot script). Hold Select until ready.
+  if (!ready) {
+    return (
+      <button
+        type="button"
+        aria-label="Choose blob color palette"
+        className="nav-palette-trigger"
+        disabled
+        suppressHydrationWarning
+      >
+        <Swatch useActiveToken />
+        <span className="sr-only">{palette.label}</span>
+      </button>
+    )
+  }
 
   return (
     <Select
@@ -40,7 +66,7 @@ export function PaletteSelect() {
         className="nav-palette-trigger"
       >
         <SelectValue>
-          <Swatch gradient={palette.gradient} />
+          <Swatch useActiveToken />
           <span className="sr-only">{palette.label}</span>
         </SelectValue>
       </SelectTrigger>

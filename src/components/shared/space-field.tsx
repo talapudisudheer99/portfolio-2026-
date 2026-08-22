@@ -2,12 +2,13 @@
 
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMemo, useRef } from "react"
 
 import { useHydratedReducedMotion } from "@/components/shared/motion"
 import { cn } from "@/lib/utils"
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 function mulberry(seed: number) {
   return () => {
@@ -61,16 +62,19 @@ type MeteorPath = {
   length: number
 }
 
-/** Percent positions; rotation is derived from the path so the nose tracks velocity. */
+/**
+ * Slim SVG craft — diagonal flybys (not a level skim across the top).
+ * Nose is +x; rotation follows the path.
+ */
 const FLYBY_ROUTES = [
-  // Shallow cruise — left → right, slight descent
-  { from: { left: "-14%", top: "16%" }, to: { left: "114%", top: "34%" } },
-  // Return pass — right → left, slight descent
-  { from: { left: "114%", top: "20%" }, to: { left: "-14%", top: "42%" } },
-  // Low skim — left → right, almost level
-  { from: { left: "-14%", top: "58%" }, to: { left: "114%", top: "64%" } },
-  // Climbing cut — right → left, gentle rise
-  { from: { left: "114%", top: "52%" }, to: { left: "-14%", top: "28%" } },
+  // Dive L → R
+  { from: { left: "-14%", top: "12%" }, to: { left: "114%", top: "42%" } },
+  // Climb R → L
+  { from: { left: "114%", top: "48%" }, to: { left: "-14%", top: "18%" } },
+  // Mid diagonal L → R
+  { from: { left: "-14%", top: "28%" }, to: { left: "114%", top: "58%" } },
+  // Return dive R → L
+  { from: { left: "114%", top: "22%" }, to: { left: "-14%", top: "50%" } },
 ] as const
 
 function parsePct(value: string) {
@@ -82,14 +86,26 @@ function craftHeading(
   from: { left: string; top: string },
   to: { left: string; top: string }
 ) {
-  const dx = ((parsePct(to.left) - parsePct(from.left)) / 100) * window.innerWidth
-  const dy = ((parsePct(to.top) - parsePct(from.top)) / 100) * window.innerHeight
+  const dx =
+    ((parsePct(to.left) - parsePct(from.left)) / 100) * window.innerWidth
+  const dy =
+    ((parsePct(to.top) - parsePct(from.top)) / 100) * window.innerHeight
   return (Math.atan2(dy, dx) * 180) / Math.PI
 }
 
+/** True when Sameward/product mid-frame is clear — skip sky traffic over UI. */
+function upperSkyIsClear() {
+  const projects = document.querySelector("#projects")
+  if (!projects) return true
+  const vh = window.innerHeight || 1
+  const r = projects.getBoundingClientRect()
+  // Tablet owns the middle band — hold meteors/craft
+  return !(r.top < vh * 0.58 && r.bottom > vh * 0.22)
+}
+
 /**
- * Global space world: starfield + twinkles + meteors + rare gold craft flyby.
- * CSS/SVG + GSAP only — no second WebGL.
+ * Global space world: starfield + twinkles + meteors + rare SVG craft flyby.
+ * CSS/SVG + GSAP only — WebGL props live in AmbientAtmosphere.
  */
 export function SpaceField() {
   const prefersReducedMotion = useHydratedReducedMotion()
@@ -99,35 +115,35 @@ export function SpaceField() {
 
   const layers = useMemo(
     () => ({
-      far: buildStarShadows(0x51a7, 140, {
-        minAlpha: 0.35,
-        maxAlpha: 0.7,
-        blurMax: 0.4,
-        spreadMax: 0.15,
+      far: buildStarShadows(0x51a7, 180, {
+        minAlpha: 0.28,
+        maxAlpha: 0.65,
+        blurMax: 0.35,
+        spreadMax: 0.12,
       }),
-      mid: buildStarShadows(0xc0de, 95, {
-        minAlpha: 0.45,
-        maxAlpha: 0.85,
-        blurMax: 0.8,
-        spreadMax: 0.35,
-      }),
-      near: buildStarShadows(0xf00d, 48, {
-        minAlpha: 0.65,
-        maxAlpha: 0.95,
-        blurMax: 1.6,
-        spreadMax: 0.7,
-      }),
-      glow: buildStarShadows(0xab12, 18, {
-        minAlpha: 0.55,
-        maxAlpha: 0.9,
-        blurMax: 4,
-        spreadMax: 1.4,
-      }),
-      ember: buildStarShadows(0xe31b, 28, {
+      mid: buildStarShadows(0xc0de, 120, {
         minAlpha: 0.4,
-        maxAlpha: 0.8,
-        blurMax: 1.2,
-        spreadMax: 0.5,
+        maxAlpha: 0.85,
+        blurMax: 0.9,
+        spreadMax: 0.4,
+      }),
+      near: buildStarShadows(0xf00d, 64, {
+        minAlpha: 0.6,
+        maxAlpha: 0.98,
+        blurMax: 1.8,
+        spreadMax: 0.8,
+      }),
+      glow: buildStarShadows(0xab12, 24, {
+        minAlpha: 0.5,
+        maxAlpha: 0.92,
+        blurMax: 5,
+        spreadMax: 1.6,
+      }),
+      ember: buildStarShadows(0xe31b, 36, {
+        minAlpha: 0.35,
+        maxAlpha: 0.85,
+        blurMax: 1.4,
+        spreadMax: 0.55,
         warm: true,
       }),
     }),
@@ -136,76 +152,119 @@ export function SpaceField() {
 
   const twinkles = useMemo(() => {
     const rand = mulberry(0x71a1)
-    return Array.from({ length: 16 }, (_, id): Twinkle => ({
+    return Array.from({ length: 28 }, (_, id): Twinkle => ({
       id,
       x: rand() * 100,
       y: rand() * 100,
-      size: 1.4 + rand() * 2.2,
+      size: 1.3 + rand() * 2.6,
       delay: rand() * 8,
-      dur: 2.4 + rand() * 3.6,
+      dur: 2.1 + rand() * 3.8,
     }))
   }, [])
 
   const meteorSeed = useMemo(() => {
     const rand = mulberry(0x5e7e)
-    return Array.from({ length: 4 }, (_, id): MeteorPath => ({
-      id,
-      // Start high / left so the streak can cross a long diagonal
-      top: 2 + rand() * 38,
-      left: -8 + rand() * 55,
-      // Positive = CSS clockwise = down-right fall
-      rotate: 28 + rand() * 22,
-      length: 100 + rand() * 90,
-    }))
+    // Classic gold streaks — only the top sky band (never mid-frame / tablet)
+    return Array.from({ length: 4 }, (_, id): MeteorPath => {
+      const fromLeft = rand() > 0.45
+      return {
+        id,
+        // Upper 6–18% only
+        top: 6 + rand() * 12,
+        left: fromLeft ? -12 + rand() * 18 : 72 + rand() * 28,
+        // Shallow diagonal fall — one story, not random rise/fall mix
+        rotate: fromLeft ? 28 + rand() * 14 : 152 + rand() * 14,
+        length: 72 + rand() * 48,
+      }
+    })
   }, [])
 
   useGSAP(
     () => {
-      if (prefersReducedMotion) return
-
+      const root = rootRef.current
       const craft = craftRef.current
       const meteorRoot = meteorsRef.current
+      if (!root || prefersReducedMotion) return
       if (!craft || !meteorRoot) return
 
       const isCompact = window.matchMedia("(max-width: 900px)").matches
       const meteorNodes = gsap.utils.toArray<HTMLElement>(
         meteorRoot.querySelectorAll(".space-field-meteor")
       )
+      const far = root.querySelector(".space-field-parallax--far")
+      const mid = root.querySelector(".space-field-parallax--mid")
+      const near = root.querySelector(".space-field-parallax--near")
+      const glow = root.querySelector(".space-field-parallax--glow")
+      const ember = root.querySelector(".space-field-parallax--ember")
+      const nebulaA = root.querySelector(".space-field-nebula--a")
+      const nebulaB = root.querySelector(".space-field-nebula--b")
+      const dust = root.querySelector(".space-field-dust")
 
-      gsap.set(craft, { autoAlpha: 0, left: "-12%", top: "40%" })
+      const parallax = gsap.timeline({
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.1,
+        },
+      })
+      if (far) parallax.to(far, { yPercent: -8, ease: "none" }, 0)
+      if (mid) parallax.to(mid, { yPercent: -14, xPercent: 2, ease: "none" }, 0)
+      if (near)
+        parallax.to(near, { yPercent: -22, xPercent: -1.5, ease: "none" }, 0)
+      if (glow) parallax.to(glow, { yPercent: -26, ease: "none" }, 0)
+      if (ember) parallax.to(ember, { yPercent: -18, xPercent: 3, ease: "none" }, 0)
+      if (nebulaA)
+        parallax.to(nebulaA, { yPercent: -12, xPercent: 4, ease: "none" }, 0)
+      if (nebulaB)
+        parallax.to(nebulaB, { yPercent: -20, xPercent: -5, ease: "none" }, 0)
+      if (dust) parallax.to(dust, { yPercent: -10, opacity: 0.55, ease: "none" }, 0)
+
+      gsap.set(craft, { autoAlpha: 0, left: "-12%", top: "28%" })
       meteorNodes.forEach((node, i) => {
         const seed = meteorSeed[i]
         gsap.set(node, {
           autoAlpha: 0,
           x: 0,
           y: 0,
-          rotation: seed?.rotate ?? 35,
-          scaleX: 0.2,
+          rotation: seed?.rotate ?? 32,
+          scaleX: 0.15,
           transformOrigin: "left center",
         })
       })
 
+      let craftBusy = false
+      let meteorBusy = false
+
       const runFlyby = () => {
+        if (craftBusy || !upperSkyIsClear()) return
+        craftBusy = true
+
         const route =
           FLYBY_ROUTES[Math.floor(Math.random() * FLYBY_ROUTES.length)] ??
           FLYBY_ROUTES[0]
-        const duration = isCompact ? 4.15 : 5.54
+        // Slower, readable pass — silhouette + trail stay clear
+        const duration = isCompact ? 4.2 : 5.1
         const heading = craftHeading(route.from, route.to)
 
         gsap
-          .timeline()
+          .timeline({
+            onComplete: () => {
+              craftBusy = false
+            },
+          })
           .set(craft, {
             autoAlpha: 0,
             left: route.from.left,
             top: route.from.top,
             rotation: heading,
-            scale: isCompact ? 0.78 : 1,
+            scale: isCompact ? 0.72 : 0.92,
             transformOrigin: "50% 50%",
           })
           .to(craft, {
-            autoAlpha: 1,
-            duration: 0.4,
-            ease: "power1.out",
+            autoAlpha: 0.92,
+            duration: 0.55,
+            ease: "power2.out",
           })
           .to(
             craft,
@@ -213,51 +272,57 @@ export function SpaceField() {
               left: route.to.left,
               top: route.to.top,
               duration,
-              ease: "none",
+              ease: "power1.inOut",
             },
-            0
+            0.15
           )
           .to(
             craft,
             {
               autoAlpha: 0,
-              duration: 0.5,
-              ease: "power1.in",
+              duration: 0.65,
+              ease: "power2.in",
             },
-            duration - 0.5
+            duration - 0.35
           )
       }
 
       const runMeteor = () => {
+        if (meteorBusy || !upperSkyIsClear()) return
+
         const index = Math.floor(Math.random() * meteorNodes.length)
         const node = meteorNodes[index]
         const seed = meteorSeed[index]
-        if (!node) return
+        if (!node || !seed) return
 
-        const angle = (seed?.rotate ?? 35) * (Math.PI / 180)
-        // Travel along the streak axis so the head leads a full fly-across
+        meteorBusy = true
+        const angle = seed.rotate * (Math.PI / 180)
+        // Short, fast streak — reads as a spark, not a lingering slash
         const dist =
-          (isCompact ? 0.8 : 1.05) *
-          Math.hypot(window.innerWidth, window.innerHeight) *
-          (0.5 + Math.random() * 0.3)
+          (isCompact ? 0.28 : 0.36) *
+          Math.hypot(window.innerWidth, window.innerHeight)
         const dx = Math.cos(angle) * dist
         const dy = Math.sin(angle) * dist
-        const duration = 1.45 + Math.random() * 0.5
+        const duration = 0.7 + Math.random() * 0.28
 
         gsap
-          .timeline()
+          .timeline({
+            onComplete: () => {
+              meteorBusy = false
+            },
+          })
           .set(node, {
             autoAlpha: 0,
             x: 0,
             y: 0,
-            rotation: seed?.rotate ?? 35,
-            scaleX: 0.25,
+            rotation: seed.rotate,
+            scaleX: 0.2,
             transformOrigin: "left center",
           })
           .to(node, {
             autoAlpha: 1,
             scaleX: 1,
-            duration: 0.2,
+            duration: 0.12,
             ease: "power1.out",
           })
           .to(
@@ -266,7 +331,7 @@ export function SpaceField() {
               x: dx,
               y: dy,
               duration,
-              ease: "none",
+              ease: "power1.in",
             },
             0
           )
@@ -274,57 +339,65 @@ export function SpaceField() {
             node,
             {
               autoAlpha: 0,
-              scaleX: 0.65,
-              duration: 0.32,
-              ease: "power1.in",
+              scaleX: 0.35,
+              duration: 0.22,
+              ease: "power2.in",
             },
-            duration - 0.32
+            duration - 0.18
           )
       }
 
       const timers: gsap.core.Tween[] = []
 
-      timers.push(
-        gsap.delayedCall(isCompact ? 3.5 : 2.2, () => {
-          runMeteor()
-        })
-      )
-      timers.push(gsap.delayedCall(isCompact ? 8 : 5.5, runFlyby))
+      const tryMeteor = () => {
+        if (upperSkyIsClear()) runMeteor()
+      }
+      const tryFlyby = () => {
+        if (upperSkyIsClear()) runFlyby()
+      }
+
+      // Hero beat — one quiet meteor, then a craft after the page settles
+      timers.push(gsap.delayedCall(isCompact ? 4.5 : 3.2, tryMeteor))
+      timers.push(gsap.delayedCall(isCompact ? 11 : 8.5, tryFlyby))
 
       const scheduleCraft = () => {
-        const wait = isCompact ? 26 + Math.random() * 14 : 18 + Math.random() * 16
+        // Rare — atmosphere accent, not traffic
+        const wait = isCompact ? 36 + Math.random() * 18 : 28 + Math.random() * 16
         timers.push(
           gsap.delayedCall(wait, () => {
-            runFlyby()
+            tryFlyby()
             scheduleCraft()
           })
         )
       }
       timers.push(
-        gsap.delayedCall(isCompact ? 28 : 22, () => {
-          runFlyby()
+        gsap.delayedCall(isCompact ? 40 : 32, () => {
           scheduleCraft()
         })
       )
 
       const scheduleMeteor = () => {
-        const wait = isCompact ? 9 + Math.random() * 8 : 6 + Math.random() * 7
+        // Occasional gold sparks — not a continuous shower
+        const wait = isCompact ? 14 + Math.random() * 10 : 11 + Math.random() * 9
         timers.push(
           gsap.delayedCall(wait, () => {
-            runMeteor()
+            tryMeteor()
             scheduleMeteor()
           })
         )
       }
       timers.push(
-        gsap.delayedCall(isCompact ? 11 : 8, () => {
-          runMeteor()
+        gsap.delayedCall(isCompact ? 12 : 9, () => {
           scheduleMeteor()
         })
       )
 
       return () => {
         timers.forEach((t) => t.kill())
+        parallax.scrollTrigger?.kill()
+        parallax.kill()
+        gsap.killTweensOf(craft)
+        meteorNodes.forEach((n) => gsap.killTweensOf(n))
       }
     },
     {
@@ -340,26 +413,41 @@ export function SpaceField() {
       className={cn("space-field", prefersReducedMotion && "is-still")}
       aria-hidden="true"
     >
-      <span
-        className="space-field-dots space-field-dots--far"
-        style={{ boxShadow: layers.far }}
-      />
-      <span
-        className="space-field-dots space-field-dots--mid"
-        style={{ boxShadow: layers.mid }}
-      />
-      <span
-        className="space-field-dots space-field-dots--near"
-        style={{ boxShadow: layers.near }}
-      />
-      <span
-        className="space-field-dots space-field-dots--glow"
-        style={{ boxShadow: layers.glow }}
-      />
-      <span
-        className="space-field-dots space-field-dots--ember"
-        style={{ boxShadow: layers.ember }}
-      />
+      {/* Soft cosmic gas — entire journey, not hero-only */}
+      <div className="space-field-nebula space-field-nebula--a" />
+      <div className="space-field-nebula space-field-nebula--b" />
+      <div className="space-field-dust" />
+
+      <div className="space-field-parallax space-field-parallax--far">
+        <span
+          className="space-field-dots space-field-dots--far"
+          style={{ boxShadow: layers.far }}
+        />
+      </div>
+      <div className="space-field-parallax space-field-parallax--mid">
+        <span
+          className="space-field-dots space-field-dots--mid"
+          style={{ boxShadow: layers.mid }}
+        />
+      </div>
+      <div className="space-field-parallax space-field-parallax--near">
+        <span
+          className="space-field-dots space-field-dots--near"
+          style={{ boxShadow: layers.near }}
+        />
+      </div>
+      <div className="space-field-parallax space-field-parallax--glow">
+        <span
+          className="space-field-dots space-field-dots--glow"
+          style={{ boxShadow: layers.glow }}
+        />
+      </div>
+      <div className="space-field-parallax space-field-parallax--ember">
+        <span
+          className="space-field-dots space-field-dots--ember"
+          style={{ boxShadow: layers.ember }}
+        />
+      </div>
 
       {!prefersReducedMotion
         ? twinkles.map((star) => (
@@ -404,12 +492,10 @@ export function SpaceField() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Slim dart fuselage */}
             <path
               d="M10 11 L28 7.2 H52 L68 9.2 L78 11 L68 12.8 H52 L28 14.8 Z"
               fill="url(#spaceCraftHull)"
             />
-            {/* Canopy */}
             <ellipse
               cx="40"
               cy="11"
@@ -418,24 +504,20 @@ export function SpaceField() {
               fill="url(#spaceCraftCanopy)"
               opacity="0.9"
             />
-            {/* Upper fin */}
             <path
               d="M22 7.4 L14 2.5 L30 7.8 Z"
               fill="color-mix(in srgb, var(--primary) 55%, #c8c8d4)"
               opacity="0.9"
             />
-            {/* Lower fin */}
             <path
               d="M22 14.6 L14 19.5 L30 14.2 Z"
               fill="color-mix(in srgb, var(--primary) 55%, #c8c8d4)"
               opacity="0.9"
             />
-            {/* Gold nose */}
             <path
               d="M68 9.2 L82 11 L68 12.8 Z"
               fill="url(#spaceCraftNose)"
             />
-            {/* Engine bead */}
             <circle cx="12" cy="11" r="1.4" fill="var(--primary)" />
             <defs>
               <linearGradient

@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
+import { AtmosphereReadyProvider } from "@/components/shared/atmosphere-ready"
 import { AmbientAtmosphere } from "@/components/shared/blob-scene"
 import { CursorInteraction } from "@/components/shared/cursor"
 import { ScrollGrain } from "@/components/shared/parallax"
@@ -26,7 +27,7 @@ interface MotionRootProps {
  */
 export function MotionRoot({ children }: Readonly<MotionRootProps>) {
   return (
-    <>
+    <AtmosphereReadyProvider>
       <CursorInteraction />
       <SmoothScroll>
         <AmbientAtmosphere />
@@ -45,6 +46,6 @@ export function MotionRoot({ children }: Readonly<MotionRootProps>) {
         <Footer />
         <Toaster richColors position="top-right" />
       </SmoothScroll>
-    </>
+    </AtmosphereReadyProvider>
   )
 }

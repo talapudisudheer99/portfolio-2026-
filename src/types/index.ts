@@ -64,7 +64,7 @@ export interface HeroContent {
   wordmark: string
   surname: string
   headline: HeadlineSegment[]
-  tagline: string
+  tagline: string | readonly string[]
   availability: string
   availabilityHref?: string
   /** Eyebrow above the product stack. */
