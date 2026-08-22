@@ -4339,7 +4339,7 @@
 /* ─── Hero — Dark editorial ─── */
 .hero-editorial {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   min-height: 100svh;
   min-height: 100dvh;
   display: flex;
@@ -4350,17 +4350,6 @@
   overflow: hidden;
   background: transparent;
   box-sizing: border-box;
-}
-
-/* Hold SSR HTML until the intro timeline owns visibility (no static flash). */
-.hero-editorial:not(.hero-entered) .hero-content {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-editorial:not(.hero-entered) .hero-content {
-    opacity: 1;
-  }
 }
 
 .hero-kicker {
@@ -4417,7 +4406,7 @@
   }
 }
 
-/* Accent gradient on ONE layer only — parent + word both clipped = double ghost */
+/* Accent fill only — never clip the GSAP opacity wrapper (.hero-word) */
 .hero-headline [data-accent]:not(:has(.hero-word)) {
   display: inline-block;
   font-family: var(--font-display);
@@ -4439,7 +4428,19 @@
   -webkit-text-fill-color: inherit;
 }
 
-.hero-headline [data-accent] .hero-word,
+.hero-word {
+  display: inline-block;
+  will-change: opacity, transform;
+}
+
+.hero-editorial.hero-booted .hero-word {
+  will-change: auto;
+}
+
+.hero-word-inner {
+  display: inline;
+}
+
 .hero-accent-word {
   display: inline-block;
   font-family: var(--font-display);
@@ -4459,12 +4460,17 @@
   filter: none;
 }
 
-.hero-word {
-  display: inline-block;
+/* Hidden until first moon frame, then GSAP plays. No ghost 0.14 text. */
+.hero-editorial:not(.hero-playing):not(.hero-booted) .hero-content,
+.hero-editorial:not(.hero-playing):not(.hero-booted) .hero-scroll-cue {
+  opacity: 0;
 }
 
-.hero-boot-word {
-  display: inline;
+@media (prefers-reduced-motion: reduce) {
+  .hero-editorial:not(.hero-playing):not(.hero-booted) .hero-content,
+  .hero-editorial:not(.hero-playing):not(.hero-booted) .hero-scroll-cue {
+    opacity: 1;
+  }
 }
 
 .hero-tagline {
@@ -4588,6 +4594,16 @@
   pointer-events: none;
   overflow: hidden;
   opacity: 1;
+  animation: space-field-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes space-field-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Soft cosmic gas — balanced, not a left-edge vignette */
@@ -4971,7 +4987,7 @@ html[data-section-mood="contact"] .space-field-nebula--a {
     var(--atmosphere-opacity, 0.92) * var(--atmosphere-reveal) *
       var(--atmosphere-mood) * var(--atmosphere-scroll-fade, 1)
   );
-  transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .blob-scene-fixed.is-ready {
@@ -5015,10 +5031,10 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   --atmosphere-mood: 0.88;
 }
 
-/* Content overlay */
+/* Content overlay — always paint; never wait on GSAP / WebGL */
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   width: 100%;
   max-width: 56rem;
   margin: 0 auto;
@@ -5027,6 +5043,8 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   align-items: center;
   text-align: center;
   padding: 0.5rem 1rem 0.75rem;
+  opacity: 1;
+  visibility: visible;
 }
 
 .hero-content [data-h-cta] {

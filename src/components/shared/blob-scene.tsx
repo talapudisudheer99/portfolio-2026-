@@ -187,6 +187,7 @@ export function AmbientAtmosphere() {
     function revealAtmosphere() {
       if (cancelled) return
       parent.classList.add("is-ready")
+      window.dispatchEvent(new Event("portfolio:atmosphere-ready"))
     }
 
     function attachSpaceProps() {
@@ -308,11 +309,7 @@ export function AmbientAtmosphere() {
         .loadAsync("/moon/color-1k.jpg")
         .then((colorMap) => {
           mountMoon(colorMap)
-          const idle =
-            "requestIdleCallback" in window
-              ? window.requestIdleCallback.bind(window)
-              : (cb: () => void) => window.setTimeout(cb, 180)
-          idle(() => attachSpaceProps())
+          requestAnimationFrame(() => attachSpaceProps())
 
           const hiColor = isMobile
             ? "/moon/color-2k.jpg"
