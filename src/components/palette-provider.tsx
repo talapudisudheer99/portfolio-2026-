@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react"
 
+import { PALETTE_STORAGE_KEY } from "@/components/palette-init-script"
 import {
   blobPalettes,
   defaultBlobPaletteId,
@@ -19,15 +20,28 @@ import {
   type BlobPaletteId,
 } from "@/data/blob-palettes"
 
-const STORAGE_KEY = "portfolio-blob-palette"
-
 interface PaletteContextValue {
   palette: BlobPalette
   paletteId: BlobPaletteId
   setPaletteId: (id: BlobPaletteId) => void
+  ready: boolean
 }
 
 const PaletteContext = createContext<PaletteContextValue | null>(null)
+
+/** Prefer DOM (boot script) so first client paint matches applied tokens. */
+function readBootPaletteId(): BlobPaletteId {
+  if (typeof window === "undefined") return defaultBlobPaletteId
+  try {
+    const fromDom = document.documentElement.getAttribute("data-palette")
+    if (fromDom && isBlobPaletteId(fromDom)) return fromDom
+    const stored = window.localStorage.getItem(PALETTE_STORAGE_KEY)
+    if (stored && isBlobPaletteId(stored)) return stored
+  } catch {
+    /* private mode / blocked storage */
+  }
+  return defaultBlobPaletteId
+}
 
 function applyPaletteTokens(palette: BlobPalette) {
   const root = document.documentElement
@@ -35,7 +49,6 @@ function applyPaletteTokens(palette: BlobPalette) {
   for (const [token, value] of Object.entries(palette.tokens)) {
     root.style.setProperty(token, value)
   }
-  // Keep form / input chrome in sync — not always listed in palette tokens.
   const primary = palette.tokens["--primary"]
   const border = palette.tokens["--border"]
   if (primary && border) {
@@ -49,32 +62,37 @@ function applyPaletteTokens(palette: BlobPalette) {
 export function PaletteProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  // SSR + first client render stay on default; boot script already painted stored tokens.
   const [paletteId, setPaletteIdState] =
     useState<BlobPaletteId>(defaultBlobPaletteId)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    queueMicrotask(() => {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored && isBlobPaletteId(stored)) {
-        setPaletteIdState(stored)
-      }
-    })
+    const stored = readBootPaletteId()
+    setPaletteIdState(stored)
+    applyPaletteTokens(getBlobPalette(stored))
+    setReady(true)
   }, [])
 
   const palette = useMemo(() => getBlobPalette(paletteId), [paletteId])
 
   useEffect(() => {
+    if (!ready) return
     applyPaletteTokens(palette)
-    localStorage.setItem(STORAGE_KEY, paletteId)
-  }, [palette, paletteId])
+    try {
+      window.localStorage.setItem(PALETTE_STORAGE_KEY, paletteId)
+    } catch {
+      /* ignore */
+    }
+  }, [palette, paletteId, ready])
 
   const setPaletteId = useCallback((id: BlobPaletteId) => {
     setPaletteIdState(id)
   }, [])
 
   const value = useMemo(
-    () => ({ palette, paletteId, setPaletteId }),
-    [palette, paletteId, setPaletteId]
+    () => ({ palette, paletteId, setPaletteId, ready }),
+    [palette, paletteId, setPaletteId, ready]
   )
 
   return (

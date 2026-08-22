@@ -51,7 +51,7 @@ export function Contact() {
         <div className="col-span-12 md:col-span-5">
           <p className="section-kicker text-primary mb-6">Let&rsquo;s build</p>
           <MaskedLine display>
-            <h2 className="editorial-display type-display max-w-[16ch] font-medium">
+            <h2 className="editorial-display type-title max-w-[16ch] text-foreground">
               Have a product worth building?
             </h2>
           </MaskedLine>

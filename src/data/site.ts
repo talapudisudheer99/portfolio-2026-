@@ -58,12 +58,14 @@ export const siteConfig: SiteConfig = {
     surname: "Talapudi",
     headline: [
       { text: "I built" },
-      { text: "Sameward", break: true, accent: true },
+      { text: "Sameward", accent: true },
       { text: "a live product system,", break: true },
-      { text: "end to end.", break: true, nowrap: true },
+      { text: "end to end.", break: true },
     ],
-    tagline:
-      "Frontend-strong engineer. Interface, realtime, auth, AI tools, and launch — shipped as one product, not a demo.",
+    tagline: [
+      "Frontend-strong engineer. Interface, realtime, auth,",
+      "AI tools, and launch — shipped as one product, not a demo.",
+    ],
     availability: "Sameward is live",
     availabilityHref: "https://sameward.com/",
     systemLabel: "How a product ships",

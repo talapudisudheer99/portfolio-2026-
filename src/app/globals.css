@@ -6,17 +6,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-michroma), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-michroma), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  /* Phase 06 — cosmic geometric type scale */
-  --text-display: clamp(2.75rem, 7vw, 5.5rem);
-  --text-title: clamp(2rem, 4.2vw, 3.75rem);
-  --text-section: clamp(1.75rem, 3.2vw, 2.75rem);
-  --text-lead: clamp(1.0625rem, 1.35vw, 1.1875rem);
-  --text-body: 1rem;
+  /* Phase 06 — cosmic geometric type scale (nudged for Michroma optical size) */
+  --text-display: clamp(2.55rem, 6.35vw, 5rem);
+  --text-title: clamp(1.7rem, 3.4vw, 3rem);
+  --text-section: clamp(1.45rem, 2.55vw, 2.2rem);
+  --text-lead: clamp(1.1rem, 1.4vw, 1.22rem);
+  --text-body: 1.015rem;
   --text-ui: 0.875rem;
   --text-meta: 0.75rem;
   --text-micro: 0.6875rem;
@@ -28,12 +28,13 @@
   --leading-ui: 1.4;
   --leading-meta: 1.4;
 
-  --tracking-display: -0.04em;
-  --tracking-title: -0.04em;
-  --tracking-section: -0.035em;
+  /* Michroma is already extended — open tracking like aerospace HUDs */
+  --tracking-display: 0.04em;
+  --tracking-title: 0.035em;
+  --tracking-section: 0.05em;
   --tracking-body: 0.01em;
-  --tracking-ui: -0.01em;
-  --tracking-meta: 0.14em;
+  --tracking-ui: 0.02em;
+  --tracking-meta: 0.16em;
 
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
@@ -226,7 +227,7 @@
 @layer utilities {
   .editorial-display {
     font-family: var(--font-display);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: var(--tracking-display);
   }
 
@@ -235,7 +236,7 @@
     font-size: var(--text-display);
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .type-title {
@@ -243,7 +244,7 @@
     font-size: var(--text-title);
     line-height: var(--leading-title);
     letter-spacing: var(--tracking-title);
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .type-section {
@@ -251,7 +252,7 @@
     font-size: var(--text-section);
     line-height: var(--leading-section);
     letter-spacing: var(--tracking-section);
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .type-lead {
@@ -363,14 +364,14 @@
     position: relative;
     z-index: 1;
     display: grid;
-    gap: clamp(1.75rem, 4vw, 2.5rem);
+    gap: clamp(2.5rem, 5.5vw, 3.75rem);
     padding-block: clamp(1.25rem, 3vw, 2.25rem) clamp(1.75rem, 4vw, 2.5rem);
   }
 
   .projects-inside-sync {
     position: relative;
-    z-index: 1;
-    margin-top: 0;
+    z-index: 2;
+    margin-top: clamp(0.5rem, 1.6vw, 1.1rem);
     display: flex;
     justify-content: center;
   }
@@ -524,10 +525,10 @@
   }
 
   .projects-approach-headline {
-    max-width: 11ch;
+    max-width: 12ch;
     font-size: var(--text-title);
     line-height: var(--leading-title);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: var(--tracking-title);
   }
 
@@ -540,33 +541,116 @@
   }
 
   .projects-approach-steps {
-    row-gap: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
   }
 
-  .projects-approach-activate-rule {
-    display: block;
-    width: 100%;
-    height: 1px;
-    margin-bottom: 1.25rem;
-    background: color-mix(in srgb, var(--primary) 45%, var(--border));
-    transform: scaleX(0);
-    transform-origin: left center;
+  @media (min-width: 1024px) {
+    .projects-approach-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  .projects-approach-card {
+    position: relative;
+    display: grid;
+    gap: 0.85rem;
+    height: 100%;
+    padding: 1.15rem 1.2rem 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, rgb(255 255 255 / 0.1));
+    background:
+      radial-gradient(
+        120% 80% at 0% 0%,
+        color-mix(in srgb, var(--primary) 14%, transparent) 0%,
+        transparent 55%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--surface-elevated, #161210) 88%, transparent) 0%,
+        color-mix(in srgb, var(--background) 50%, #0a0907) 100%
+      );
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+
+  /* Non-emerald palettes: lift card fill so copy stays readable on darker accents */
+  html:not([data-palette="obsidian-emerald"]) .projects-approach-card {
+    border-color: color-mix(in srgb, var(--primary) 30%, rgb(255 255 255 / 0.16));
+    background:
+      radial-gradient(
+        120% 80% at 0% 0%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 0%,
+        transparent 58%
+      ),
+      linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--surface-elevated, #161210) 72%, rgb(255 255 255 / 0.1)) 0%,
+        color-mix(in srgb, var(--background) 42%, rgb(255 255 255 / 0.06)) 100%
+      );
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--primary) 14%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.1);
+  }
+
+  html:not([data-palette="obsidian-emerald"]) .projects-approach-card-num {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+    border-color: color-mix(in srgb, var(--primary) 38%, transparent);
+  }
+
+  html:not([data-palette="obsidian-emerald"]) .projects-approach-card-detail {
+    color: color-mix(in srgb, var(--foreground-secondary) 82%, var(--foreground) 18%);
+  }
+
+  .projects-approach-card-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-width: 2.35rem;
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.12em;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  }
+
+  .projects-approach-card-body {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .projects-approach-card-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: var(--tracking-title);
+    color: var(--foreground);
+  }
+
+  .projects-approach-card-detail {
+    margin: 0;
+    max-width: 28ch;
+    font-size: clamp(0.92rem, 1.2vw, 1rem);
+    line-height: 1.5;
+    color: var(--foreground-secondary);
   }
 
   .projects-flow-step--approach {
-    padding-block: 0.35rem 0.55rem;
-    border-top: none;
     cursor: default;
     transition: none;
   }
 
   .projects-flow-step--approach:hover {
     transform: none;
-    border-top-color: transparent;
-  }
-
-  .projects-flow-detail--approach {
-    max-width: 22ch;
   }
 
   .projects-flow-title--accent {
@@ -2079,9 +2163,9 @@
     }
 
     .projects-problem-line {
-      font-size: clamp(1.65rem, 7.2vw, 2.35rem);
-      line-height: 1.08;
-      letter-spacing: -0.03em;
+      font-size: clamp(1.4rem, 6vw, 2rem);
+      line-height: 1.14;
+      letter-spacing: var(--tracking-title);
     }
 
     .projects-approach-headline {
@@ -2110,25 +2194,20 @@
     }
 
     .projects-flow-step--approach {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-block: 0.55rem 0.45rem;
-      text-align: center;
+      display: grid;
+      padding: 1.1rem 1.15rem 1.2rem;
+      text-align: left;
     }
 
     .projects-case-section--approach .projects-flow-meta {
-      justify-content: center;
+      justify-content: flex-start;
     }
 
-    .projects-flow-title {
-      margin-top: 0.65rem;
-      font-size: clamp(1.3rem, 5.4vw, 1.65rem);
-      line-height: 1.06;
+    .projects-approach-card-title {
+      font-size: clamp(1.2rem, 5vw, 1.4rem);
     }
 
-    .projects-flow-detail,
-    .projects-flow-detail--approach {
+    .projects-approach-card-detail {
       max-width: none;
       font-size: 1rem;
       line-height: 1.5;
@@ -2136,7 +2215,7 @@
     }
 
     .projects-approach-steps {
-      gap: 0.9rem 0;
+      gap: 0.85rem;
       width: 100%;
     }
 
@@ -2431,6 +2510,25 @@
       transform var(--motion-ui, 350ms) var(--motion-ease-out, ease);
   }
 
+  /* Michroma is wide — keep stats compact so 2023 / 05 / 01 never collide */
+  .experience-stats {
+    width: 100%;
+  }
+
+  .experience-stat-value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.9vw, 1.35rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .experience-stat-value--accent {
+    color: var(--primary);
+  }
+
   .experience-row.is-muted {
     opacity: 0.36;
     filter: saturate(0.75);
@@ -2495,7 +2593,7 @@
     text-transform: uppercase;
   }
 
-  /* Capabilities — Asteroid Belt */
+  /* Capabilities — flat editorial grid */
   .capabilities-section {
     position: relative;
     isolation: isolate;
@@ -2503,21 +2601,18 @@
   }
 
   .capabilities-section .section-space {
-    /* Stage owns vertical presence; keep modest section chrome only */
     padding-bottom: clamp(2.75rem, 4.5vw, 4.25rem);
   }
 
   .capabilities-rail {
     position: relative;
     z-index: 1;
-    overflow: visible;
   }
 
   .capabilities-belt {
     position: relative;
     display: grid;
-    /* Clear air between copy and the field */
-    gap: clamp(4rem, 8vw, 6.25rem);
+    gap: clamp(2.75rem, 5vw, 4rem);
     width: 100%;
   }
 
@@ -2555,8 +2650,8 @@
 
   .capabilities-belt-headline-line {
     display: block;
-    font-size: clamp(2.1rem, 4.8vw, 3.35rem);
-    line-height: 1.05;
+    font-size: clamp(1.8rem, 4vw, 2.85rem);
+    line-height: 1.1;
     font-weight: 500;
     letter-spacing: var(--tracking-title);
     color: var(--foreground);
@@ -2572,557 +2667,185 @@
   .capabilities-belt-hero-aside {
     display: grid;
     gap: 0.75rem;
-    min-width: 0;
-    padding-left: clamp(0.85rem, 2vw, 1.5rem);
-    border-left: 1px solid rgb(255 255 255 / 0.14);
   }
 
   .capabilities-belt-lead {
     margin: 0;
-    max-width: 34ch;
-    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
-    line-height: var(--leading-body);
-    font-weight: 500;
-    color: rgb(255 255 255 / 0.78);
-    text-wrap: pretty;
+    max-width: 36ch;
+    font-size: clamp(1rem, 1.35vw, 1.125rem);
+    line-height: 1.55;
+    color: var(--foreground-secondary);
   }
 
   .capabilities-belt-stance {
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    line-height: 1.55;
-    letter-spacing: 0.04em;
-    color: rgb(255 255 255 / 0.48);
+    font-size: var(--text-meta);
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--primary) 55%, var(--foreground-secondary));
   }
 
   .capabilities-belt-count {
-    margin: 0.1rem 0 0;
+    margin: 0.15rem 0 0;
     font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--primary) 75%, rgb(255 255 255 / 0.4));
-  }
-
-  .capabilities-belt-field {
-    position: relative;
-    z-index: 1;
-    outline: none;
-    margin-inline: clamp(-1.5rem, -3vw, 0px);
-  }
-
-  .capabilities-belt-viewport {
-    position: relative;
-    isolation: isolate;
-    width: 100%;
-    overflow: visible;
-  }
-
-  .capabilities-belt-world {
-    position: relative;
-    will-change: transform;
-  }
-
-  .capabilities-belt-nebula {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 0;
-    width: min(34rem, 72vw);
-    height: min(22rem, 46vh);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .capabilities-belt-nebula-core {
-    position: absolute;
-    inset: 16% 20%;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 44% 40%,
-      color-mix(in srgb, var(--primary) 55%, transparent) 0%,
-      color-mix(in srgb, var(--primary) 16%, transparent) 42%,
-      transparent 72%
-    );
-    filter: blur(32px);
-  }
-
-  .capabilities-belt-nebula-haze {
-    position: absolute;
-    inset: -6%;
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at 50% 48%,
-      color-mix(in srgb, var(--primary) 22%, transparent) 0%,
-      transparent 68%
-    );
-    filter: blur(44px);
-    opacity: 0.88;
-  }
-
-  .capabilities-belt-nebula-veil {
-    position: absolute;
-    inset: 10% 6%;
-    border-radius: 46% 54% 48% 52%;
-    background: radial-gradient(
-      ellipse at 60% 55%,
-      color-mix(in srgb, var(--primary) 12%, transparent) 0%,
-      transparent 60%
-    );
-    filter: blur(34px);
-    opacity: 0.6;
-    mix-blend-mode: screen;
-  }
-
-  .capabilities-belt-dust {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  .capabilities-belt-mote {
-    position: absolute;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--primary) 72%, white);
-    box-shadow: 0 0 7px color-mix(in srgb, var(--primary) 50%, transparent);
-  }
-
-  .capabilities-belt-stage {
-    position: relative;
-    z-index: 2;
-    /*
-     * Tall enough that 2 rock rows (≈16.5rem each) can sit with air between.
-     * Short stages force every seat into the same band → collisions + empty padding.
-     */
-    height: clamp(46rem, 76vh, 56rem);
-    width: 100%;
-  }
-
-  .capabilities-belt-ring-path {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: min(56rem, 96%);
-    height: min(34rem, 78%);
-    border: 1px dashed color-mix(in srgb, var(--primary) 32%, transparent);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    opacity: 0.45;
-  }
-
-  .capabilities-belt-plane {
-    position: absolute;
-    left: 50%;
-    bottom: 2%;
-    z-index: 0;
-    width: min(50rem, 92%);
-    height: 5.5rem;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-
-  .capabilities-belt-plane-glow {
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    background: radial-gradient(
-      ellipse at center,
-      color-mix(in srgb, var(--primary) 28%, transparent) 0%,
-      transparent 72%
-    );
-    filter: blur(18px);
-    opacity: 0.5;
-  }
-
-  /*
-   * Asteroid layout: left/top come from INLINE styles on each article.
-   * Sized to fit a tall stage without overlapping neighbors.
-   */
-  .capabilities-asteroid {
-    position: absolute;
-    width: min(14.25rem, 22vw);
-    height: min(16.75rem, 28vh);
-    max-width: 15.25rem;
-    max-height: 18rem;
-    transform: translate(-50%, -50%);
-    transform-origin: center center;
-  }
-
-  .capabilities-asteroid-shell {
-    position: absolute;
-    inset: 0;
-    will-change: transform, opacity, filter;
-    opacity: 0;
-  }
-
-  .capabilities-asteroid-mesh {
-    position: absolute;
-    inset: -2% -1% -4% -2%;
-    z-index: 1;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    filter: drop-shadow(0 16px 24px rgb(0 0 0 / 0.6));
-    pointer-events: none;
-  }
-
-  .capabilities-asteroid-mesh-rim {
-    stroke: color-mix(in srgb, var(--primary) 26%, transparent);
-  }
-
-  .capabilities-asteroid-mesh-limb {
-    opacity: 0.85;
-  }
-
-  .capabilities-asteroid-rim {
-    position: absolute;
-    inset: -8px;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.4;
-    background: radial-gradient(
-      ellipse 68% 58% at 50% 44%,
-      color-mix(in srgb, var(--primary) 20%, transparent) 0%,
-      transparent 70%
-    );
-    filter: blur(12px);
-  }
-
-  .capabilities-asteroid-shadow {
-    position: absolute;
-    left: 16%;
-    right: 14%;
-    bottom: 2%;
-    height: 14%;
-    z-index: 0;
-    pointer-events: none;
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at center,
-      rgb(0 0 0 / 0.48) 0%,
-      transparent 72%
-    );
-    filter: blur(9px);
-    opacity: 0.5;
-  }
-
-  .capabilities-asteroid-face {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: grid;
-    align-content: start;
-    gap: 0.35rem;
-    padding: 22% 20% 20% 20%;
-    overflow: hidden;
-    clip-path: var(--rock-face-clip);
-  }
-
-  .capabilities-asteroid-face-head {
-    display: contents;
-  }
-
-  .capabilities-asteroid-icon {
-    display: none;
-  }
-
-  .capabilities-asteroid-meta {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: var(--text-meta);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--primary) 78%, rgb(255 255 255 / 0.45));
+    color: var(--foreground-muted, var(--foreground-secondary));
   }
 
-  .capabilities-asteroid-stage {
-    color: var(--primary);
-    font-weight: 600;
-  }
-
-  .capabilities-asteroid-title {
-    margin: 0;
-    font-size: clamp(1.2rem, 1.9vw, 1.55rem);
-    line-height: 1.08;
-    font-weight: 500;
-    letter-spacing: var(--tracking-title);
-    color: rgb(255 255 255 / 0.98);
-    text-wrap: balance;
-    text-shadow: 0 2px 16px rgb(0 0 0 / 0.75);
-  }
-
-  .capabilities-asteroid-ore {
-    list-style: none;
-    margin: 0.4rem 0 0;
-    padding: 0.45rem 0 0;
-    border-top: 1px solid color-mix(in srgb, var(--primary) 32%, rgb(255 255 255 / 0.1));
+  .capabilities-grid {
     display: grid;
-    gap: 0.26rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
   }
 
-  .capabilities-asteroid-vein {
+  @media (min-width: 768px) {
+    .capabilities-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem 1.15rem;
+    }
+  }
+
+  .capabilities-grid-item {
+    height: 100%;
+    min-width: 0;
+  }
+
+  /* Asteroid-face panels — flat grid, not a floating constellation */
+  .capabilities-card {
     position: relative;
-    padding-left: 0.85rem;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    line-height: 1.3;
-    color: rgb(255 255 255 / 0.72);
+    display: grid;
+    gap: 0.65rem;
+    height: 100%;
+    overflow: hidden;
+    padding: 1.25rem 1.3rem 1.35rem 1.4rem;
+    /* Soft faceted rock silhouette */
+    border-radius: 1.35rem 0.7rem 1.5rem 0.85rem;
+    clip-path: polygon(
+      1.5% 10%,
+      7% 2.5%,
+      93% 1.5%,
+      99% 11%,
+      98.5% 88%,
+      91% 98%,
+      8% 98.5%,
+      1% 89%
+    );
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, rgb(255 255 255 / 0.14));
+    background:
+      radial-gradient(
+        120% 90% at 12% 0%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 0%,
+        transparent 52%
+      ),
+      linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--surface-elevated, #161210) 92%, #1a1408) 0%,
+        color-mix(in srgb, var(--background) 55%, #0a0907) 100%
+      );
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--primary) 12%, transparent),
+      0 14px 36px rgb(0 0 0 / 0.42),
+      0 0 28px color-mix(in srgb, var(--primary) 12%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.06);
   }
 
-  .capabilities-asteroid-vein::before {
+  .capabilities-card::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0.38em;
-    width: 0.4rem;
-    height: 0.26rem;
-    border-radius: 1px;
-    background: var(--primary);
+    top: 14%;
+    bottom: 14%;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--ember-gradient);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 45%, transparent);
+    opacity: 0.85;
+  }
+
+  .capabilities-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-left: 0.4rem;
+  }
+
+  .capabilities-card-meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--foreground-secondary);
+  }
+
+  .capabilities-card-stage {
+    color: var(--primary);
+  }
+
+  .capabilities-card-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    color: var(--primary);
+    opacity: 0.95;
+  }
+
+  .capabilities-card-title {
+    margin: 0;
+    padding-left: 0.4rem;
+    font-size: clamp(1.12rem, 1.85vw, 1.38rem);
+    line-height: 1.22;
+    font-weight: 400;
+    letter-spacing: var(--tracking-title);
+    color: var(--foreground);
+    text-shadow: 0 2px 16px rgb(0 0 0 / 0.55);
+  }
+
+  .capabilities-card-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    margin: 0;
+    padding: 0.2rem 0 0 0.4rem;
+    list-style: none;
+  }
+
+  .capabilities-card-skill {
+    position: relative;
+    padding-left: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.04em;
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--foreground-secondary) 88%, white);
+  }
+
+  .capabilities-card-skill::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.48em;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 80%, white);
     box-shadow: 0 0 6px color-mix(in srgb, var(--primary) 40%, transparent);
-    transform: skewX(-18deg);
-  }
-
-  .capabilities-belt-field.is-reduced .capabilities-asteroid-shell {
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-
-  /* Tablet + mobile — editorial stack with soft rock-panel presence */
-  @media (max-width: 1023px) {
-    .capabilities-belt {
-      gap: clamp(2rem, 5vw, 2.75rem);
-    }
-
-    .capabilities-belt-hero-aside {
-      padding-left: 0;
-      border-left: none;
-      padding-top: 0.85rem;
-      border-top: 1px solid rgb(255 255 255 / 0.12);
-    }
-
-    .capabilities-belt-headline-line {
-      font-size: clamp(1.9rem, 8vw, 2.6rem);
-    }
-
-    .capabilities-belt-field {
-      margin-inline: 0;
-    }
-
-    .capabilities-belt-dust,
-    .capabilities-belt-ring-path,
-    .capabilities-belt-plane,
-    .capabilities-asteroid-mesh,
-    .capabilities-asteroid-rim,
-    .capabilities-asteroid-shadow {
-      display: none !important;
-    }
-
-    /* Soft ambient wash behind the stack */
-    .capabilities-belt-nebula {
-      display: block !important;
-      position: absolute;
-      left: 50%;
-      top: 42%;
-      z-index: 0;
-      width: min(28rem, 92vw);
-      height: min(18rem, 40vh);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      opacity: 0.55;
-    }
-
-    .capabilities-belt-stage {
-      position: relative;
-      z-index: 1;
-      height: auto;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .capabilities-asteroid {
-      position: relative;
-      left: auto !important;
-      top: auto !important;
-      width: 100%;
-      max-width: none;
-      height: auto;
-      max-height: none;
-      transform: none;
-    }
-
-    .capabilities-asteroid:nth-child(odd) {
-      width: calc(100% - 0.55rem);
-      justify-self: start;
-    }
-
-    .capabilities-asteroid:nth-child(even) {
-      width: calc(100% - 0.55rem);
-      justify-self: end;
-    }
-
-    .capabilities-asteroid-shell {
-      position: relative;
-      inset: auto;
-      opacity: 1 !important;
-      transform: none !important;
-      filter: none !important;
-      will-change: auto;
-    }
-
-    .capabilities-asteroid-face {
-      position: relative;
-      inset: auto;
-      overflow: hidden;
-      gap: 0.6rem;
-      padding: 1.2rem 1.25rem 1.25rem 1.35rem;
-      /* Soft faceted panel — not a hard rectangle */
-      border-radius: 1.35rem 0.7rem 1.5rem 0.85rem;
-      clip-path: polygon(
-        1.5% 10%,
-        7% 2.5%,
-        93% 1.5%,
-        99% 11%,
-        98.5% 88%,
-        91% 98%,
-        8% 98.5%,
-        1% 89%
-      );
-      border: 1px solid color-mix(in srgb, var(--primary) 28%, rgb(255 255 255 / 0.14));
-      background:
-        radial-gradient(
-          120% 90% at 12% 0%,
-          color-mix(in srgb, var(--primary) 16%, transparent) 0%,
-          transparent 52%
-        ),
-        linear-gradient(
-          160deg,
-          color-mix(in srgb, var(--surface-elevated) 88%, #1a1408) 0%,
-          color-mix(in srgb, var(--background) 70%, #0a0907) 100%
-        );
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--primary) 10%, transparent),
-        0 14px 36px rgb(0 0 0 / 0.42),
-        0 0 28px color-mix(in srgb, var(--primary) 12%, transparent),
-        inset 0 1px 0 rgb(255 255 255 / 0.06);
-    }
-
-    .capabilities-asteroid-face::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 14%;
-      bottom: 14%;
-      width: 3px;
-      border-radius: 2px;
-      background: var(--ember-gradient);
-      box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 45%, transparent);
-      opacity: 0.85;
-    }
-
-    .capabilities-asteroid-face-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding-left: 0.35rem;
-    }
-
-    .capabilities-asteroid-icon {
-      display: grid;
-      place-items: center;
-      width: 2rem;
-      height: 2rem;
-      padding: 0.4rem;
-      border-radius: 999px;
-      color: var(--primary);
-      background: color-mix(in srgb, var(--primary) 14%, transparent);
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 28%, transparent);
-      opacity: 1;
-    }
-
-    .capabilities-asteroid-meta {
-      margin: 0;
-      font-size: var(--text-micro);
-    }
-
-    .capabilities-asteroid-title {
-      margin: 0;
-      padding-left: 0.35rem;
-      font-size: clamp(1.25rem, 4.4vw, 1.55rem);
-      line-height: 1.12;
-      text-shadow: none;
-    }
-
-    .capabilities-asteroid-ore {
-      margin: 0.2rem 0 0;
-      padding: 0.55rem 0 0 0.35rem;
-      display: grid;
-      gap: 0.32rem;
-      border-top: 1px solid color-mix(in srgb, var(--primary) 22%, rgb(255 255 255 / 0.08));
-    }
-
-    .capabilities-asteroid-vein {
-      padding-left: 0.95rem;
-      font-size: var(--text-ui);
-      line-height: 1.45;
-      color: rgb(255 255 255 / 0.74);
-    }
-  }
-
-  @media (min-width: 640px) and (max-width: 1023px) {
-    .capabilities-belt-stage {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem 0.9rem;
-    }
-
-    .capabilities-asteroid:nth-child(odd),
-    .capabilities-asteroid:nth-child(even) {
-      width: 100%;
-      justify-self: stretch;
-    }
-
-    .capabilities-asteroid:nth-child(even) .capabilities-asteroid-face {
-      border-radius: 0.7rem 1.35rem 0.85rem 1.5rem;
-      clip-path: polygon(
-        1% 11%,
-        8% 1.5%,
-        94% 2.5%,
-        99% 10%,
-        99% 89%,
-        92% 98.5%,
-        7% 98%,
-        1.5% 88%
-      );
-    }
-
-    .capabilities-asteroid:last-child:nth-child(odd) {
-      grid-column: 1 / -1;
-      max-width: 28rem;
-      justify-self: center;
-      width: 100%;
-    }
   }
 
   @media (max-width: 899px) {
-    .capabilities-belt-field {
-      margin-inline: 0;
+    .capabilities-belt-hero-aside {
+      max-width: 42ch;
+    }
+
+    .capabilities-belt-headline-line {
+      font-size: clamp(1.55rem, 5.8vw, 2.05rem);
     }
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .capabilities-asteroid,
-    .capabilities-asteroid-mesh,
-    .capabilities-asteroid-shell,
-    .capabilities-belt-mote {
-      animation: none !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-
 
   /* About — two columns: story left, impact right */
   .about-section {
@@ -3215,7 +2938,7 @@
     display: block;
     font-size: var(--text-title);
     line-height: var(--leading-title);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: var(--tracking-title);
     color: var(--foreground);
   }
@@ -3276,11 +2999,11 @@
   }
 
   .about-channel[data-accent="amber"] {
-    --about-accent: var(--primary-hover);
+    --about-accent: var(--primary);
   }
 
   .about-channel[data-accent="ember"] {
-    --about-accent: #e8c060;
+    --about-accent: var(--primary);
   }
 
   .about-channel-icon {
@@ -3449,10 +3172,11 @@
   }
 
   .about-hud-stat-value {
-    font-size: clamp(0.95rem, 1.3vw, 1.12rem);
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    font-weight: 400;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.03em;
     background: var(--ember-gradient);
     -webkit-background-clip: text;
     background-clip: text;
@@ -3484,7 +3208,7 @@
 
   @media (max-width: 719px) {
     .about-brief-headline-line {
-      font-size: clamp(2rem, 8vw, var(--text-title));
+      font-size: clamp(1.85rem, 7.4vw, var(--text-title));
     }
 
     .about-hud {
@@ -3719,7 +3443,7 @@
   /* Featured work — static tablet frame (Option B edge perspective) */
   .fd-section {
     position: relative;
-    padding-bottom: 0.15rem;
+    padding-bottom: clamp(0.65rem, 1.8vw, 1.15rem);
   }
 
   .fd-showcase-head {
@@ -3731,10 +3455,10 @@
   .fd-showcase-title {
     margin-top: 0.65rem;
     font-family: var(--font-display);
-    font-size: clamp(2.35rem, 4.2vw, 3.35rem);
-    line-height: 0.98;
-    font-weight: 500;
-    letter-spacing: -0.04em;
+    font-size: clamp(2.05rem, 3.7vw, 2.95rem);
+    line-height: 1.05;
+    font-weight: 400;
+    letter-spacing: var(--tracking-title);
   }
 
   .fd-showcase-thesis {
@@ -3911,8 +3635,8 @@
     position: absolute;
     left: 8%;
     right: 8%;
-    bottom: -0.85rem;
-    height: 1rem;
+    bottom: -0.35rem;
+    height: 0.75rem;
     border-radius: 999px;
     pointer-events: none;
     z-index: 0;
@@ -3993,15 +3717,38 @@
   }
 
   .fd-showcase-stages {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* CSS-only show/hide — do NOT use Tailwind hidden/lg:block (fought !important rules) */
+  .fd-showcase-tablet {
+    display: block;
     width: 100%;
     max-width: 100%;
   }
 
-  .fd-showcase-mobile,
-  .fd-showcase-tablet {
+  .fd-showcase-mobile {
+    display: none;
     width: 100%;
     max-width: 100%;
+    justify-content: center;
   }
+
+  @media (max-width: 1023px) {
+    .fd-showcase-tablet {
+      display: none !important;
+    }
+
+    .fd-showcase-mobile {
+      display: flex !important;
+    }
+  }
+
+  /* Tablet/phone stage enter owned by FeaturedWorkStage GSAP */
 
   /* Phone frame — mobile-only product stage */
   .fd-phone-stage {
@@ -4562,10 +4309,10 @@
   min-height: 100svh;
   min-height: 100dvh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  /* Top clears nav; bottom keeps CTAs above fold */
-  padding: 5rem 1.5rem 3.25rem;
+  /* Slightly below nav — not flush, not mid-screen */
+  padding: 8.75rem 1.5rem 34vh;
   overflow: hidden;
   background: transparent;
   box-sizing: border-box;
@@ -4602,28 +4349,60 @@
 .hero-headline {
   margin: 0;
   font-family: var(--font-display);
-  /* +8px vs prior max scale; Space Grotesk unchanged */
-  font-size: clamp(3.25rem, calc(7vw + 0.5rem), 6rem);
-  font-weight: 500;
+  /* Larger display — lines stay nowrap; content width carries the length */
+  font-size: clamp(2.15rem, calc(3.4vw + 0.55rem), 3.75rem);
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: var(--tracking-display);
   color: var(--foreground);
+  width: 100%;
+  max-width: 100%;
 }
 
-.hero-headline [data-nowrap] {
+.hero-headline .hero-line {
+  display: block;
   white-space: nowrap;
+  width: max-content;
+  max-width: none;
+  margin-inline: auto;
 }
 
+@media (max-width: 639px) {
+  .hero-headline {
+    font-size: clamp(1.55rem, 5.8vw, 2.05rem);
+  }
+}
 
-.hero-headline [data-accent],
+/* Accent gradient on ONE layer only — parent + word both clipped = double ghost */
+.hero-headline [data-accent]:not(:has(.hero-word)) {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1em;
+  letter-spacing: 0.02em;
+  background: var(--ember-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-headline [data-accent]:has(.hero-word) {
+  display: inline;
+  background: none;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+}
+
 .hero-headline [data-accent] .hero-word,
 .hero-accent-word {
   display: inline-block;
   font-family: var(--font-display);
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 1em;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
   padding: 0;
   margin: 0;
   overflow: visible;
@@ -4632,6 +4411,8 @@
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: none;
 }
 
 .hero-word {
@@ -4642,18 +4423,25 @@
 }
 
 .hero-tagline {
-  margin: 1.75rem 0 0;
-  max-width: 42ch;
-  font-size: clamp(1.15rem, 1.7vw, 1.35rem);
-  line-height: 1.6;
+  margin: 1.15rem 0 0;
+  max-width: min(100%, 36rem);
+  font-size: clamp(1.02rem, 1.25vw, 1.18rem);
+  line-height: 1.5;
   color: var(--foreground-secondary);
+  white-space: normal;
+}
+
+@media (max-width: 1100px) {
+  .hero-tagline {
+    max-width: 34rem;
+  }
 }
 
 .hero-status {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   line-height: var(--leading-meta);
@@ -4692,7 +4480,7 @@
   justify-content: center;
   gap: 0.85rem;
   width: 100%;
-  margin-top: 1.75rem;
+  margin-top: 1.25rem;
 }
 
 @media (max-width: 639px) {
@@ -4746,15 +4534,139 @@
 
 /* ── Product visual ── */
 
-/* ---------- Global space field (stars + micro dust over lava) ---------- */
+/* ---------- Global space field (stars + nebula + meteors) ---------- */
 .space-field {
   position: fixed;
   inset: 0;
-  /* Above WebGL lava, below page chrome (main / nav) */
+  /* Above WebGL moon, below page chrome (main / nav) */
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
   opacity: 1;
+}
+
+/* Soft cosmic gas — balanced, not a left-edge vignette */
+.space-field-nebula {
+  position: absolute;
+  width: 68vmax;
+  height: 68vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.22;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+
+.space-field-nebula--a {
+  /* Top-center wash — was left:-12% and read as a box-shadow strip */
+  top: -28%;
+  left: 18%;
+  background:
+    radial-gradient(
+      circle at 45% 50%,
+      color-mix(in srgb, var(--primary) 32%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 8%, transparent) 40%,
+      transparent 70%
+    );
+}
+
+.space-field-nebula--b {
+  right: -18%;
+  bottom: -26%;
+  width: 62vmax;
+  height: 62vmax;
+  opacity: 0.2;
+  background:
+    radial-gradient(
+      circle at 55% 40%,
+      color-mix(in srgb, #6a7ab8 28%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 8%, transparent) 48%,
+      transparent 72%
+    );
+}
+
+.space-field-dust {
+  position: absolute;
+  inset: -10%;
+  opacity: 0.28;
+  background:
+    radial-gradient(
+      ellipse 85% 55% at 50% -5%,
+      color-mix(in srgb, var(--primary) 10%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 65% 48% at 78% 72%,
+      color-mix(in srgb, #5a6a9a 12%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 55% 38% at 28% 78%,
+      color-mix(in srgb, var(--primary) 6%, transparent),
+      transparent 58%
+    );
+  will-change: transform, opacity;
+}
+
+.space-field:not(.is-still) .space-field-nebula--a {
+  animation: space-nebula-drift-a 48s ease-in-out infinite alternate;
+}
+
+.space-field:not(.is-still) .space-field-nebula--b {
+  animation: space-nebula-drift-b 62s ease-in-out infinite alternate;
+}
+
+.space-field:not(.is-still) .space-field-dust {
+  animation: space-dust-breathe 28s ease-in-out infinite alternate;
+}
+
+@keyframes space-nebula-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(6%, 4%, 0) scale(1.08); }
+}
+
+@keyframes space-nebula-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-5%, -6%, 0) scale(1.1); }
+}
+
+@keyframes space-dust-breathe {
+  from { opacity: 0.22; transform: translate3d(0, 0, 0); }
+  to { opacity: 0.34; transform: translate3d(0, -2%, 0); }
+}
+
+/* Section mood gently recolors the universe wash */
+html[data-section-mood="projects"] .space-field-nebula--a {
+  opacity: 0.28;
+  filter: blur(80px) hue-rotate(-8deg);
+}
+
+html[data-section-mood="skills"] .space-field-nebula--b {
+  opacity: 0.26;
+  filter: blur(80px) hue-rotate(18deg);
+}
+
+html[data-section-mood="experience"] .space-field-nebula--a {
+  opacity: 0.2;
+  filter: blur(84px) hue-rotate(-14deg);
+}
+
+html[data-section-mood="experience"] .space-field-nebula--b {
+  opacity: 0.18;
+}
+
+html[data-section-mood="about"] .space-field-nebula {
+  opacity: 0.16;
+}
+
+html[data-section-mood="contact"] .space-field-nebula--a {
+  opacity: 0.26;
+}
+
+.space-field-parallax {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
 }
 
 .space-field-dots {
@@ -4804,41 +4716,46 @@
 
 @media (min-width: 901px) {
   .space-field:not(.is-still) .space-field-dots--far {
-    animation: space-field-drift-a 150s linear infinite;
+    animation: space-field-drift-a 90s linear infinite;
   }
 
   .space-field:not(.is-still) .space-field-dots--mid {
-    animation: space-field-drift-b 100s linear infinite;
+    animation: space-field-drift-b 60s linear infinite;
   }
 
   .space-field:not(.is-still) .space-field-dots--near,
   .space-field:not(.is-still) .space-field-dots--glow {
-    animation: space-field-drift-c 72s linear infinite;
+    animation: space-field-drift-c 42s linear infinite;
   }
 
   .space-field:not(.is-still) .space-field-dots--ember {
-    animation: space-field-drift-b 110s linear infinite reverse;
+    animation: space-field-drift-b 70s linear infinite reverse;
   }
 }
 
 @keyframes space-field-drift-a {
   from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(0, -2%, 0); }
+  to { transform: translate3d(0.4%, -3.5%, 0); }
 }
 
 @keyframes space-field-drift-b {
   from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(0.8%, -2.8%, 0); }
+  to { transform: translate3d(1.4%, -4.5%, 0); }
 }
 
 @keyframes space-field-drift-c {
   from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-0.6%, -3.6%, 0); }
+  to { transform: translate3d(-1.1%, -5.5%, 0); }
 }
 
 @media (max-width: 900px) {
   .space-field {
-    opacity: 0.88;
+    opacity: 0.9;
+  }
+
+  .space-field-nebula {
+    opacity: 0.24;
+    filter: blur(56px);
   }
 
   .space-field-dots--far {
@@ -4855,7 +4772,9 @@
     opacity: 0.75;
   }
 
-  .space-field-dots {
+  .space-field-dots,
+  .space-field-nebula,
+  .space-field-dust {
     animation: none !important;
   }
 }
@@ -4894,24 +4813,25 @@
 
 .space-field-meteor {
   position: absolute;
-  height: 2px;
+  height: 1.5px;
   border-radius: 999px;
   transform-origin: left center;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--primary) 35%, transparent) 18%,
-    color-mix(in srgb, var(--primary) 85%, white) 62%,
+    color-mix(in srgb, var(--primary) 30%, transparent) 22%,
+    color-mix(in srgb, var(--primary) 88%, white) 68%,
     #fff 100%
   );
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--primary) 45%, transparent),
-    0 0 2px rgb(255 255 255 / 0.8);
+    0 0 10px color-mix(in srgb, var(--primary) 40%, transparent),
+    0 0 2px rgb(255 255 255 / 0.75);
   opacity: 0;
   will-change: transform, opacity;
+  pointer-events: none;
 }
 
-/* Rare craft flyby — slim dart ship + tapered wake */
+/* Rare craft flyby — slim dart + tapered wake */
 .space-field-craft {
   position: absolute;
   top: 40%;
@@ -4923,6 +4843,7 @@
   opacity: 0;
   will-change: transform, opacity, left, top;
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--primary) 40%, transparent));
+  pointer-events: none;
 }
 
 .space-field-craft-svg {
@@ -4991,39 +4912,62 @@
   }
 }
 
-/* ---------- Global Fixed Blob Scene ---------- */
+/* ---------- Global Fixed NASA Moon Atmosphere ---------- */
 .blob-scene-fixed {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: var(--atmosphere-opacity, 0.92);
+  /* Hidden until moon textures paint — avoids UI-first pop-in */
+  --atmosphere-reveal: 0;
+  --atmosphere-mood: 1;
+  --atmosphere-scroll-fade: 1;
+  opacity: calc(
+    var(--atmosphere-opacity, 0.92) * var(--atmosphere-reveal) *
+      var(--atmosphere-mood) * var(--atmosphere-scroll-fade, 1)
+  );
+  transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.blob-scene-fixed.is-ready {
+  --atmosphere-reveal: 1;
 }
 
 .blob-scene-fixed canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
-  transition: opacity 600ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .blob-scene-fixed {
-    opacity: 0.55;
+    transition: none;
+  }
+
+  .blob-scene-fixed.is-ready {
+    opacity: calc(0.55 * var(--atmosphere-reveal));
   }
 }
 
 /* Phase 09 Task 13 — subtle page mood continuity (atmosphere remains primary) */
 html[data-section-mood="projects"] .blob-scene-fixed {
-  opacity: calc(var(--atmosphere-opacity, 0.95) * 1.02);
+  --atmosphere-mood: 0.94;
+}
+
+html[data-section-mood="skills"] .blob-scene-fixed {
+  --atmosphere-mood: 1.02;
+}
+
+html[data-section-mood="experience"] .blob-scene-fixed {
+  --atmosphere-mood: 0.98;
 }
 
 html[data-section-mood="about"] .blob-scene-fixed {
-  opacity: calc(var(--atmosphere-opacity, 0.95) * 0.92);
+  --atmosphere-mood: 0.92;
 }
 
 html[data-section-mood="contact"] .blob-scene-fixed {
-  opacity: calc(var(--atmosphere-opacity, 0.95) * 1.01);
+  --atmosphere-mood: 0.88;
 }
 
 /* Content overlay */
@@ -5031,7 +4975,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 50rem;
+  max-width: 56rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -5067,12 +5011,12 @@ html[data-section-mood="contact"] .blob-scene-fixed {
 /* Short viewports (laptop 100% zoom) — keep CTAs in first screen */
 @media (max-height: 860px) {
   .hero-editorial {
-    padding: 4.5rem 1.25rem 2.5rem;
+    padding: 7.5rem 1.25rem 30vh;
   }
 
   .hero-headline {
-    font-size: clamp(2.85rem, calc(5.8vw + 0.5rem), 4.75rem);
-    line-height: 1.16;
+    font-size: clamp(1.95rem, calc(3vw + 0.5rem), 3.35rem);
+    line-height: 1.18;
   }
 
   .hero-kicker {
@@ -5080,16 +5024,16 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   }
 
   .hero-tagline {
-    margin-top: 1.35rem;
-    font-size: clamp(1.1rem, 1.5vw, 1.25rem);
+    margin-top: 0.95rem;
+    font-size: clamp(0.98rem, 1.15vw, 1.1rem);
   }
 
   .hero-status {
-    margin-top: 1.15rem;
+    margin-top: 0.85rem;
   }
 
   .hero-actions {
-    margin-top: 1.35rem;
+    margin-top: 1.05rem;
   }
 
   .hero-scroll-cue {
@@ -5103,13 +5047,12 @@ html[data-section-mood="contact"] .blob-scene-fixed {
 
 @media (max-height: 740px) {
   .hero-editorial {
-    padding: 4rem 1rem 2rem;
+    padding: 6.5rem 1rem 28vh;
     align-items: flex-start;
-    padding-top: 4.75rem;
   }
 
   .hero-headline {
-    font-size: clamp(2.55rem, calc(5vw + 0.5rem), 4rem);
+    font-size: clamp(1.75rem, calc(2.6vw + 0.45rem), 2.85rem);
   }
 
   .hero-scroll-cue {

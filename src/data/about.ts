@@ -25,14 +25,14 @@ export const aboutContent: AboutContent = {
       title: "Ship End-to-End",
       detail:
         "From clean architecture to production-ready\nsystems.",
-      accent: "amber",
+      accent: "gold",
       icon: Layers,
     },
     {
       title: "Solve Real Problems",
       detail:
         "Creating smooth, performant and delightful\nexperiences.",
-      accent: "ember",
+      accent: "gold",
       icon: Rocket,
     },
   ],
