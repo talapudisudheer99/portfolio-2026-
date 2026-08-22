@@ -7,16 +7,17 @@ import { useEffect, useRef } from "react"
 
 import { MotionParallax } from "@/components/motion/parallax-layer"
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { waitForAtmosphere } from "@/hooks/use-deferred-layer"
 import { siteConfig } from "@/data/site"
 
 gsap.registerPlugin(useGSAP)
 
 function BootWords({
   text,
-  wordClass,
+  accent = false,
 }: {
   text: string
-  wordClass: string
+  accent?: boolean
 }) {
   const words = text.split(" ")
   return (
@@ -24,7 +25,11 @@ function BootWords({
       {words.map((word, i) => (
         <span key={`${word}-${i}`}>
           {i > 0 ? " " : null}
-          <span className={wordClass}>{word}</span>
+          <span className="hero-word">
+            <span className={accent ? "hero-accent-word" : "hero-word-inner"}>
+              {word}
+            </span>
+          </span>
         </span>
       ))}
     </>
@@ -32,8 +37,8 @@ function BootWords({
 }
 
 /**
- * Hero boot — ISS / spacecraft HUD: words tick in, then lock.
- * No blur, rise, scale, or magnetic drag (those felt like editorial web, not ops UI).
+ * Opacity lives on `.hero-word` (plain span). Gradient clip stays on the inner
+ * fill — clip + opacity on the same node does not fade in WebKit.
  */
 export function Hero() {
   const { hero } = siteConfig
@@ -50,72 +55,144 @@ export function Hero() {
       if (!section) return
 
       const kickerEl = section.querySelector("[data-h-kicker]")
-      const words = gsap.utils.toArray<HTMLElement>(
-        section.querySelectorAll(".hero-word")
+      const lines = gsap.utils.toArray<HTMLElement>(
+        section.querySelectorAll(".hero-line")
       )
       const tagWords = gsap.utils.toArray<HTMLElement>(
-        section.querySelectorAll(".hero-boot-word")
+        section.querySelectorAll(".hero-tagline .hero-word")
       )
       const statusEl = section.querySelector("[data-h-status]")
       const ctaEls = gsap.utils.toArray<HTMLElement>("[data-h-cta]", section)
       const cueEl = section.querySelector("[data-h-cue]")
       const chrome = [statusEl, ...ctaEls, cueEl].filter(Boolean) as HTMLElement[]
 
-      const revealAll = () => {
-        section.classList.add("hero-entered")
-        gsap.set([...words, ...tagWords, kickerEl, ...chrome].filter(Boolean), {
-          opacity: 1,
-          visibility: "visible",
+      let cancelled = false
+      let done = false
+      let failsafe = 0
+      let tl: gsap.core.Timeline | null = null
+
+      const finish = () => {
+        if (done) return
+        done = true
+        section.classList.add("hero-booted")
+      }
+
+      const play = () => {
+        if (cancelled || done) return
+
+        const content = section.querySelector<HTMLElement>(".hero-content")
+        const headlineWords = gsap.utils.toArray<HTMLElement>(
+          section.querySelectorAll(".hero-headline .hero-word")
+        )
+
+        if (stillRef.current) {
+          if (content) gsap.set(content, { autoAlpha: 1 })
+          gsap.set([...headlineWords, ...tagWords, kickerEl, ...chrome].filter(Boolean), {
+            autoAlpha: 1,
+            y: 0,
+          })
+          finish()
+          return
+        }
+
+        gsap.set(kickerEl, { autoAlpha: 0 })
+        gsap.set(headlineWords, { autoAlpha: 0, y: 8 })
+        gsap.set(tagWords, { autoAlpha: 0, y: 0 })
+        gsap.set(chrome, { autoAlpha: 0, y: 0 })
+        section.classList.add("hero-playing")
+        if (content) gsap.set(content, { autoAlpha: 1 })
+
+        tl = gsap.timeline({
+          defaults: { ease: "power2.inOut" },
+        })
+
+        if (kickerEl) {
+          tl.to(kickerEl, { autoAlpha: 1, duration: 0.16 }, 0)
+        }
+
+        const wordDur = 0.14
+        const wordStagger = 0.032
+        const lineGap = 0.03
+        let headlineT = 0
+
+        lines.forEach((line, lineIndex) => {
+          const lineWords = gsap.utils.toArray<HTMLElement>(
+            line.querySelectorAll(".hero-word")
+          )
+          if (!lineWords.length) return
+          const n = lineWords.length
+          tl!.fromTo(
+            lineWords,
+            { autoAlpha: 0, y: 8 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: wordDur,
+              stagger: wordStagger,
+              immediateRender: lineIndex === 0,
+            },
+            headlineT
+          )
+          headlineT +=
+            wordDur + wordStagger * (n - 1) + (lineIndex < lines.length - 1 ? lineGap : 0)
+        })
+
+        if (tagWords.length) {
+          tl.fromTo(
+            tagWords,
+            { autoAlpha: 0 },
+            {
+              autoAlpha: 1,
+              duration: 0.24,
+              stagger: 0.012,
+              immediateRender: false,
+            },
+            0.72
+          )
+        }
+
+        if (statusEl) {
+          tl.fromTo(
+            statusEl,
+            { autoAlpha: 0, y: 5 },
+            { autoAlpha: 1, y: 0, duration: 0.2, immediateRender: false },
+            1.12
+          )
+        }
+        if (ctaEls.length) {
+          tl.fromTo(
+            ctaEls,
+            { autoAlpha: 0, y: 6 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.24,
+              stagger: 0.06,
+              immediateRender: false,
+            },
+            1.22
+          )
+        }
+        if (cueEl) {
+          tl.to(cueEl, { autoAlpha: 1, duration: 0.2 }, 1.42)
+        }
+
+        failsafe = window.setTimeout(finish, 10000)
+        tl.eventCallback("onComplete", () => {
+          window.clearTimeout(failsafe)
+          finish()
         })
       }
 
-      if (stillRef.current) {
-        revealAll()
-        return
+      void waitForAtmosphere(520, () => cancelled).then(play)
+
+      return () => {
+        cancelled = true
+        window.clearTimeout(failsafe)
+        tl?.kill()
       }
-
-      section.classList.add("hero-entered")
-
-      if (kickerEl) gsap.set(kickerEl, { opacity: 0.14 })
-      gsap.set(words, { opacity: 0.1 })
-      gsap.set(tagWords, { opacity: 0.1 })
-      gsap.set(chrome, { autoAlpha: 0 })
-
-      const failsafe = window.setTimeout(revealAll, 2200)
-      const tl = gsap.timeline({
-        defaults: { ease: "steps(1)" },
-        onComplete: () => window.clearTimeout(failsafe),
-      })
-
-      if (kickerEl) {
-        tl.to(kickerEl, { opacity: 1, duration: 0.05 }, 0.06)
-      }
-
-      if (words.length) {
-        tl.to(
-          words,
-          { opacity: 1, duration: 0.04, stagger: 0.055 },
-          kickerEl ? ">" : 0.08
-        )
-      }
-
-      if (tagWords.length) {
-        tl.to(tagWords, { opacity: 1, duration: 0.035, stagger: 0.028 }, "+=0.08")
-      }
-
-      if (statusEl) {
-        tl.to(statusEl, { autoAlpha: 1, duration: 0.06 }, "+=0.06")
-      }
-      if (ctaEls.length) {
-        tl.to(ctaEls, { autoAlpha: 1, duration: 0.06, stagger: 0.09 }, "+=0.04")
-      }
-      if (cueEl) {
-        tl.to(cueEl, { autoAlpha: 1, duration: 0.06 }, "+=0.04")
-      }
-
-      return () => window.clearTimeout(failsafe)
     },
-    { scope: root, dependencies: [still], revertOnUpdate: true }
+    { scope: root, dependencies: [] }
   )
 
   return (
@@ -130,27 +207,27 @@ export function Hero() {
 
         <h1 className="hero-headline">
           <span className="hero-line">
-            <BootWords text="I built" wordClass="hero-word" />{" "}
+            <BootWords text="I built" />{" "}
             <span data-accent="">
-              <BootWords text="Sameward" wordClass="hero-word hero-accent-word" />
+              <BootWords text="Sameward" accent />
             </span>
           </span>
           <span className="hero-line">
-            <BootWords text="a live product system," wordClass="hero-word" />
+            <BootWords text="a live product system," />
           </span>
           <span className="hero-line">
-            <BootWords text="end to end." wordClass="hero-word" />
+            <BootWords text="end to end." />
           </span>
         </h1>
 
         <p data-h-tagline="" className="hero-tagline">
           {typeof hero.tagline === "string" ? (
-            <BootWords text={hero.tagline} wordClass="hero-boot-word" />
+            <BootWords text={hero.tagline} />
           ) : (
             hero.tagline.map((line, i) => (
-              <span key={i}>
+              <span key={line}>
                 {i > 0 ? <br /> : null}
-                <BootWords text={line} wordClass="hero-boot-word" />
+                <BootWords text={line} />
               </span>
             ))
           )}
