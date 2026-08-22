@@ -1,11 +1,11 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono, Michroma } from "next/font/google"
 
 import { MotionRoot } from "@/components/motion"
 import { PaletteInitScript } from "@/components/palette-init-script"
 import { PaletteProvider } from "@/components/palette-provider"
 import { ThemeProvider } from "@/components/theme-provider"
-import { createSiteMetadata } from "@/lib/metadata"
+import { createJsonLd, createSiteMetadata } from "@/lib/metadata"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -34,6 +34,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = createSiteMetadata()
 
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  colorScheme: "dark",
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -54,23 +59,15 @@ export default function RootLayout({
         <PaletteInitScript />
         <link
           rel="preload"
-          href="/moon/color-4k.jpg"
+          href="/moon/color-1k.jpg"
           as="image"
           type="image/jpeg"
-          media="(min-width: 768px)"
         />
-        <link
-          rel="preload"
-          href="/moon/color-2k.jpg"
-          as="image"
-          type="image/jpeg"
-          media="(max-width: 767px)"
-        />
-        <link
-          rel="preload"
-          href="/moon/displacement-2k.jpg"
-          as="image"
-          type="image/jpeg"
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(createJsonLd()),
+          }}
         />
       </head>
       <body className="min-h-svh font-sans antialiased">

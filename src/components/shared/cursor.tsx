@@ -1,20 +1,17 @@
 "use client"
 
-import gsap from "gsap"
 import { useEffect, useRef, useSyncExternalStore } from "react"
 import { createPortal } from "react-dom"
 
-import { useHydratedReducedMotion } from "@/components/shared/motion"
-import { duration, ease } from "@/lib/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 
 /**
- * Desktop cursor — small stellar reticle (nebula bloom + orbit + star).
- * Labels from data-cursor. Off on mobile / reduced-motion.
+ * Desktop cursor — hotspot is 1:1 with the OS pointer (set in pointermove).
+ * Only the glow trails. Never lerp the reticle; that is what felt sticky.
  */
 export function CursorInteraction() {
   const lightRef = useRef<HTMLDivElement>(null)
   const pointerRef = useRef<HTMLDivElement>(null)
-  const orbitRef = useRef<HTMLDivElement>(null)
   const labelRef = useRef<HTMLDivElement>(null)
   const still = useHydratedReducedMotion()
   const mounted = useSyncExternalStore(
@@ -33,143 +30,37 @@ export function CursorInteraction() {
 
     const lightNode = lightRef.current
     const pointerNode = pointerRef.current
-    const orbitNode = orbitRef.current
     const labelNode = labelRef.current
-    if (!lightNode || !pointerNode || !orbitNode || !labelNode) return
+    if (!lightNode || !pointerNode || !labelNode) return
 
     const lightEl: HTMLDivElement = lightNode
     const pointerEl: HTMLDivElement = pointerNode
-    const orbitEl: HTMLDivElement = orbitNode
     const labelEl: HTMLDivElement = labelNode
 
     const root = document.documentElement
     root.classList.add("cursor-live")
 
-    gsap.set([lightEl, pointerEl, labelEl], {
-      xPercent: -50,
-      yPercent: -50,
-      x: 0,
-      y: 0,
-      scale: 1,
-      transformOrigin: "50% 50%",
-    })
-    gsap.set(orbitEl, { rotation: 0, transformOrigin: "50% 50%" })
-    gsap.set(labelEl, { yPercent: 0, autoAlpha: 0 })
-
-    const lightX = gsap.quickTo(lightEl, "x", {
-      duration: 0.55,
-      ease: "power3.out",
-    })
-    const lightY = gsap.quickTo(lightEl, "y", {
-      duration: 0.55,
-      ease: "power3.out",
-    })
-    const pointerX = gsap.quickTo(pointerEl, "x", {
-      duration: 0.12,
-      ease: "power3.out",
-    })
-    const pointerY = gsap.quickTo(pointerEl, "y", {
-      duration: 0.12,
-      ease: "power3.out",
-    })
-    const labelX = gsap.quickTo(labelEl, "x", {
-      duration: 0.28,
-      ease: "power3.out",
-    })
-    const labelY = gsap.quickTo(labelEl, "y", {
-      duration: 0.28,
-      ease: "power3.out",
-    })
-
+    const mouse = { x: 0, y: 0 }
+    const light = { x: 0, y: 0 }
     let hovering = false
     let visible = false
     let labelText = ""
-    let orbitTween: gsap.core.Tween | null = null
+    let frame = 0
+    let lastHoverKey = ""
 
     function setLabel(next: string) {
       if (next === labelText) return
       labelText = next
-      if (next) {
-        labelEl.textContent = next
-        gsap.to(labelEl, {
-          autoAlpha: 1,
-          duration: duration.micro,
-          ease: ease.hover,
-          overwrite: "auto",
-        })
-      } else {
-        gsap.to(labelEl, {
-          autoAlpha: 0,
-          duration: duration.micro,
-          ease: ease.hover,
-          overwrite: "auto",
-        })
-      }
+      labelEl.textContent = next
+      labelEl.classList.toggle("is-visible", Boolean(next))
     }
 
     function setHoverState(next: boolean, label = "") {
-      const wasHovering = hovering
+      if (hovering === next && (!next || label === labelText)) return
       hovering = next
-
-      gsap.to(pointerEl, {
-        scale: next ? 1.2 : 1,
-        duration: duration.ui,
-        ease: ease.hover,
-        overwrite: "auto",
-      })
-      gsap.to(lightEl, {
-        opacity: next ? 0.22 : 0.1,
-        scale: next ? 1.15 : 1,
-        duration: duration.ui,
-        ease: ease.hover,
-        overwrite: "auto",
-      })
-
       pointerEl.classList.toggle("is-hover", next)
-
-      if (next && !wasHovering) {
-        orbitTween?.kill()
-        orbitTween = gsap.to(orbitEl, {
-          rotation: "+=360",
-          duration: 8,
-          ease: "none",
-          repeat: -1,
-        })
-      } else if (!next && wasHovering) {
-        orbitTween?.kill()
-        orbitTween = null
-        gsap.to(orbitEl, {
-          rotation: 0,
-          duration: duration.ui,
-          ease: ease.hover,
-          overwrite: "auto",
-        })
-      }
-
+      lightEl.classList.toggle("is-hover", next)
       setLabel(next ? label : "")
-    }
-
-    function showCursor(x: number, y: number) {
-      lightX(x)
-      lightY(y)
-      pointerX(x)
-      pointerY(y)
-      labelX(x + 18)
-      labelY(y + 20)
-
-      if (!visible) {
-        visible = true
-        lightEl.classList.add("is-visible")
-        pointerEl.classList.add("is-visible")
-      }
-    }
-
-    function hideCursor() {
-      if (!visible) return
-      visible = false
-      lightEl.classList.remove("is-visible")
-      pointerEl.classList.remove("is-visible")
-      setHoverState(false)
     }
 
     function resolveLabel(el: Element): string {
@@ -187,44 +78,78 @@ export function CursorInteraction() {
       return ""
     }
 
+    function placeHotspot(x: number, y: number) {
+      pointerEl.style.transform = `translate3d(${x - 18}px, ${y - 18}px, 0)`
+      if (labelText) {
+        labelEl.style.transform = `translate3d(${x + 16}px, ${y + 18}px, 0)`
+      }
+    }
+
     function onMove(e: PointerEvent) {
-      showCursor(e.clientX, e.clientY)
+      const x = e.clientX
+      const y = e.clientY
+      mouse.x = x
+      mouse.y = y
+      placeHotspot(x, y)
+
+      if (!visible) {
+        visible = true
+        light.x = x
+        light.y = y
+        lightEl.style.transform = `translate3d(${x - 44}px, ${y - 44}px, 0)`
+        lightEl.classList.add("is-visible")
+        pointerEl.classList.add("is-visible")
+      }
 
       const target = e.target
       if (!(target instanceof Element)) return
+      const key = `${target.tagName}:${target.className}`
+      if (key === lastHoverKey) return
+      lastHoverKey = key
 
       const interactive = target.closest(
         "a, button, [role='button'], [data-cursor], input, textarea, select"
       )
       if (!interactive) {
-        if (hovering) setHoverState(false)
+        setHoverState(false)
         return
       }
-
       if (
         interactive.matches("input, textarea, select, [contenteditable='true']")
       ) {
-        if (hovering) setHoverState(false)
+        setHoverState(false)
         return
       }
-
       setHoverState(true, resolveLabel(interactive))
     }
 
     function onLeaveWindow(e: MouseEvent) {
       if (e.relatedTarget !== null) return
-      hideCursor()
+      visible = false
+      lastHoverKey = ""
+      lightEl.classList.remove("is-visible")
+      pointerEl.classList.remove("is-visible")
+      setHoverState(false)
+    }
+
+    function tick() {
+      frame = requestAnimationFrame(tick)
+      if (!visible) return
+      light.x += (mouse.x - light.x) * 0.22
+      light.y += (mouse.y - light.y) * 0.22
+      lightEl.style.transform = `translate3d(${light.x - 44}px, ${light.y - 44}px, 0)`
     }
 
     window.addEventListener("pointermove", onMove, { passive: true })
     document.documentElement.addEventListener("mouseleave", onLeaveWindow)
+    frame = requestAnimationFrame(tick)
 
     return () => {
-      orbitTween?.kill()
+      cancelAnimationFrame(frame)
       root.classList.remove("cursor-live")
       window.removeEventListener("pointermove", onMove)
       document.documentElement.removeEventListener("mouseleave", onLeaveWindow)
-      lightEl.classList.remove("is-visible")
+      lightEl.classList.remove("is-visible", "is-hover")
       pointerEl.classList.remove("is-visible", "is-hover")
     }
   }, [still, mounted])
@@ -235,7 +160,7 @@ export function CursorInteraction() {
     <div className="global-cursor-root" aria-hidden="true">
       <div ref={lightRef} className="global-cursor-light" />
       <div ref={pointerRef} className="global-cursor-pointer">
-        <div ref={orbitRef} className="global-cursor-orbit-wrap">
+        <div className="global-cursor-orbit-wrap">
           <svg
             className="global-cursor-reticle"
             width="36"
@@ -290,6 +215,3 @@ export function CursorInteraction() {
     document.body
   )
 }
-
-/** Alias for Phase 08 motion barrel */
-export const GlobalCursor = CursorInteraction

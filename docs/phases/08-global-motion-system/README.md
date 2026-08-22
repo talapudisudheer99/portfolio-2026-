@@ -240,7 +240,7 @@ scroll progress) **and** GSAP ScrollTrigger (hero scrub, Sameward stage).
 
 ### 2. Current WebGL architecture
 
-- **One** canvas: `BlobScene` in root layout inside `SmoothScroll`.
+- **One** canvas: `AmbientAtmosphere` in `MotionRoot` inside `SmoothScroll`.
 - Imperative Three in `useEffect`: `WebGLRenderer` on existing `<canvas>`,
   shader sphere + glow mesh, mouse/scroll uniforms, palette updates via refs.
 - Lifecycle: dispose on unmount; pause render when `document.hidden`; freeze
@@ -266,8 +266,8 @@ scroll progress) **and** GSAP ScrollTrigger (hero scrub, Sameward stage).
 |------|--------|
 | `hero.tsx` | SplitText word reveal, timeline, scroll scrub, pointer quickTo |
 | `featured-work-stage.tsx` | Enter fade/rise + tablet scrub parallax |
-| `cursor.tsx` | quickTo follow + hover scale |
-| `smooth-scroll.tsx` | Plugin register + ST sync only |
+| `cursor.tsx` | 1:1 hotspot on pointermove; glow trails |
+| `smooth-scroll.tsx` | Lenis + ST sync; stable options (no per-render remount) |
 
 GSAP is **not** the sitewide section-reveal engine yet. Most section arrives
 are Framer Trace.
@@ -277,16 +277,17 @@ are Framer Trace.
 | Module | Exports / tokens |
 |--------|------------------|
 | `src/lib/motion.ts` | `duration`, `rise`, `gap`, `parallax`, `fadeRise`, Trace variants |
-| `src/components/shared/motion.tsx` | `FadeIn`/`SectionArrive`, `MaskedLine`, `Trace*`, `HoverLift`, reduced-motion hooks |
-| `src/components/shared/parallax.tsx` | `ParallaxFloat/Layer`, deprecated `ScrollEmergence`, `ParallaxFooter`, `ScrollGrain`, `ScrollCue` |
+| `src/components/shared/motion.tsx` | `FadeIn`, `MaskedLine`, `Trace*` |
+| `src/components/motion/hud-word-reveal.tsx` | Sameward problem: word-by-word HUD tick (once, not scrub) |
+| `src/hooks/use-hydrated-reduced-motion.ts` | Reduced-motion after hydration (tiny; keep off the WebGL module) |
+| `src/components/shared/parallax.tsx` | `ParallaxFooter`, `ScrollGrain` |
 | `src/data/blob-palettes.ts` | Blob color sets for palette switcher |
 
 ### 6. Potential conflicts
 
 1. **Framer vs GSAP scroll** — both drive scroll-linked motion (experience rail,
    product visual, grain vs ST scrub).
-2. **Double enters** — largely cleaned; `ScrollEmergence` deprecated but still
-   in codebase / commented shipped block.
+2. **Double enters** — `ScrollEmergence` removed from the live stack.
 3. **Multiple raf loops** — Lenis `autoRaf` + Three `requestAnimationFrame` +
    Framer springs + shipped-flow geometry raf (if re-enabled).
 4. **Cursor vs blob** — both track pointer (DOM cursor + shader `uMouse`); fine

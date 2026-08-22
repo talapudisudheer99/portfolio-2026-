@@ -4,11 +4,11 @@ import { siteConfig } from "@/data/site"
 import { getSiteUrl } from "@/lib/site-url"
 
 const siteUrl = getSiteUrl()
-const { metadata, contact } = siteConfig
+const { metadata, contact, socialLinks, hero } = siteConfig
+const ogImage = metadata.ogImage
+const ogAlt = `${contact.name} — Frontend engineer who shipped Sameward`
 
 export function createSiteMetadata(): Metadata {
-  const ogImage = metadata.ogImage
-
   return {
     metadataBase: new URL(siteUrl),
     title: {
@@ -32,6 +32,10 @@ export function createSiteMetadata(): Metadata {
         "max-snippet": -1,
       },
     },
+    formatDetection: {
+      email: false,
+      telephone: false,
+    },
     alternates: {
       canonical: "/",
     },
@@ -47,7 +51,8 @@ export function createSiteMetadata(): Metadata {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${contact.name} — Frontend Engineer portfolio`,
+          alt: ogAlt,
+          type: "image/png",
         },
       ],
     },
@@ -55,7 +60,52 @@ export function createSiteMetadata(): Metadata {
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      images: [ogImage],
+      images: [{ url: ogImage, alt: ogAlt }],
     },
+  }
+}
+
+export function createJsonLd() {
+  const sameAs = [
+    ...socialLinks.map((link) => link.href).filter((href) => !href.startsWith("mailto:")),
+    hero.ctas.find((cta) => cta.external)?.href,
+  ].filter((href): href is string => Boolean(href))
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}/#person`,
+        name: contact.name,
+        jobTitle: "Frontend Engineer",
+        description: metadata.description,
+        url: siteUrl,
+        email: contact.email,
+        telephone: contact.phone,
+        sameAs,
+        knowsAbout: [
+          "React",
+          "Next.js",
+          "TypeScript",
+          "Realtime systems",
+          "Product engineering",
+        ],
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Hyderabad",
+          addressCountry: "IN",
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: siteUrl,
+        name: metadata.siteName,
+        description: metadata.description,
+        inLanguage: "en-IN",
+        publisher: { "@id": `${siteUrl}/#person` },
+      },
+    ],
   }
 }

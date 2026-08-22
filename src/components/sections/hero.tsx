@@ -5,14 +5,10 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SplitText } from "gsap/SplitText"
 import { ArrowUpRight, Download, ExternalLink } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 import { MotionParallax } from "@/components/motion/parallax-layer"
-import {
-  ATMOSPHERE_WAIT_MS,
-  useAtmosphereReady,
-} from "@/components/shared/atmosphere-ready"
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { siteConfig } from "@/data/site"
 import { duration, ease } from "@/lib/motion"
 
@@ -26,20 +22,9 @@ export function Hero() {
   const { hero } = siteConfig
   const still = useHydratedReducedMotion()
   const stillRef = useRef(still)
-  const { ready: atmosphereReady } = useAtmosphereReady()
-  const [waitExpired, setWaitExpired] = useState(false)
   useEffect(() => {
     stillRef.current = still
   }, [still])
-  useEffect(() => {
-    if (atmosphereReady) return
-    const id = window.setTimeout(
-      () => setWaitExpired(true),
-      ATMOSPHERE_WAIT_MS
-    )
-    return () => window.clearTimeout(id)
-  }, [atmosphereReady])
-  const moonReady = atmosphereReady || waitExpired
   const root = useRef<HTMLElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
 
@@ -69,6 +54,7 @@ export function Hero() {
       ].filter(Boolean) as HTMLElement[]
 
       const revealAll = () => {
+        section.classList.add("hero-entered")
         gsap.set(enterTargets, {
           autoAlpha: 1,
           y: 0,
@@ -86,21 +72,19 @@ export function Hero() {
       }
 
       if (stillRef.current) {
+        section.classList.add("hero-entered")
         revealAll()
         return
       }
 
-      // Hold hero until moon is painted (or wait budget expires)
+      section.classList.add("hero-entered")
+
       if (kickerEl) gsap.set(kickerEl, { autoAlpha: 0, y: 28 })
       gsap.set(headlineEl, { autoAlpha: 0, scale: 0.985 })
       if (taglineEl) gsap.set(taglineEl, { autoAlpha: 0, y: 28 })
       if (statusEl) gsap.set(statusEl, { autoAlpha: 0, y: 22 })
       if (ctaEls.length) gsap.set(ctaEls, { autoAlpha: 0, y: 18 })
       if (cueEl) gsap.set(cueEl, { autoAlpha: 0, y: 12 })
-
-      if (!moonReady) {
-        return
-      }
 
       const finePointer = window.matchMedia(
         "(hover: hover) and (pointer: fine)"
@@ -308,7 +292,7 @@ export function Hero() {
       Promise.race([
         fontsReady,
         new Promise<void>((resolve) => {
-          window.setTimeout(resolve, 400)
+          window.setTimeout(resolve, 80)
         }),
       ]).then(() => {
         if (!cancelled) runSplit()
@@ -323,7 +307,7 @@ export function Hero() {
         split?.revert()
       }
     },
-    { scope: root, dependencies: [moonReady], revertOnUpdate: true }
+    { scope: root, dependencies: [still], revertOnUpdate: true }
   )
 
   return (

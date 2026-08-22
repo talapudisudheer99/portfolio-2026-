@@ -5,7 +5,7 @@ import { Download, FileText, Globe, User } from "lucide-react"
 import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
 
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   samewardMockTiming,

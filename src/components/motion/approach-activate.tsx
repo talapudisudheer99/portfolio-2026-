@@ -5,7 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -15,9 +15,7 @@ interface ApproachActivateProps {
   className?: string
 }
 
-/**
- * Scroll-linked activate for approach cards (no separator rule).
- */
+/** Approach cards lock in one after another — play once, no scrub. */
 export function ApproachActivate({
   children,
   className,
@@ -35,43 +33,19 @@ export function ApproachActivate({
       )
       if (!steps.length) return
 
-      const mm = gsap.matchMedia()
-
-      mm.add("(max-width: 767px)", () => {
-        gsap.set(steps, { autoAlpha: 1, y: 0 })
+      gsap.set(steps, { opacity: 0.16 })
+      gsap.to(steps, {
+        opacity: 1,
+        duration: 0.08,
+        ease: "steps(1)",
+        stagger: 0.16,
+        scrollTrigger: {
+          trigger: root,
+          start: "top 78%",
+          once: true,
+          toggleActions: "play none none none",
+        },
       })
-
-      mm.add("(min-width: 768px)", () => {
-        gsap.set(steps, { autoAlpha: 0.4, y: 18 })
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root,
-            start: "top 72%",
-            end: "bottom 45%",
-            scrub: 0.85,
-          },
-        })
-
-        steps.forEach((step, i) => {
-          tl.to(
-            step,
-            { autoAlpha: 1, y: 0, duration: 0.22, ease: "none" },
-            i === 0 ? 0 : ">"
-          )
-          if (i > 0) {
-            tl.to(
-              steps[i - 1],
-              { autoAlpha: 0.7, duration: 0.12, ease: "none" },
-              "<"
-            )
-          }
-        })
-
-        tl.to({}, { duration: 0.12 })
-      })
-
-      return () => mm.revert()
     },
     { dependencies: [still], revertOnUpdate: true }
   )

@@ -136,8 +136,6 @@ export interface Project {
   approachLead?: string
   approachSteps?: ApproachStep[]
   decisions?: string[]
-  /** @deprecated Use shippedFlow — kept for reference during migration */
-  buildList?: string[]
   shippedFlowHub?: ShippedFlowHub
   shippedFlow?: ShippedFlowNode[]
 }

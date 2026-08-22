@@ -24,12 +24,12 @@ Ops / env / deploy: [PORTFOLIO.md](../PORTFOLIO.md)
 | [08](./08-global-motion-system/README.md) | **Global motion + interaction system** | ✅ Done |
 | [09](./09-motion-calibration/README.md) | **Motion calibration + cinematic polish** | ✅ Done |
 
-**UI is locked** for layout, copy, and product mocks. Typography families follow
-[Phase 06](./06-typography-system/README.md) (Space Grotesk + Inter + JetBrains Mono).
+**UI is locked** for layout, copy, and product mocks. Typography families:
+**Michroma** (display / HUD) · **Inter** (body/UI) · **JetBrains Mono** (meta).
 
 **Motion track:** [docs/phases/09-motion-calibration/README.md](./09-motion-calibration/README.md)
-— Phase 09 complete. Phase 08 shipped the system; Phase 09 calibrated perceived
-cinematic quality (UI still locked).
+— Phase 09 complete. Production follow-ups: content-first hero (do not gate type
+on 4K moon), 1:1 custom cursor hotspot, progressive moon textures.
 
 Engineering Trace reveal primitives remain in
 [docs/phases/motion/README.md](./motion/README.md) as vocabulary notes only.
@@ -86,7 +86,7 @@ dashboard.
 - One portfolio accent only: oxblood `#8E2B3A` light / `#CF5C63` dark.
 - Sameward Ocean Blue appears only inside Sameward media/diagrams. It is product
   content, not the portfolio chrome.
-- Geometric space display (Space Grotesk) for large statements; Inter for body/UI;
+- Geometric space display (**Michroma**) for large statements; Inter for body/UI;
   mono only for technical metadata (12px floor on page chrome).
 - Full type scale and section assignments: [Phase 06](./06-typography-system/README.md).
 - Hairline rules, large whitespace, crop/overlap, and typographic scale create
@@ -116,20 +116,19 @@ dashboard.
 5. **Profile / About** (`#about`) — personal story, highlights, dark climax band.
 6. **Contact** (`#contact`) — closing statement, email, Web3Forms form.
 
-Global chrome: floating pill navbar (palette picker, resume), footer, Fluid Blob
-background (`blob-scene.tsx`), smooth scroll, custom cursor.
+Global chrome: navbar, footer, NASA moon atmosphere (`blob-scene.tsx`),
+space field, Lenis, custom cursor (hotspot tracks the OS pointer 1:1).
 
 Typography spec: [Phase 06](./06-typography-system/README.md).
 
 ### Interaction rules
 
-- Remove Three.js/R3F/drei/GSAP unless a later measured need justifies them.
-- Use CSS and limited Framer Motion only: headline reveal, project media reveal,
-  and one sticky/progress interaction.
+- One Three.js atmosphere (NASA moon + delayed space props). No second WebGL canvas.
+- Lenis + GSAP/ScrollTrigger for scroll; Framer for micro UI only.
+- Hero copy is LCP — never wait on 4K textures. Moon paints 1K first, then upgrades.
 - Motion uses transform/opacity, never blocks reading, and has a complete
   reduced-motion path.
-- No cursor gimmicks, smooth-scroll hijacking, free-roam 3D, or animation on
-  every element.
+- Custom cursor hotspot is unsmoothed; only the glow may trail.
 
 ## Preserve
 
@@ -144,7 +143,8 @@ Typography spec: [Phase 06](./06-typography-system/README.md).
 ```text
 You are working in portfolio-2026 only.
 Read docs/CONTEXT-SAMEWARD-HANDOFF.md and docs/phases/README.md.
-This is redesign v2: warm editorial, no boxed sections, no WebGL by default.
+This is redesign v2: cinematic dark world, Sameward-first, UI locked.
+Motion: Lenis + GSAP + one Three atmosphere. Hero must not wait on moon textures.
 Execute the first incomplete phase only. Preserve src/data content and plumbing.
 Do not edit Sameward/teamhub-ai. Stop after the phase checklist is complete.
 ```

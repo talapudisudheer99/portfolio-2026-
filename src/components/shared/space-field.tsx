@@ -5,7 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMemo, useRef } from "react"
 
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -115,35 +115,35 @@ export function SpaceField() {
 
   const layers = useMemo(
     () => ({
-      far: buildStarShadows(0x51a7, 180, {
+      far: buildStarShadows(0x51a7, 96, {
         minAlpha: 0.28,
         maxAlpha: 0.65,
-        blurMax: 0.35,
-        spreadMax: 0.12,
+        blurMax: 0.25,
+        spreadMax: 0.08,
       }),
-      mid: buildStarShadows(0xc0de, 120, {
+      mid: buildStarShadows(0xc0de, 64, {
         minAlpha: 0.4,
         maxAlpha: 0.85,
-        blurMax: 0.9,
-        spreadMax: 0.4,
+        blurMax: 0.55,
+        spreadMax: 0.22,
       }),
-      near: buildStarShadows(0xf00d, 64, {
+      near: buildStarShadows(0xf00d, 32, {
         minAlpha: 0.6,
         maxAlpha: 0.98,
-        blurMax: 1.8,
-        spreadMax: 0.8,
+        blurMax: 1.1,
+        spreadMax: 0.45,
       }),
-      glow: buildStarShadows(0xab12, 24, {
+      glow: buildStarShadows(0xab12, 8, {
         minAlpha: 0.5,
         maxAlpha: 0.92,
-        blurMax: 5,
-        spreadMax: 1.6,
+        blurMax: 2.4,
+        spreadMax: 0.8,
       }),
-      ember: buildStarShadows(0xe31b, 36, {
+      ember: buildStarShadows(0xe31b, 14, {
         minAlpha: 0.35,
         maxAlpha: 0.85,
-        blurMax: 1.4,
-        spreadMax: 0.55,
+        blurMax: 0.8,
+        spreadMax: 0.3,
         warm: true,
       }),
     }),
@@ -152,7 +152,7 @@ export function SpaceField() {
 
   const twinkles = useMemo(() => {
     const rand = mulberry(0x71a1)
-    return Array.from({ length: 28 }, (_, id): Twinkle => ({
+    return Array.from({ length: 12 }, (_, id): Twinkle => ({
       id,
       x: rand() * 100,
       y: rand() * 100,

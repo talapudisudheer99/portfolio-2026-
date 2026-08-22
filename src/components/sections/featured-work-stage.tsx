@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react"
 
 import { FeaturedWorkMobileStage } from "@/components/sections/featured-work-mobile-stage"
 import { FeaturedWorkTabletStage } from "@/components/sections/featured-work-tablet-stage"
-import { useHydratedReducedMotion } from "@/components/shared/motion"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { parallax } from "@/lib/motion"
 import type { Project } from "@/types"
 

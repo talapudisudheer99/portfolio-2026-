@@ -92,11 +92,11 @@ function displaceRock(
 
 /** Shared NASA moon maps — sphere UVs + strong bump (not canvas noise). */
 function createRockTextureBank(disposables: Disposable[]) {
-  const color = new THREE.TextureLoader().load("/moon/color-2k.jpg")
+  const color = new THREE.TextureLoader().load("/moon/color-1k.jpg")
   color.colorSpace = THREE.SRGBColorSpace
   color.wrapS = color.wrapT = THREE.RepeatWrapping
   color.anisotropy = 8
-  const bump = new THREE.TextureLoader().load("/moon/displacement-2k.jpg")
+  const bump = new THREE.TextureLoader().load("/moon/displacement-1k.jpg")
   bump.wrapS = bump.wrapT = THREE.RepeatWrapping
   bump.anisotropy = 8
   track(disposables, color, bump)
