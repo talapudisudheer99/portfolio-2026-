@@ -10,7 +10,7 @@ export const workingRange: WorkingRange = {
     { layer: "Live updates", detail: "Socket.IO · presence" },
     { layer: "Sign-in", detail: "Sessions · OAuth" },
     { layer: "AI", detail: "OpenAI · Channel AI" },
-    { layer: "Testing", detail: "React Testing Library" },
+    { layer: "Testing", detail: "Jest · React Testing Library" },
     { layer: "Launch", detail: "Railway · Vercel · AWS S3" },
   ],
 }
@@ -60,8 +60,8 @@ export const skillGroups: SkillGroup[] = [
     id: "testing",
     title: "Testing",
     summary:
-      "Component tests that lock the Sameward flows that cannot break — sign-in, messaging, and Channel AI.",
-    skills: ["React Testing Library", "User-event flows", "Component tests"],
+      "Unit and component tests with Jest and React Testing Library on production work, plus end-to-end release checks on Sameward.",
+    skills: ["Jest", "React Testing Library", "Component tests", "End-to-end release checks"],
   },
   {
     id: "api-data",

@@ -8,7 +8,6 @@ export const siteConfig: SiteConfig = {
     keywords: [
       "Sudheer Talapudi",
       "Frontend Engineer",
-      "Senior Frontend",
       "Product Engineer",
       "Sameward",
       "Next.js",
