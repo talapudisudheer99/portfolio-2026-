@@ -708,8 +708,10 @@ export function createSpaceProps(disposables: Disposable[]): {
         rocks: [P(0.95, -0.75, 2.6, 1.0), P(0.5, -0.86, 2.3, 0.7), P(-0.97, 0.4, 2.2, 0.5)],
       },
       // Sameward: astronaut floats up beside the tablet's top-left corner
+      // The tablet owns this frame: the astronaut drifts back, small and far,
+      // in the top-left gutter (clear of the tablet edge)
       projects: {
-        astro: P(-0.84, 0.25, 2.9, 0.95),
+        astro: P(-0.9, 0.62, 2.35, 0.4),
         planet: P(0.92, 0.82, 2.2, 0.7),
         rocks: [P(0.93, -0.6, 2.25, 0.85), P(0.95, 0.2, 2.18, 0.55), P(-0.95, -0.75, 2.1, 0.5)],
       },
