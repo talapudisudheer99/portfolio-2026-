@@ -14,7 +14,6 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
-import { SamewardLogo } from "@/components/shared/sameward-logo"
 import { SamewardMessageContent } from "@/components/shared/sameward-message-content"
 import {
   SamewardPersonAvatar,
@@ -105,7 +104,6 @@ export function SamewardWindow() {
             <div className="sw-workspace">
               <span className="sw-workspace-badge">{samewardWorkspace.initial}</span>
               <span className="sw-workspace-name">{samewardWorkspace.name}</span>
-              <SamewardLogo variant="mark" size={16} tone="onDark" className="ml-auto opacity-80" />
             </div>
 
             <p className="sw-side-label">Channels</p>
