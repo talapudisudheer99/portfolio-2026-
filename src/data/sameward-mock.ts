@@ -49,8 +49,19 @@ export type SamewardMessage = {
   reactions: ReadonlyArray<{ emoji: string; count: number }>
 }
 
-/** Feed: (1) body + attachment + reactions · (2) link only · (3) Channel AI in panel */
+/** Feed, oldest first: link unfurl → file + reaction (the AI catch-up follows). */
 export const samewardMessages: readonly SamewardMessage[] = [
+  {
+    id: "aisha",
+    name: "Aisha Patel",
+    time: "9:42",
+    linkPreview: {
+      host: "docs.northwind.dev",
+      title: "Friday deploy runbook",
+      description: "Checklist, rollback steps, and owners for the release.",
+    },
+    reactions: [],
+  },
   {
     id: "rohit",
     name: "Rohit Singh",
@@ -63,18 +74,36 @@ export const samewardMessages: readonly SamewardMessage[] = [
     },
     reactions: [{ emoji: "✅", count: 2 }],
   },
-  {
-    id: "aisha",
-    name: "Aisha Patel",
-    time: "9:42",
-    linkPreview: {
-      host: "docs.northwind.dev",
-      title: "Friday deploy runbook",
-      description: "Checklist, rollback steps, and owners for the release.",
-    },
-    reactions: [],
-  },
 ]
+
+/** Desktop window — sidebar contents (mock workspace) */
+export const samewardWorkspace = {
+  name: "Northwind",
+  initial: "N",
+  channels: [
+    { name: "general", active: true, unread: 0 },
+    { name: "product", active: false, unread: 3 },
+    { name: "development", active: false, unread: 0 },
+    { name: "design", active: false, unread: 1 },
+  ],
+  topic: "Release week · deploy Friday",
+} as const
+
+/** Channel AI catch-up card (desktop window) */
+export const samewardCatchUp = {
+  title: "Catch up · last 7 days",
+  points: [
+    "Rohit's notification debounce fix is in QA.",
+    "Friday's deploy follows the runbook Aisha linked.",
+    "No open blockers.",
+  ],
+  source: "Read 12 messages and 1 linked page",
+} as const
+
+/** Draft reply the user reviews and sends themselves */
+export const samewardDraft = {
+  text: "Thanks Rohit, I'll check the QA build before Friday's deploy.",
+} as const
 
 export const samewardAiActions = [
   { id: "summarize", label: "Summarize", accent: "orange" },
