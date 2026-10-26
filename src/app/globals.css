@@ -1165,6 +1165,8 @@
   .capabilities-belt {
     position: relative;
     display: grid;
+    /* minmax(0) so wide children (stage rail) can never widen the page */
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(2.75rem, 5vw, 4rem);
     width: 100%;
   }
@@ -4602,43 +4604,88 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   color: var(--muted-foreground);
 }
 
+/* Desktop: tabs + side panel. Phones/tablets: an accordion (one open). */
+.xp-accordion {
+  display: none;
+}
+
 @media (max-width: 1023px) {
   .xp-log {
-    grid-template-columns: 1fr;
-  }
-
-  /* Missions become a swipeable row of pills */
-  .xp-tabs {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
-  }
-
-  .xp-tabs::-webkit-scrollbar {
     display: none;
   }
 
-  .xp-tab {
-    flex: 0 0 auto;
-    min-width: 12.5rem;
-    scroll-snap-align: start;
-    border-color: rgb(255 255 255 / 0.07);
+  .xp-accordion {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .xp-acc-item {
+    border-radius: 1rem;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: color-mix(in srgb, var(--background) 72%, transparent);
+    overflow: hidden;
+  }
+
+  .xp-acc-item.is-open {
+    border-color: color-mix(in srgb, var(--primary) 35%, rgb(255 255 255 / 0.08));
+  }
+
+  .xp-acc-item .xp-tab {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding-right: 3rem;
+  }
+
+  .xp-acc-item.is-open .xp-tab {
+    background: radial-gradient(120% 90% at 0% 50%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 70%);
+  }
+
+  .xp-acc-chevron {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: -0.55rem;
+    color: var(--muted-foreground);
+    transition: transform var(--motion-ui) var(--motion-ease-out);
+  }
+
+  .xp-acc-item.is-open .xp-acc-chevron {
+    transform: rotate(180deg);
+    color: var(--primary);
+  }
+
+  .xp-acc-body {
+    padding: 0 1rem 1.1rem;
+  }
+
+  /* Dates and company are already in the accordion header */
+  .xp-acc-body .xp-panel-company,
+  .xp-acc-body .xp-panel-meta > span:nth-child(-n + 2) {
+    display: none;
+  }
+
+  .xp-acc-body .xp-panel-role {
+    margin-top: 0.5rem;
+  }
+
+  .xp-acc-body .xp-panel-summary {
+    font-size: 0.95rem;
+  }
+
+  .xp-highlights {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .xp-tab.is-training {
     margin-top: 0;
   }
-
-  .xp-highlights {
-    grid-template-columns: 1fr;
-  }
-
-  .xp-panel {
-    min-height: 0;
-  }}
+}
 
 @media (prefers-reduced-motion: reduce) {
   .xp-tab.is-active .xp-tab-orbit::after {
@@ -4854,17 +4901,12 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   color: var(--muted-foreground);
 }
 
+/* Phones / small tablets: every stage visible at once as a tile grid
+   (no hidden horizontal scroll), panel full width underneath */
 @media (max-width: 899px) {
   .cap-rail {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    gap: 0.25rem;
-  }
-
-  .cap-rail::-webkit-scrollbar {
-    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
   }
 
   .cap-rail-track {
@@ -4872,13 +4914,48 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   }
 
   .cap-stage {
-    flex: 0 0 5.5rem;
-    scroll-snap-align: start;
+    gap: 0.3rem;
+    padding: 0.7rem 0.25rem 0.6rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgb(255 255 255 / 0.07);
+    background: color-mix(in srgb, var(--background) 70%, transparent);
+  }
+
+  .cap-stage.is-active {
+    border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+    background: color-mix(in srgb, var(--primary) 12%, var(--background));
+  }
+
+  .cap-stage-node {
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+  }
+
+  .cap-stage.is-active .cap-stage-node {
+    transform: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .cap-stage-num {
+    display: none;
+  }
+
+  .cap-stage-label {
+    font-size: 0.75rem;
+  }
+
+  .cap-panel {
+    min-height: 0;
+    margin-top: 0.75rem;
   }
 
   .cap-panel-grid {
-    grid-template-columns: 1fr;
-  }}
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .cap-rail-fill,

@@ -1,6 +1,7 @@
 "use client"
 
 import { AnimatePresence, motion } from "framer-motion"
+import { ChevronDown } from "lucide-react"
 import { useId, useRef, useState, type KeyboardEvent } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
@@ -11,8 +12,44 @@ import { defaultExperienceId, experience } from "@/data/experience"
 import { sections } from "@/data/sections"
 import { duration, easeOut } from "@/lib/motion"
 import { cn } from "@/lib/utils"
+import type { Experience as Role } from "@/types"
 
 const isCurrent = (period: string) => /present/i.test(period)
+
+/** Role details — shared by the desktop panel and the mobile accordion. */
+function RoleDetails({ role }: Readonly<{ role: Role }>) {
+  return (
+    <>
+      <p className="xp-panel-meta">
+        <span>{role.period}</span>
+        {role.context ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{role.context}</span>
+          </>
+        ) : null}
+      </p>
+      <h3 className="xp-panel-company editorial-display">{role.company}</h3>
+      <p className="xp-panel-role">{role.role}</p>
+      <p className="xp-panel-summary">{role.summary}</p>
+
+      <ul className="xp-highlights">
+        {role.highlights.map((item) => (
+          <li key={item.tag} className="xp-highlight">
+            <span className="xp-highlight-tag">{item.tag}</span>
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </ul>
+
+      <ul className="xp-stack" aria-label="Stack">
+        {role.stack.map((tech) => (
+          <li key={tech}>{tech}</li>
+        ))}
+      </ul>
+    </>
+  )
+}
 
 /**
  * Experience as a "mission log": every role on one screen. Pick a mission
@@ -27,9 +64,13 @@ export function Experience() {
   const [activeId, setActiveId] = useState(defaultExperienceId)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
 
+  // Accordion can close everything ("" id); the desktop panel then keeps
+  // showing the default role.
   const activeIndex = Math.max(
     0,
-    experience.findIndex((role) => role.id === activeId)
+    experience.findIndex(
+      (role) => role.id === (activeId || defaultExperienceId)
+    )
   )
   const active = experience[activeIndex]!
 
@@ -40,6 +81,11 @@ export function Experience() {
     )
   )
   const currentCount = experience.filter((r) => isCurrent(r.period)).length
+
+  const missionLabel = (role: Role) =>
+    role.kind === "training"
+      ? "Training"
+      : `Mission ${String(professional.length - professional.indexOf(role)).padStart(2, "0")}`
 
   const tabId = (id: string) => `${baseId}-tab-${id}`
   const panelId = `${baseId}-panel`
@@ -103,7 +149,7 @@ export function Experience() {
           onKeyDown={onKeyDown}
         >
           {experience.map((role, index) => {
-            const selected = role.id === activeId
+            const selected = index === activeIndex
             const current = isCurrent(role.period)
             return (
               <button
@@ -126,11 +172,7 @@ export function Experience() {
               >
                 <span className="xp-tab-orbit" aria-hidden="true" />
                 <span className="xp-tab-meta">
-                  <span>
-                    {role.kind === "training"
-                      ? "Training"
-                      : `Mission ${String(professional.length - professional.indexOf(role)).padStart(2, "0")}`}
-                  </span>
+                  <span>{missionLabel(role)}</span>
                   {current ? <span className="xp-tab-now">Now</span> : null}
                 </span>
                 <span className="xp-tab-company">{role.company}</span>
@@ -155,36 +197,61 @@ export function Experience() {
               exit={still ? undefined : { opacity: 0, y: -10 }}
               transition={{ duration: duration.ui, ease: easeOut }}
             >
-              <p className="xp-panel-meta">
-                <span>{active.period}</span>
-                {active.context ? (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <span>{active.context}</span>
-                  </>
-                ) : null}
-              </p>
-              <h3 className="xp-panel-company editorial-display">{active.company}</h3>
-              <p className="xp-panel-role">{active.role}</p>
-              <p className="xp-panel-summary">{active.summary}</p>
-
-              <ul className="xp-highlights">
-                {active.highlights.map((item) => (
-                  <li key={item.tag} className="xp-highlight">
-                    <span className="xp-highlight-tag">{item.tag}</span>
-                    <p>{item.text}</p>
-                  </li>
-                ))}
-              </ul>
-
-              <ul className="xp-stack" aria-label="Stack">
-                {active.stack.map((tech) => (
-                  <li key={tech}>{tech}</li>
-                ))}
-              </ul>
+              <RoleDetails role={active} />
             </motion.div>
           </AnimatePresence>
         </div>
+      </SectionReveal>
+
+      {/* Phones / tablets: accordion — tap a mission to open it in place */}
+      <SectionReveal variant="body" delay={0.1}>
+        <ul className="xp-accordion">
+          {experience.map((role) => {
+            const open = role.id === activeId
+            const bodyId = `${baseId}-acc-${role.id}`
+            return (
+              <li key={role.id} className={cn("xp-acc-item", open && "is-open")}>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={bodyId}
+                  onClick={() => setActiveId(open ? "" : role.id)}
+                  className={cn(
+                    "xp-tab",
+                    open && "is-active",
+                    role.kind === "training" && "is-training"
+                  )}
+                >
+                  <span className="xp-tab-orbit" aria-hidden="true" />
+                  <span className="xp-tab-meta">
+                    <span>{missionLabel(role)}</span>
+                    {isCurrent(role.period) ? <span className="xp-tab-now">Now</span> : null}
+                  </span>
+                  <span className="xp-tab-company">{role.company}</span>
+                  <span className="xp-tab-period">{role.period}</span>
+                  <ChevronDown className="xp-acc-chevron" aria-hidden="true" />
+                </button>
+                <AnimatePresence initial={false}>
+                  {open ? (
+                    <motion.div
+                      id={bodyId}
+                      key="body"
+                      initial={still ? false : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={still ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: duration.ui, ease: easeOut }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div className="xp-acc-body">
+                        <RoleDetails role={role} />
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </li>
+            )
+          })}
+        </ul>
       </SectionReveal>
     </SectionWrapper>
   )
