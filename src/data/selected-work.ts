@@ -8,7 +8,8 @@ export interface WorkItem {
   /** Primary link — in-page anchor or external */
   href: string
   cta: string
-  secondary?: { href: string; label: string }
+  /** Extra external links (live site, code, demo) */
+  extras?: { href: string; label: string }[]
 }
 
 export const selectedWork: WorkItem[] = [
@@ -31,7 +32,7 @@ export const selectedWork: WorkItem[] = [
     tags: ["Next.js", "Node.js", "Socket.IO", "MongoDB", "OpenAI"],
     href: "#projects",
     cta: "See the case study",
-    secondary: { href: "https://sameward.com/", label: "sameward.com" },
+    extras: [{ href: "https://sameward.com/", label: "sameward.com" }],
   },
   {
     id: "task-list",
@@ -42,9 +43,9 @@ export const selectedWork: WorkItem[] = [
     tags: ["Server Actions", "Supabase", "PostgreSQL", "Vitest"],
     href: "https://task-list-app-rho.vercel.app/",
     cta: "Open the app",
-    secondary: {
-      href: "https://github.com/talapudisudheer99/task-list-app",
-      label: "Code",
-    },
+    extras: [
+      { href: "https://github.com/talapudisudheer99/task-list-app", label: "Code" },
+      { href: "https://youtu.be/DIufKqp48aE", label: "Demo video" },
+    ],
   },
 ]

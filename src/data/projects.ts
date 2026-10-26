@@ -38,21 +38,4 @@ export const projects: Project[] = [
       "Changed the product from TeamHub to Sameward without risky changes to live data or storage",
     ],
   },
-  {
-    id: "task-list-app",
-    title: "Task List App",
-    period: "Oct 2026 · Take-home for Modern Signal",
-    subtitle: "Per-user task lists with CSV bulk import",
-    description:
-      "A small full-stack app where each user manages their own tasks. Built with Next.js Server Actions and Supabase, with Row-Level Security so a user can only ever read and change their own rows.",
-    highlights: [
-      "Row-Level Security policies in PostgreSQL scope every query to the signed-in user",
-      "CSV bulk import that validates each row and reports exactly which rows failed",
-      "32 Vitest tests covering validation, import and task actions",
-    ],
-    stack: ["Next.js", "Server Actions", "TypeScript", "Supabase", "PostgreSQL", "Vitest", "Vercel"],
-    liveUrl: "https://task-list-app-rho.vercel.app/",
-    githubUrl: "https://github.com/talapudisudheer99/task-list-app",
-    demoUrl: "https://youtu.be/DIufKqp48aE",
-  },
 ]

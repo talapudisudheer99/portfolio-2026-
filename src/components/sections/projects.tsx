@@ -1,5 +1,4 @@
 import { FeaturedWorkStage } from "@/components/sections/featured-work-stage"
-import { MoreProjects } from "@/components/sections/more-projects"
 import { FragmentDrift } from "@/components/motion/fragment-drift"
 import { ApproachActivate } from "@/components/motion/approach-activate"
 import { SectionReveal } from "@/components/motion/section-reveal"
@@ -146,8 +145,6 @@ export function Projects() {
           </div>
         </div>
       </ContentRail>
-
-      <MoreProjects />
     </SectionShell>
   )
 }

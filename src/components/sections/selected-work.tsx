@@ -48,17 +48,18 @@ export function SelectedWork() {
                         <ArrowRight className="size-4" aria-hidden="true" />
                       )}
                     </a>
-                    {item.secondary ? (
+                    {item.extras?.map((link) => (
                       <a
-                        href={item.secondary.href}
+                        key={link.href}
+                        href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="work-card-link"
                       >
-                        {item.secondary.label}
+                        {link.label}
                         <ArrowUpRight className="size-4" aria-hidden="true" />
                       </a>
-                    ) : null}
+                    ))}
                   </div>
                 </article>
               </SectionReveal>

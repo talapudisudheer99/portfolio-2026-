@@ -126,12 +126,6 @@ export interface Project {
   description: string
   liveUrl?: string
   githubUrl?: string
-  /** Walkthrough video */
-  demoUrl?: string
-  /** e.g. "Oct 2026 · Take-home" */
-  period?: string
-  stack?: string[]
-  highlights?: string[]
   /** Sole homepage flagship when true */
   featured?: boolean
   subtitle?: string
