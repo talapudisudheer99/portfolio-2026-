@@ -13,8 +13,8 @@ import { parallax } from "@/lib/motion"
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 /**
- * Sameward showcase — glass window rises out of depth with scroll, floating
- * AI cards fly in from nearer depths; then light parallax + pointer depth.
+ * Sameward tablet — lands with scroll (lying back → facing you, screen wakes),
+ * then light parallax + pointer tilt. Product UI unchanged.
  */
 export function FeaturedWorkStage() {
   const still = useHydratedReducedMotion()
@@ -64,59 +64,60 @@ export function FeaturedWorkStage() {
         )
       })
 
-      // Desktop (lg+) — the glass window rises out of depth and tilts up to
-      // face you; then the Channel AI card and the drafted reply float in
-      // from nearer depths, and the messages settle. Scrubbed 1:1.
+      // Tablet (lg+) — lands like a real device: it starts lying back in
+      // depth with the display off, tilts up to face you as it rises, the
+      // screen wakes, and a glare sweeps across the glass. Scrubbed 1:1.
       mmEnter.add("(min-width: 1024px)", () => {
-        const q = (sel: string) => section.querySelector<HTMLElement>(sel)
-        const win = q('[data-sw-layer="window"]')
-        const ai = q('[data-sw-layer="ai"]')
-        const draft = q('[data-sw-layer="draft"]')
-        const aura = q(".sw-aura")
-        const msgs = gsap.utils.toArray<HTMLElement>("[data-sw-msg]", section)
-        if (!win) return
+        const body = section.querySelector<HTMLElement>(".fd-tablet-body")
+        const power = section.querySelector<HTMLElement>(".fd-tablet-power")
+        const glare = section.querySelector<HTMLElement>(".fd-tablet-glare")
+        const ground = section.querySelector<HTMLElement>(".fd-tablet-ground")
+        if (!body) return
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
           scrollTrigger: {
             trigger: section,
             start: "top bottom",
-            end: "top 15%",
+            end: "top 18%",
             scrub: true,
           },
         })
 
         tl.fromTo(
-          win,
-          { rotateX: 32, y: 120, scale: 0.88, autoAlpha: 0.35, transformOrigin: "50% 100%" },
-          { rotateX: 0, y: 0, scale: 1, autoAlpha: 1, ease: "power2.out", duration: 1 },
+          body,
+          {
+            rotateX: 62,
+            y: 140,
+            scale: 0.84,
+            transformOrigin: "50% 100%",
+            force3D: true,
+          },
+          { rotateX: 0, y: 0, scale: 1, ease: "power2.out", duration: 1 },
           0
         )
-        if (aura) {
-          tl.fromTo(aura, { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.9 }, 0.1)
-        }
-        if (msgs.length) {
+        if (power) {
           tl.fromTo(
-            msgs,
-            { autoAlpha: 0, y: 14 },
-            { autoAlpha: 1, y: 0, stagger: 0.08, duration: 0.25, ease: "power2.out" },
+            power,
+            { opacity: 1 },
+            { opacity: 0, ease: "power1.inOut", duration: 0.35 },
+            0.5
+          )
+        }
+        if (glare) {
+          tl.fromTo(
+            glare,
+            { "--glare-x": "-30%" },
+            { "--glare-x": "140%", ease: "power1.inOut", duration: 0.55 },
             0.45
           )
         }
-        if (ai) {
+        if (ground) {
           tl.fromTo(
-            ai,
-            { x: 90, y: 50, rotateY: -16, autoAlpha: 0 },
-            { x: 0, y: 0, rotateY: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" },
-            0.55
-          )
-        }
-        if (draft) {
-          tl.fromTo(
-            draft,
-            { x: -70, y: 60, rotateY: 14, autoAlpha: 0 },
-            { x: 0, y: 0, rotateY: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" },
-            0.7
+            ground,
+            { opacity: 0.25, scaleX: 0.7 },
+            { opacity: 1, scaleX: 1, duration: 1 },
+            0
           )
         }
       })
@@ -144,60 +145,67 @@ export function FeaturedWorkStage() {
         })
       }
 
-      // Pointer depth: the window tilts a little, floating cards move more
-      // (they are nearer), so the shot reads as real 3D layers.
-      const scene = section.querySelector<HTMLElement>(".sw-scene")
+      const chassis = section.querySelector(
+        ".fd-tablet-chassis"
+      ) as HTMLElement | null
+      const stageShell = section.querySelector(
+        ".fd-tablet-stage"
+      ) as HTMLElement | null
       const finePointer = window.matchMedia(
         "(hover: hover) and (pointer: fine)"
       ).matches
       const desktopLayout = window.matchMedia("(min-width: 1024px)").matches
+
       let detachTilt: (() => void) | undefined
 
-      if (scene && finePointer && desktopLayout) {
+      if (chassis && stageShell && finePointer && desktopLayout) {
+        gsap.set(stageShell, { perspective: 1200 })
+        gsap.set(chassis, {
+          transformStyle: "preserve-3d",
+          transformOrigin: "center center",
+        })
+
         const tilt = parallax.stageTilt
-        const layers = [
-          { el: scene.querySelector<HTMLElement>('[data-sw-layer="window"]'), depth: 1 },
-          { el: scene.querySelector<HTMLElement>('[data-sw-layer="ai"]'), depth: 2.4 },
-          { el: scene.querySelector<HTMLElement>('[data-sw-layer="draft"]'), depth: 2 },
-        ]
-        // Tilt the whole scene; translate layers by depth (separate props so
-        // they never fight the scroll timeline's x/y on the same element).
-        const rx = gsap.quickTo(scene, "rotationX", { duration: 0.6, ease: "power3.out" })
-        const ry = gsap.quickTo(scene, "rotationY", { duration: 0.6, ease: "power3.out" })
-        const movers = layers
-          .filter((l): l is { el: HTMLElement; depth: number } => Boolean(l.el))
-          .map(({ el, depth }) => ({
-            depth,
-            x: gsap.quickTo(el, "xPercent", { duration: 0.7, ease: "power3.out" }),
-            y: gsap.quickTo(el, "yPercent", { duration: 0.7, ease: "power3.out" }),
-          }))
+        const xTo = gsap.quickTo(chassis, "x", {
+          duration: 0.55,
+          ease: "power3.out",
+        })
+        const yTo = gsap.quickTo(chassis, "y", {
+          duration: 0.55,
+          ease: "power3.out",
+        })
+        const rxTo = gsap.quickTo(chassis, "rotationX", {
+          duration: 0.55,
+          ease: "power3.out",
+        })
+        const ryTo = gsap.quickTo(chassis, "rotationY", {
+          duration: 0.55,
+          ease: "power3.out",
+        })
 
         const onMove = contextSafe((e: PointerEvent) => {
-          const rect = scene.getBoundingClientRect()
+          const rect = chassis.getBoundingClientRect()
           const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2
           const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2
-          ry(nx * tilt.rotateY)
-          rx(-ny * tilt.rotateX)
-          for (const m of movers) {
-            m.x(nx * 0.6 * m.depth)
-            m.y(ny * 0.6 * m.depth)
-          }
-        })
-        const onLeave = contextSafe(() => {
-          rx(0)
-          ry(0)
-          for (const m of movers) {
-            m.x(0)
-            m.y(0)
-          }
+          xTo(nx * tilt.x)
+          yTo(ny * tilt.y)
+          ryTo(nx * tilt.rotateY)
+          rxTo(-ny * tilt.rotateX)
         })
 
-        section.addEventListener("pointermove", onMove)
-        section.addEventListener("pointerleave", onLeave)
+        const onLeave = contextSafe(() => {
+          xTo(0)
+          yTo(0)
+          rxTo(0)
+          ryTo(0)
+        })
+
+        chassis.addEventListener("pointermove", onMove)
+        chassis.addEventListener("pointerleave", onLeave)
         detachTilt = () => {
-          section.removeEventListener("pointermove", onMove)
-          section.removeEventListener("pointerleave", onLeave)
-          gsap.set(scene, { clearProps: "transform" })
+          chassis.removeEventListener("pointermove", onMove)
+          chassis.removeEventListener("pointerleave", onLeave)
+          gsap.set(chassis, { clearProps: "transform,transformStyle" })
         }
       }
 
