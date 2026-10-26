@@ -13,8 +13,8 @@ import { parallax } from "@/lib/motion"
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 /**
- * Sameward tablet — lands with scroll (lying back → facing you, screen wakes),
- * then light parallax + pointer tilt. Product UI unchanged.
+ * Sameward tablet — opens with scroll (depth → frame), then light lag + tilt.
+ * Product UI unchanged.
  */
 export function FeaturedWorkStage() {
   const still = useHydratedReducedMotion()
@@ -38,88 +38,72 @@ export function FeaturedWorkStage() {
         if (stage) {
           gsap.set(stage, { y: 0, clearProps: "transform" })
         }
-        gsap.set(enter, { autoAlpha: 1, clearProps: "transform" })
+        gsap.set(enter, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          clearProps: "filter,transform",
+        })
         return
       }
 
       const mmEnter = gsap.matchMedia()
 
-      // Phone mock (below lg) — soft rise, scrubbed
-      mmEnter.add("(max-width: 1023px)", () => {
+      // Mobile — soft rise + fade (no heavy 3D)
+      mmEnter.add("(max-width: 767px)", () => {
+        gsap.set(enter, {
+          autoAlpha: 0.2,
+          y: 48,
+          scale: 0.92,
+          transformOrigin: "50% 90%",
+          force3D: true,
+        })
+
+        gsap.to(enter, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 95%",
+            end: "top 45%",
+            scrub: true,
+          },
+        })
+      })
+
+      // Tablet / desktop — physical open: deep → framed as it enters
+      mmEnter.add("(min-width: 768px)", () => {
+        gsap.set(enter, {
+          transformOrigin: "50% 88%",
+          transformPerspective: 1400,
+          force3D: true,
+        })
+
         gsap.fromTo(
           enter,
-          { autoAlpha: 0.2, y: 48, scale: 0.94, transformOrigin: "50% 90%" },
+          {
+            autoAlpha: 0.1,
+            y: 110,
+            scale: 0.58,
+            rotateX: 14,
+          },
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
+            rotateX: 0,
             ease: "none",
             scrollTrigger: {
               trigger: section,
               start: "top 95%",
-              end: "top 45%",
+              end: "top 32%",
               scrub: true,
             },
           }
         )
-      })
-
-      // Tablet (lg+) — lands like a real device: it starts lying back in
-      // depth with the display off, tilts up to face you as it rises, the
-      // screen wakes, and a glare sweeps across the glass. Scrubbed 1:1.
-      mmEnter.add("(min-width: 1024px)", () => {
-        const body = section.querySelector<HTMLElement>(".fd-tablet-body")
-        const power = section.querySelector<HTMLElement>(".fd-tablet-power")
-        const glare = section.querySelector<HTMLElement>(".fd-tablet-glare")
-        const ground = section.querySelector<HTMLElement>(".fd-tablet-ground")
-        if (!body) return
-
-        const tl = gsap.timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "top 18%",
-            scrub: true,
-          },
-        })
-
-        tl.fromTo(
-          body,
-          {
-            rotateX: 62,
-            y: 140,
-            scale: 0.84,
-            transformOrigin: "50% 100%",
-            force3D: true,
-          },
-          { rotateX: 0, y: 0, scale: 1, ease: "power2.out", duration: 1 },
-          0
-        )
-        if (power) {
-          tl.fromTo(
-            power,
-            { opacity: 1 },
-            { opacity: 0, ease: "power1.inOut", duration: 0.35 },
-            0.5
-          )
-        }
-        if (glare) {
-          tl.fromTo(
-            glare,
-            { "--glare-x": "-30%" },
-            { "--glare-x": "140%", ease: "power1.inOut", duration: 0.55 },
-            0.45
-          )
-        }
-        if (ground) {
-          tl.fromTo(
-            ground,
-            { opacity: 0.25, scaleX: 0.7 },
-            { opacity: 1, scaleX: 1, duration: 1 },
-            0
-          )
-        }
       })
 
       const mm = gsap.matchMedia()

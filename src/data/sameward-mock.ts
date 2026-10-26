@@ -49,8 +49,19 @@ export type SamewardMessage = {
   reactions: ReadonlyArray<{ emoji: string; count: number }>
 }
 
-/** Feed: (1) body + attachment + reactions · (2) link only · (3) Channel AI in panel */
+/** Feed, oldest first: (1) link only · (2) body + attachment + reactions · (3) Channel AI */
 export const samewardMessages: readonly SamewardMessage[] = [
+  {
+    id: "aisha",
+    name: "Aisha Patel",
+    time: "9:42",
+    linkPreview: {
+      host: "docs.northwind.dev",
+      title: "Friday deploy runbook",
+      description: "Checklist, rollback steps, and owners for the release.",
+    },
+    reactions: [],
+  },
   {
     id: "rohit",
     name: "Rohit Singh",
@@ -62,17 +73,6 @@ export const samewardMessages: readonly SamewardMessage[] = [
       sizeLabel: "248 KB",
     },
     reactions: [{ emoji: "✅", count: 2 }],
-  },
-  {
-    id: "aisha",
-    name: "Aisha Patel",
-    time: "9:42",
-    linkPreview: {
-      host: "docs.northwind.dev",
-      title: "Friday deploy runbook",
-      description: "Checklist, rollback steps, and owners for the release.",
-    },
-    reactions: [],
   },
 ]
 
