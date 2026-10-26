@@ -708,23 +708,26 @@ export function createSpaceProps(disposables: Disposable[]): {
         rocks: [P(0.95, -0.75, 2.6, 1.0), P(0.5, -0.86, 2.3, 0.7), P(-0.97, 0.4, 2.2, 0.5)],
       },
       // Sameward: astronaut floats up beside the tablet's top-left corner
+      // The tablet owns this frame: the astronaut drifts back, small and far,
+      // in the top-left gutter (clear of the tablet edge)
       projects: {
-        astro: P(-0.84, 0.25, 2.9, 0.95),
+        astro: P(-0.9, 0.62, 2.35, 0.4),
         planet: P(0.92, 0.82, 2.2, 0.7),
         rocks: [P(0.93, -0.6, 2.25, 0.85), P(0.95, 0.2, 2.18, 0.55), P(-0.95, -0.75, 2.1, 0.5)],
       },
-      // Capabilities: astronaut in the gap above the cards, a big asteroid
-      // drifts in close on the right
+      // Capabilities: astronaut in the gap above the pipeline; a near asteroid
+      // peeks in at the right edge, below the stage rail
       skills: {
         astro: P(0.02, 0.5, 2.6, 0.5),
         planet: P(0.95, 0.85, 2.3, 1.0),
-        rocks: [P(0.92, -0.2, 3.18, 4.1), P(-0.97, -0.85, 2.4, 1.1), P(0.2, 0.9, 2.2, 0.6)],
+        rocks: [P(1.02, -0.55, 3.1, 2.6), P(-0.98, -0.85, 2.4, 1.0), P(0.2, 0.9, 2.2, 0.6)],
       },
-      // Experience: the planet comes close in the open space under the stats
+      // Experience (mission log): planet in the open top-right corner above
+      // the stats; rocks stay on the outer edges, clear of tabs and panel
       experience: {
         astro: P(-1.4, 0.3, 2.2, 0.38),
-        planet: P(-0.72, -0.6, 2.95, 2.5),
-        rocks: [P(0.97, -0.7, 2.35, 1.1), P(0.98, 0.7, 2.28, 0.8), P(-0.98, 0.9, 2.18, 0.55)],
+        planet: P(0.86, 0.8, 2.6, 1.15),
+        rocks: [P(0.99, -0.8, 2.35, 0.9), P(-0.99, 0.82, 2.28, 0.7), P(-1.25, -0.9, 2.18, 0.4)],
       },
       // Profile: astronaut drifts in the open space under the stats (right)
       about: {

@@ -49,8 +49,19 @@ export type SamewardMessage = {
   reactions: ReadonlyArray<{ emoji: string; count: number }>
 }
 
-/** Feed: (1) body + attachment + reactions · (2) link only · (3) Channel AI in panel */
+/** Feed, oldest first: (1) link only · (2) body + attachment + reactions · (3) Channel AI */
 export const samewardMessages: readonly SamewardMessage[] = [
+  {
+    id: "aisha",
+    name: "Aisha Patel",
+    time: "9:42",
+    linkPreview: {
+      host: "docs.northwind.dev",
+      title: "Friday deploy runbook",
+      description: "Checklist, rollback steps, and owners for the release.",
+    },
+    reactions: [],
+  },
   {
     id: "rohit",
     name: "Rohit Singh",
@@ -63,40 +74,25 @@ export const samewardMessages: readonly SamewardMessage[] = [
     },
     reactions: [{ emoji: "✅", count: 2 }],
   },
-  {
-    id: "aisha",
-    name: "Aisha Patel",
-    time: "9:42",
-    linkPreview: {
-      host: "docs.northwind.dev",
-      title: "Friday deploy runbook",
-      description: "Checklist, rollback steps, and owners for the release.",
-    },
-    reactions: [],
-  },
 ]
 
 export const samewardAiActions = [
-  { id: "summarize", label: "Summarize", accent: "orange" },
-  { id: "catch-up", label: "Catch up", accent: "amber" },
-  { id: "ask", label: "Ask", accent: "lime" },
-  { id: "draft", label: "Draft reply", accent: "coral" },
+  { id: "summarize", label: "Summarize", hint: "The whole channel", accent: "orange" },
+  { id: "catch-up", label: "Catch up", hint: "What you missed", accent: "amber" },
+  { id: "ask", label: "Ask", hint: "About this channel", accent: "lime" },
+  { id: "draft", label: "Draft reply", hint: "You review and send", accent: "coral" },
 ] as const
 
-export type SamewardAiAccent = (typeof samewardAiActions)[number]["accent"]
+/** The action whose result is showing in the thread */
+export const samewardActiveAiAction = "catch-up"
 
-export const samewardAiActionTone: Record<SamewardAiAccent, string> = {
-  orange: "text-[#ff9f4a]",
-  amber: "text-[#ffe066]",
-  lime: "text-[#c8ff63]",
-  coral: "text-[#ff7a7a]",
-}
+
 
 export const samewardMockTiming = {
   aiSummary:
     "Catch-up · last 7 days — sync today, Friday deploy runbook linked.",
   aiBlocker: "1 linked page read for context.",
-  aiTypeStartMs: 1500,
-  lineStart: 0.5,
-  lineStep: 0.14,
+  aiTypeStartMs: 900,
+  lineStart: 0.15,
+  lineStep: 0.12,
 } as const

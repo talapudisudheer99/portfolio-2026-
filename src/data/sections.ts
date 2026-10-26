@@ -1,4 +1,4 @@
-import type { ProjectActions, SectionContent } from "@/types"
+import type { SectionContent } from "@/types"
 
 export const sections: SectionContent = {
   skills: {
@@ -11,9 +11,4 @@ export const sections: SectionContent = {
     description:
       "I build production frontend systems and own Sameward end-to-end.",
   },
-}
-
-export const projectActions: ProjectActions = {
-  liveDemo: "Visit Sameward",
-  github: "GitHub",
 }

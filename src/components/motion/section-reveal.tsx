@@ -31,7 +31,7 @@ interface SectionRevealProps {
 }
 
 /**
- * Phase 09 — one GSAP ScrollTrigger reveal language.
+ * one GSAP ScrollTrigger reveal language.
  * opacity + transform only. Prefer over inventing per-section Framer enters.
  */
 export function SectionReveal({
@@ -54,7 +54,7 @@ export function SectionReveal({
       const mm = gsap.matchMedia()
 
       mm.add("(max-width: 767px)", () => {
-        // Task 17 — shorter, simpler mobile reveals
+        // shorter, simpler mobile reveals
         gsap.fromTo(
           el,
           { autoAlpha: 0, y: Math.min(travel, 18) },

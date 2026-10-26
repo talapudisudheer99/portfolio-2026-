@@ -2,7 +2,6 @@
 
 import { ArrowUp, Hash, Smile } from "lucide-react"
 
-import { SamewardLogo } from "@/components/shared/sameward-logo"
 import { SamewardMessageContent } from "@/components/shared/sameward-message-content"
 import {
   SamewardAiReply,
@@ -44,12 +43,9 @@ export function SamewardMobilePanel({
               3 online
             </p>
           </div>
-          <SamewardLogo
-            variant="horizontal"
-            size={18}
-            tone="onDark"
-            className="sameward-mobile-brand shrink-0"
-          />
+          <span className="sameward-wordmark sameward-mobile-brand shrink-0">
+            Sameward
+          </span>
         </div>
       </SamewardLine>
 

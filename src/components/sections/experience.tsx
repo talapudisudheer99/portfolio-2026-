@@ -1,348 +1,258 @@
 "use client"
 
-import { useGSAP } from "@gsap/react"
-import {
-  animate,
-  motion,
-  useInView,
-  useMotionValue,
-  useTransform,
-} from "framer-motion"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useEffect, useRef, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { ChevronDown } from "lucide-react"
+import { useId, useRef, useState, type KeyboardEvent } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
 import { MaskedLine } from "@/components/shared/motion"
-import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
-import { experience } from "@/data/experience"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { defaultExperienceId, experience } from "@/data/experience"
 import { sections } from "@/data/sections"
-import { duration, easeOut, rise, viewportOnce } from "@/lib/motion"
+import { duration, easeOut } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import type { Experience as Role } from "@/types"
 
-gsap.registerPlugin(useGSAP, ScrollTrigger)
-
 const isCurrent = (period: string) => /present/i.test(period)
 
+/** Role details — shared by the desktop panel and the mobile accordion. */
+function RoleDetails({ role }: Readonly<{ role: Role }>) {
+  return (
+    <>
+      <p className="xp-panel-meta">
+        <span>{role.period}</span>
+        {role.context ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{role.context}</span>
+          </>
+        ) : null}
+      </p>
+      <h3 className="xp-panel-company editorial-display">{role.company}</h3>
+      <p className="xp-panel-role">{role.role}</p>
+      <p className="xp-panel-summary">{role.summary}</p>
 
-const rowSequence = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
-}
+      <ul className="xp-highlights">
+        {role.highlights.map((item) => (
+          <li key={item.tag} className="xp-highlight">
+            <span className="xp-highlight-tag">{item.tag}</span>
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </ul>
 
-const rowPart = {
-  hidden: { opacity: 0, y: rise.sm },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.trace, ease: easeOut },
-  },
-}
-
-const rowLead = {
-  hidden: { opacity: 0, y: rise.md },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.copy, ease: easeOut },
-  },
-}
-
-const rowNode = {
-  hidden: { scale: 0 },
-  visible: {
-    scale: 1,
-    transition: { duration: duration.micro, ease: easeOut },
-  },
-}
-
-const nodePulse = {
-  hidden: { scale: 1, opacity: 0 },
-  visible: {
-    scale: 3,
-    opacity: [0.5, 0],
-    transition: { duration: 1.1, ease: easeOut },
-  },
-}
-
-interface CountUpProps {
-  value: number
-  pad: number
-}
-
-function CountUp({ value, pad }: CountUpProps) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true })
-  const prefersReducedMotion = useHydratedReducedMotion()
-  const count = useMotionValue(0)
-  const text = useTransform(count, (latest) =>
-    String(Math.round(latest)).padStart(pad, "0")
+      <ul className="xp-stack" aria-label="Stack">
+        {role.stack.map((tech) => (
+          <li key={tech}>{tech}</li>
+        ))}
+      </ul>
+    </>
   )
-
-  useEffect(() => {
-    if (!inView || prefersReducedMotion) return
-
-    const controls = animate(count, value, { duration: 1.1, ease: easeOut })
-    return () => controls.stop()
-  }, [count, inView, prefersReducedMotion, value])
-
-  if (prefersReducedMotion) {
-    return <span>{String(value).padStart(pad, "0")}</span>
-  }
-
-  return <motion.span ref={ref}>{text}</motion.span>
 }
 
 /**
- * Phase 09 Task 10 + 15 — progression via illumination;
- * scroll rail owned by GSAP ScrollTrigger (not Framer useScroll).
+ * Experience as a "mission log": every role on one screen. Pick a mission
+ * on the left (click or arrow keys); the panel on the right shows a one-line
+ * summary, three tagged highlights and the stack. Phones get a swipeable
+ * row of mission pills above the panel.
  */
 export function Experience() {
   const { experience: content } = sections
-  const railRef = useRef<HTMLDivElement>(null)
-  const progressRef = useRef<HTMLSpanElement>(null)
-  const prefersReducedMotion = useHydratedReducedMotion()
-  const [activeId, setActiveId] = useState<string | null>(
-    experience.find((r) => isCurrent(r.period))?.id ?? experience[0]?.id ?? null
+  const still = useHydratedReducedMotion()
+  const baseId = useId()
+  const [activeId, setActiveId] = useState(defaultExperienceId)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  // Accordion can close everything ("" id); the desktop panel then keeps
+  // showing the default role.
+  const activeIndex = Math.max(
+    0,
+    experience.findIndex(
+      (role) => role.id === (activeId || defaultExperienceId)
+    )
   )
+  const active = experience[activeIndex]!
 
-  useGSAP(
-    () => {
-      const rail = railRef.current
-      const bar = progressRef.current
-      if (!rail || !bar || prefersReducedMotion) return
-
-      gsap.set(bar, { scaleY: 0, transformOrigin: "top center" })
-
-      gsap.to(bar, {
-        scaleY: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rail,
-          start: "top 70%",
-          end: "bottom 70%",
-          scrub: true,
-        },
-      })
-    },
-    { dependencies: [prefersReducedMotion], revertOnUpdate: true }
+  const professional = experience.filter((role) => role.kind === "role")
+  const since = Math.min(
+    ...professional.flatMap((role) =>
+      (role.period.match(/\d{4}/g) ?? []).map(Number)
+    )
   )
-
-  // Stats count professional roles only — the internship stays in the list.
-  const professional = experience.filter((role) => !/intern/i.test(role.role))
-  const years = professional
-    .flatMap((role) => role.period.match(/\d{4}/g) ?? [])
-    .map(Number)
   const currentCount = experience.filter((r) => isCurrent(r.period)).length
+
+  const missionLabel = (role: Role) =>
+    role.kind === "training"
+      ? "Training"
+      : `Mission ${String(professional.length - professional.indexOf(role)).padStart(2, "0")}`
+
+  const tabId = (id: string) => `${baseId}-tab-${id}`
+  const panelId = `${baseId}-panel`
+
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const keys = ["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft", "Home", "End"]
+    if (!keys.includes(event.key)) return
+    event.preventDefault()
+    const last = experience.length - 1
+    let next = activeIndex
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = activeIndex === last ? 0 : activeIndex + 1
+    if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = activeIndex === 0 ? last : activeIndex - 1
+    if (event.key === "Home") next = 0
+    if (event.key === "End") next = last
+    const role = experience[next]!
+    setActiveId(role.id)
+    tabRefs.current[next]?.focus()
+  }
 
   return (
     <SectionWrapper id="experience" className="section-rule">
-      <div className="content-grid gap-y-16">
-        <div className="col-span-12 md:sticky md:top-24 md:col-span-4 md:self-start">
+      <div className="xp-head">
+        <div>
           <MaskedLine display className="mt-0">
             <h2 className="editorial-display type-title text-foreground">
               {content.title}
             </h2>
           </MaskedLine>
-
           <SectionReveal variant="body" delay={0.1}>
-            <p className="type-lead mt-6 max-w-xs text-muted-foreground">
+            <p className="type-lead mt-5 max-w-md text-muted-foreground">
               {content.description}
             </p>
-
-            <dl className="experience-stats mt-10 grid max-w-sm grid-cols-3 gap-x-6 gap-y-2 border-t border-border pt-6">
-              <div className="experience-stat min-w-0">
-                <dt className="type-meta text-muted-foreground">Since</dt>
-                <dd className="experience-stat-value mt-2 text-foreground">
-                  {Math.min(...years)}
-                </dd>
-              </div>
-              <div className="experience-stat min-w-0">
-                <dt className="type-meta text-muted-foreground">Roles</dt>
-                <dd className="experience-stat-value mt-2 text-foreground">
-                  <CountUp value={professional.length} pad={2} />
-                </dd>
-              </div>
-              <div className="experience-stat min-w-0">
-                <dt className="type-meta text-muted-foreground">Current</dt>
-                <dd className="experience-stat-value experience-stat-value--accent mt-2">
-                  <CountUp value={currentCount} pad={2} />
-                </dd>
-              </div>
-            </dl>
           </SectionReveal>
         </div>
 
-        <div
-          ref={railRef}
-          className="relative col-span-12 md:col-span-7 md:col-start-6"
-        >
-          <span
-            aria-hidden="true"
-            className="absolute top-2 bottom-0 left-0 w-px bg-border"
-          />
-          {prefersReducedMotion ? null : (
-            <span
-              ref={progressRef}
-              aria-hidden="true"
-              className="absolute top-2 bottom-0 left-0 w-px origin-top bg-primary"
-            />
-          )}
-
-          <ol>
-            {experience.map((role, index) => (
-              <ExperienceRow
-                key={role.id}
-                role={role}
-                displayIndex={
-                  experience
-                    .slice(0, index + 1)
-                    .filter((r) => !isCurrent(r.period)).length
-                }
-                illuminated={activeId === role.id}
-                muted={activeId !== null && activeId !== role.id}
-                setActiveId={setActiveId}
-              />
-            ))}
-          </ol>
-        </div>
+        <SectionReveal variant="label" delay={0.15}>
+          <dl className="xp-stats">
+            <div>
+              <dt>Since</dt>
+              <dd>{since}</dd>
+            </div>
+            <div>
+              <dt>Roles</dt>
+              <dd>{String(professional.length).padStart(2, "0")}</dd>
+            </div>
+            <div>
+              <dt>Current</dt>
+              <dd className="is-accent">{String(currentCount).padStart(2, "0")}</dd>
+            </div>
+          </dl>
+        </SectionReveal>
       </div>
-    </SectionWrapper>
-  )
-}
 
-interface ExperienceRowProps {
-  role: Role
-  displayIndex: number
-  illuminated: boolean
-  muted: boolean
-  setActiveId: (id: string) => void
-}
+      <SectionReveal variant="visual" delay={0.1} className="xp-log">
+        {/* Mission list */}
+        <div
+          className="xp-tabs"
+          role="tablist"
+          aria-label="Roles"
+          aria-orientation="vertical"
+          onKeyDown={onKeyDown}
+        >
+          {experience.map((role, index) => {
+            const selected = index === activeIndex
+            const current = isCurrent(role.period)
+            return (
+              <button
+                key={role.id}
+                ref={(el) => {
+                  tabRefs.current[index] = el
+                }}
+                id={tabId(role.id)}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={panelId}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActiveId(role.id)}
+                className={cn(
+                  "xp-tab",
+                  selected && "is-active",
+                  role.kind === "training" && "is-training"
+                )}
+              >
+                <span className="xp-tab-orbit" aria-hidden="true" />
+                <span className="xp-tab-meta">
+                  <span>{missionLabel(role)}</span>
+                  {current ? <span className="xp-tab-now">Now</span> : null}
+                </span>
+                <span className="xp-tab-company">{role.company}</span>
+                <span className="xp-tab-period">{role.period}</span>
+              </button>
+            )
+          })}
+        </div>
 
-function ExperienceRow({
-  role,
-  displayIndex,
-  illuminated,
-  muted,
-  setActiveId,
-}: ExperienceRowProps) {
-  const prefersReducedMotion = useHydratedReducedMotion()
-  const current = isCurrent(role.period)
-  const rowRef = useRef<HTMLLIElement>(null)
-  const inFocus = useInView(rowRef, {
-    margin: "-40% 0px -40% 0px",
-    amount: 0.35,
-  })
-
-  useEffect(() => {
-    if (inFocus) setActiveId(role.id)
-  }, [inFocus, role.id, setActiveId])
-
-  const meta = (
-    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-      {current ? (
-        <span className="type-meta inline-flex items-center gap-1.5 text-primary">
-          <span className="size-1.5 rounded-full bg-primary" />
-          Now
-        </span>
-      ) : (
-        <>
-          <span className="type-meta text-muted-foreground">
-            {String(displayIndex).padStart(2, "0")}
-          </span>
-          <span className="type-meta text-muted-foreground">{role.period}</span>
-        </>
-      )}
-    </div>
-  )
-
-  const company = (
-    <h3 className="editorial-display type-section mt-3 text-foreground transition-colors group-hover:text-primary">
-      {role.company}
-    </h3>
-  )
-
-  const title = (
-    <p className="type-lead mt-2 font-semibold text-foreground-secondary">
-      {role.role}
-    </p>
-  )
-
-  const rowClass = cn(
-    "group relative pb-14 pl-8 last:pb-0 sm:pl-12 experience-row",
-    illuminated && "is-illuminated",
-    muted && "is-muted",
-    current && "is-flagship"
-  )
-  const dotClass = cn(
-    "absolute top-2 left-0 size-2.5 -translate-x-1/2 rounded-full border-2 border-background",
-    current || illuminated ? "bg-primary" : "bg-border"
-  )
-
-  if (prefersReducedMotion) {
-    return (
-      <li ref={rowRef} className={rowClass}>
-        <span aria-hidden="true" className={dotClass} />
-        {meta}
-        {company}
-        {title}
-        <ul className="mt-5 space-y-2.5">
-          {role.bullets.map((bullet) => (
-            <li
-              key={bullet}
-              className="type-ui relative pl-4 text-muted-foreground"
+        {/* Selected mission */}
+        <div
+          id={panelId}
+          role="tabpanel"
+          aria-labelledby={tabId(active.id)}
+          className="xp-panel"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active.id}
+              initial={still ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={still ? undefined : { opacity: 0, y: -10 }}
+              transition={{ duration: duration.ui, ease: easeOut }}
             >
-              <span
-                aria-hidden="true"
-                className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
-              />
-              {bullet}
-            </li>
-          ))}
+              <RoleDetails role={active} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
+
+      {/* Phones / tablets: accordion — tap a mission to open it in place */}
+      <SectionReveal variant="body" delay={0.1}>
+        <ul className="xp-accordion">
+          {experience.map((role) => {
+            const open = role.id === activeId
+            const bodyId = `${baseId}-acc-${role.id}`
+            return (
+              <li key={role.id} className={cn("xp-acc-item", open && "is-open")}>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  aria-controls={bodyId}
+                  onClick={() => setActiveId(open ? "" : role.id)}
+                  className={cn(
+                    "xp-tab",
+                    open && "is-active",
+                    role.kind === "training" && "is-training"
+                  )}
+                >
+                  <span className="xp-tab-orbit" aria-hidden="true" />
+                  <span className="xp-tab-meta">
+                    <span>{missionLabel(role)}</span>
+                    {isCurrent(role.period) ? <span className="xp-tab-now">Now</span> : null}
+                  </span>
+                  <span className="xp-tab-company">{role.company}</span>
+                  <span className="xp-tab-period">{role.period}</span>
+                  <ChevronDown className="xp-acc-chevron" aria-hidden="true" />
+                </button>
+                <AnimatePresence initial={false}>
+                  {open ? (
+                    <motion.div
+                      id={bodyId}
+                      key="body"
+                      initial={still ? false : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={still ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: duration.ui, ease: easeOut }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div className="xp-acc-body">
+                        <RoleDetails role={role} />
+                      </div>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </li>
+            )
+          })}
         </ul>
-      </li>
-    )
-  }
-
-  return (
-    <motion.li
-      ref={rowRef}
-      variants={rowSequence}
-      initial="hidden"
-      whileInView="visible"
-      viewport={viewportOnce}
-      className={cn("reduce-show", rowClass)}
-    >
-      <motion.span aria-hidden="true" variants={rowNode} className={dotClass} />
-      {current ? (
-        <motion.span
-          aria-hidden="true"
-          variants={nodePulse}
-          className="absolute top-2 left-0 size-2.5 -translate-x-1/2 rounded-full bg-primary"
-        />
-      ) : null}
-
-      <motion.div variants={rowPart}>{meta}</motion.div>
-      <motion.div variants={rowLead}>{company}</motion.div>
-      <motion.div variants={rowPart}>{title}</motion.div>
-
-      <motion.ul variants={rowSequence} className="mt-5 space-y-2.5">
-        {role.bullets.map((bullet) => (
-          <motion.li
-            key={bullet}
-            variants={rowPart}
-            className="type-ui relative pl-4 text-muted-foreground"
-          >
-            <span
-              aria-hidden="true"
-              className="absolute top-[0.55em] left-0 size-1.5 rounded-full bg-muted-foreground/70"
-            />
-            {bullet}
-          </motion.li>
-        ))}
-      </motion.ul>
-    </motion.li>
+      </SectionReveal>
+    </SectionWrapper>
   )
 }

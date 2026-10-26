@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowUpRight, MapPin } from "lucide-react"
+import { ArrowUpRight, Check, Copy, Download, MapPin } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -30,6 +30,18 @@ export function Contact() {
     useContactForm()
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
   const [statusMessage, setStatusMessage] = useState("")
+  const [copied, setCopied] = useState(false)
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(contact.email)
+      setCopied(true)
+      toast.success("Email copied")
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch {
+      window.location.href = `mailto:${contact.email}`
+    }
+  }
 
   async function handleFormSubmit(values: Parameters<typeof onSubmit>[0]) {
     try {
@@ -61,16 +73,40 @@ export function Contact() {
             </p>
 
             <TraceRule className="mb-6 mt-10 bg-border" />
-            <a
-              href={`mailto:${contact.email}`}
-              className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-            >
-              <span className="truncate">{contact.email}</span>
-              <ArrowUpRight
-                className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden="true"
-              />
-            </a>
+            <div className="contact-email-row">
+              <a
+                href={`mailto:${contact.email}`}
+                className="group type-lead inline-flex max-w-full items-center gap-2 border-b border-primary pb-2 font-extrabold tracking-[-0.035em] text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              >
+                <span className="truncate">{contact.email}</span>
+                <ArrowUpRight
+                  className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  aria-hidden="true"
+                />
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="contact-copy"
+                aria-label={copied ? "Email copied" : "Copy email address"}
+              >
+                {copied ? (
+                  <Check className="size-4" aria-hidden="true" />
+                ) : (
+                  <Copy className="size-4" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+            <div className="contact-quick">
+              <span className="contact-quick-status">
+                <span className="contact-quick-dot" aria-hidden="true" />
+                Open to frontend roles · immediate joiner
+              </span>
+              <a href="/resume.pdf" className="contact-quick-link" target="_blank" rel="noopener noreferrer">
+                <Download className="size-3.5" aria-hidden="true" />
+                Resume
+              </a>
+            </div>
             <p className="type-ui mt-6 flex items-center gap-2 text-muted-foreground">
               <MapPin className="size-4 text-primary" aria-hidden="true" />
               {contact.location}

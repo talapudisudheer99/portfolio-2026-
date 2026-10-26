@@ -33,12 +33,6 @@ export interface StackLayer {
 }
 
 /** The stack a hiring reader checks, shown under Capabilities. */
-export interface WorkingRange {
-  role: string
-  note: string
-  layers: StackLayer[]
-}
-
 /** One piece of the headline. Only a single segment should carry the accent. */
 export interface HeadlineSegment {
   text: string
@@ -112,12 +106,24 @@ export interface SiteConfig {
   labels: SiteLabels
 }
 
+export interface ExperienceHighlight {
+  /** Short area tag, e.g. "Auth", "Realtime" */
+  tag: string
+  text: string
+}
+
 export interface Experience {
   id: string
   company: string
   role: string
   period: string
-  bullets: string[]
+  /** "role" = employment; "training" = internship / course */
+  kind: "role" | "training"
+  /** Product or client context shown under the company */
+  context?: string
+  summary: string
+  highlights: ExperienceHighlight[]
+  stack: string[]
 }
 
 export interface Project {
@@ -143,11 +149,19 @@ export interface ApproachStep {
   detail: string
 }
 
+export interface SkillProof {
+  /** Where it was used */
+  where: "Profolo" | "Sameward" | "Task List App" | "Codegene"
+  text: string
+}
+
 export interface SkillGroup {
   id: string
   title: string
   summary: string
   skills: string[]
+  /** Evidence: where this capability was used in real work */
+  proof: SkillProof[]
 }
 
 export interface ContactFormValues {
@@ -220,7 +234,3 @@ export interface SectionContent {
   experience: SectionMeta
 }
 
-export interface ProjectActions {
-  liveDemo: string
-  github: string
-}

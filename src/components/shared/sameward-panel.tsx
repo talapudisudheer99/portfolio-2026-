@@ -10,7 +10,6 @@ import {
   Sparkles,
 } from "lucide-react"
 
-import { SamewardLogo } from "@/components/shared/sameward-logo"
 import { SamewardMessageContent } from "@/components/shared/sameward-message-content"
 import {
   SamewardAiReply,
@@ -21,12 +20,11 @@ import {
   useSamewardMotion,
 } from "@/components/shared/sameward-mock-parts"
 import {
-  samewardAiActionTone,
+  samewardActiveAiAction,
   samewardAiActions,
   samewardChannels,
   samewardMembers,
   samewardMessages,
-  type SamewardAiAccent,
 } from "@/data/sameward-mock"
 import { cn } from "@/lib/utils"
 
@@ -57,9 +55,7 @@ export function SamewardPanel({
       <aside className="sameward-rail sameward-rail--nav">
         {/* Decorative mock — never a scroll container (it would trap touch scrolling on phones). */}
         <div className="sameward-rail-body min-h-0 flex-1 overflow-hidden">
-          <div className="sameward-brand">
-            <SamewardLogo variant="horizontal" size={24} tone="onDark" />
-          </div>
+          <p className="sameward-wordmark">Sameward</p>
 
           <p className="sameward-kicker mt-5">Channels</p>
           <ul className="mt-1.5 space-y-0.5">
@@ -113,7 +109,7 @@ export function SamewardPanel({
           </span>
         </SamewardLine>
 
-        <div className="sameward-thread-feed flex flex-1 flex-col justify-end overflow-hidden px-4 py-3.5">
+        <div className="sameward-thread-feed flex flex-1 flex-col justify-start overflow-hidden px-4 py-3.5">
           <div className="flex flex-col gap-3.5 pb-1">
             {samewardMessages.map((message, index) => (
               <SamewardLine
@@ -172,24 +168,22 @@ export function SamewardPanel({
         </p>
 
         <p className="sameward-kicker mt-5">Channel AI</p>
-        <ul className="mt-2 space-y-1.5">
+        <ul className="sameward-ai-list mt-2">
           {samewardAiActions.map((action) => {
             const Icon = aiIcons[action.id]
-            const iconTone = samewardAiActionTone[action.accent as SamewardAiAccent]
+            const active = action.id === samewardActiveAiAction
 
             return (
-              <li key={action.id}>
-                <span
-                  className="sameward-ai-action type-micro font-semibold text-foreground-secondary"
-                  data-accent={action.accent}
-                >
-                  <span
-                    className={cn("sameward-ai-action-icon", iconTone)}
-                    aria-hidden="true"
-                  >
-                    <Icon className="size-3.5 stroke-[2]" />
-                  </span>
-                  {action.label}
+              <li
+                key={action.id}
+                className={cn("sameward-ai-item", active && "is-active")}
+              >
+                <span className="sameward-ai-item-icon" aria-hidden="true">
+                  <Icon className="size-3.5" strokeWidth={2} />
+                </span>
+                <span className="min-w-0">
+                  <span className="sameward-ai-item-label">{action.label}</span>
+                  <span className="sameward-ai-item-hint">{action.hint}</span>
                 </span>
               </li>
             )
