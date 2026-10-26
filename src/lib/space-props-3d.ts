@@ -722,11 +722,12 @@ export function createSpaceProps(disposables: Disposable[]): {
         planet: P(0.95, 0.85, 2.3, 1.0),
         rocks: [P(0.92, -0.2, 3.18, 4.1), P(-0.97, -0.85, 2.4, 1.1), P(0.2, 0.9, 2.2, 0.6)],
       },
-      // Experience: the planet comes close in the open space under the stats
+      // Experience (mission log): planet in the open top-right corner above
+      // the stats; rocks stay on the outer edges, clear of tabs and panel
       experience: {
         astro: P(-1.4, 0.3, 2.2, 0.38),
-        planet: P(-0.72, -0.6, 2.95, 2.5),
-        rocks: [P(0.97, -0.7, 2.35, 1.1), P(0.98, 0.7, 2.28, 0.8), P(-0.98, 0.9, 2.18, 0.55)],
+        planet: P(0.86, 0.8, 2.6, 1.15),
+        rocks: [P(0.99, -0.8, 2.35, 0.9), P(-0.99, 0.82, 2.28, 0.7), P(-1.25, -0.9, 2.18, 0.4)],
       },
       // Profile: astronaut drifts in the open space under the stats (right)
       about: {

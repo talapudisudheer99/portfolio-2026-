@@ -112,12 +112,24 @@ export interface SiteConfig {
   labels: SiteLabels
 }
 
+export interface ExperienceHighlight {
+  /** Short area tag, e.g. "Auth", "Realtime" */
+  tag: string
+  text: string
+}
+
 export interface Experience {
   id: string
   company: string
   role: string
   period: string
-  bullets: string[]
+  /** "role" = employment; "training" = internship / course */
+  kind: "role" | "training"
+  /** Product or client context shown under the company */
+  context?: string
+  summary: string
+  highlights: ExperienceHighlight[]
+  stack: string[]
 }
 
 export interface Project {
