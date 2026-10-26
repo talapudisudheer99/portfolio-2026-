@@ -35,3 +35,9 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# internal working notes (kept locally, not in the public repo)
+.cursor/
+AGENTS.md
+docs/phases/
+docs/CONTEXT-SAMEWARD-HANDOFF.md

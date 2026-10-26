@@ -18,8 +18,9 @@ export function Navbar() {
   const [activeHref, setActiveHref] = useState("")
 
   useEffect(() => {
-    const sections = siteConfig.navLinks
-      .map((link) => document.querySelector<HTMLElement>(link.href))
+    // The hero is observed too, so no link stays highlighted back at the top.
+    const sections = ["#hero", ...siteConfig.navLinks.map((link) => link.href)]
+      .map((href) => document.querySelector<HTMLElement>(href))
       .filter((section): section is HTMLElement => section !== null)
 
     if (!sections.length) return
@@ -31,7 +32,7 @@ export function Navbar() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
 
         const id = visible[0]?.target.id
-        if (id) setActiveHref(`#${id}`)
+        if (id) setActiveHref(id === "hero" ? "" : `#${id}`)
       },
       { rootMargin: "-42% 0px -48% 0px", threshold: [0.12, 0.35, 0.6] }
     )

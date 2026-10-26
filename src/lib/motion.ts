@@ -1,5 +1,5 @@
 /**
- * Phase 08 — Global motion tokens
+ * Global motion tokens
  * Single source of truth. Do not invent a second token file.
  */
 
@@ -34,7 +34,7 @@ export const duration = {
 } as const
 
 /**
- * Phase 09 Task 2 — Lenis authorship (intentional, not laggy).
+ * Lenis authorship (intentional, not laggy).
  * One instance; GSAP ticker still owns raf.
  */
 export const scrollFeel = {
@@ -87,23 +87,10 @@ export const parallax = {
   mid: -0.06,
   fg: 0.08,
   emerge: 16,
-  /** Sameward stage scrub travel (px each way) — Task 6 */
+  /** Sameward stage scrub travel (px each way) */
   stageLag: 52,
   footer: -36,
-  drawerSpring: {
-    stiffness: 118,
-    damping: 30,
-    restDelta: 0.001,
-  },
-  product: {
-    headlineY: [36, -24] as const,
-    panelY: [34, -46] as const,
-    panelX: [8, -8] as const,
-    panelScale: [0.95, 1, 0.985] as const,
-    panelRotate: [1.1, -0.8] as const,
-    glowY: [78, -44] as const,
-  },
-  /** Sameward pointer depth (Task 6) — small, readable */
+  /** Sameward pointer depth — small, readable */
   stageTilt: {
     x: 8,
     y: 5,
@@ -113,7 +100,7 @@ export const parallax = {
 } as const
 
 /**
- * GSAP parallax travel (px each direction) — Phase 09 Task 4 calibrated.
+ * GSAP parallax travel (px each direction).
  * Background slower, decoration mid, visual faster — still restrained.
  */
 export const depth = {
@@ -207,15 +194,6 @@ export const sectionMoodOrder: { id: SectionMoodId; selector: string }[] = [
   { id: "contact", selector: "#contact" },
 ]
 
-export const fadeRise = {
-  hidden: { opacity: 0, y: rise.md },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.copy, ease: easeOut },
-  },
-}
-
 export const traceParent = {
   hidden: {},
   visible: {
@@ -235,11 +213,3 @@ export const traceNodeChild = {
   },
 }
 
-export const traceRowChild = {
-  hidden: { opacity: 0, y: rise.sm },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.trace, ease: easeOut },
-  },
-}

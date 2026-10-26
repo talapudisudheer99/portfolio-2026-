@@ -13,26 +13,22 @@ import {
   duration,
   easeOut,
   gap,
-  rise,
   traceNodeChild,
   traceParent,
-  traceRowChild,
   viewportOnce,
 } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 /** First paint stays masked; the next frame starts CSS animations. */
-export function useMountReveal(enabled = true) {
+function useMountReveal(enabled = true) {
   const [revealed, setRevealed] = useState(false)
 
   useEffect(() => {
     if (!enabled) return
-
     let inner = 0
     const outer = requestAnimationFrame(() => {
       inner = requestAnimationFrame(() => setRevealed(true))
     })
-
     return () => {
       cancelAnimationFrame(outer)
       cancelAnimationFrame(inner)
@@ -40,57 +36,6 @@ export function useMountReveal(enabled = true) {
   }, [enabled])
 
   return revealed
-}
-
-interface FadeInProps {
-  children: ReactNode
-  className?: string
-  delay?: number
-  y?: number
-  x?: number
-  /** When true, animates on mount instead of whileInView (hero signature). */
-  onMount?: boolean
-}
-
-/** Supporting copy / section block arrive — never the hero signature beat. */
-export function FadeIn({
-  children,
-  className,
-  delay = 0,
-  y = rise.sm,
-  x = 0,
-  onMount = false,
-}: FadeInProps) {
-  const prefersReducedMotion = useHydratedReducedMotion()
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>
-  }
-
-  if (onMount) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y, x }}
-        animate={{ opacity: 1, y: 0, x: 0 }}
-        transition={{ duration: duration.copy, delay, ease: easeOut }}
-        className={className}
-      >
-        {children}
-      </motion.div>
-    )
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y, x }}
-      whileInView={{ opacity: 1, y: 0, x: 0 }}
-      viewport={viewportOnce}
-      transition={{ duration: duration.copy, delay, ease: easeOut }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
 }
 
 interface MaskedLineProps {
@@ -290,32 +235,6 @@ export function TraceNode({ children, className, as = "div" }: TraceNodeProps) {
 
   return (
     <Component variants={traceNodeChild} className={className}>
-      {children}
-    </Component>
-  )
-}
-
-interface TraceRowProps {
-  children: ReactNode
-  className?: string
-  as?: "div" | "li"
-}
-
-/**
- * List/timeline row: border settles with the row (use border classes on the row).
- * Prefer TraceSequence as="ol|ul" + TraceRow as="li".
- */
-export function TraceRow({ children, className, as = "div" }: TraceRowProps) {
-  const prefersReducedMotion = useHydratedReducedMotion()
-  const Component = as === "li" ? motion.li : motion.div
-
-  if (prefersReducedMotion) {
-    const Static = as === "li" ? "li" : "div"
-    return <Static className={className}>{children}</Static>
-  }
-
-  return (
-    <Component variants={traceRowChild} className={className}>
       {children}
     </Component>
   )

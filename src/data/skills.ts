@@ -1,19 +1,4 @@
-import type { SkillGroup, WorkingRange } from "@/types"
-
-/** The interface-through-infrastructure span, summarised above the detail. */
-export const workingRange: WorkingRange = {
-  role: "Frontend-strong, full stack",
-  note: "New technology joins the stack when it solves a real product need.",
-  layers: [
-    { layer: "Interface", detail: "React · Next.js · TypeScript" },
-    { layer: "Data", detail: "Node.js · MongoDB · PostgreSQL" },
-    { layer: "Live updates", detail: "Socket.IO · presence" },
-    { layer: "Sign-in", detail: "Sessions · OAuth" },
-    { layer: "AI", detail: "OpenAI · Channel AI" },
-    { layer: "Testing", detail: "Jest · RTL · Vitest" },
-    { layer: "Launch", detail: "Railway · Vercel · AWS S3" },
-  ],
-}
+import type { SkillGroup } from "@/types"
 
 export const skillGroups: SkillGroup[] = [
   {

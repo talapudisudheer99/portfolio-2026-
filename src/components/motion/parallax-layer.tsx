@@ -23,7 +23,7 @@ interface MotionParallaxProps {
 }
 
 /**
- * Phase 09 Task 4 — GSAP ScrollTrigger parallax for decoration / visuals.
+ * GSAP ScrollTrigger parallax for decoration / visuals.
  * Do not wrap primary content. Tablet: reduced travel. Mobile: none.
  */
 export function MotionParallax({

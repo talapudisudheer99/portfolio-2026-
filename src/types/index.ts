@@ -33,12 +33,6 @@ export interface StackLayer {
 }
 
 /** The stack a hiring reader checks, shown under Capabilities. */
-export interface WorkingRange {
-  role: string
-  note: string
-  layers: StackLayer[]
-}
-
 /** One piece of the headline. Only a single segment should carry the accent. */
 export interface HeadlineSegment {
   text: string
@@ -240,7 +234,3 @@ export interface SectionContent {
   experience: SectionMeta
 }
 
-export interface ProjectActions {
-  liveDemo: string
-  github: string
-}

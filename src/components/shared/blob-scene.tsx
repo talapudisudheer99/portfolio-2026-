@@ -213,14 +213,18 @@ export function AmbientAtmosphere() {
     let introStart = -1
     const clock = new THREE.Clock()
 
+    /** Props are built on demand (e.g. after resizing a phone-width window wider). */
+    function ensureProps() {
+      if (cancelled || spaceProps || !propsAllowed()) return
+      spaceProps = createSpaceProps(disposables)
+      scene.add(spaceProps.group)
+      spaceProps.setPalette(paletteRef.current)
+    }
+
     /** Moon + props go live in the same frame, then fade/rise in together. */
     function reveal() {
       if (cancelled || introStart >= 0) return
-      if (!spaceProps && propsAllowed()) {
-        spaceProps = createSpaceProps(disposables)
-        scene.add(spaceProps.group)
-        spaceProps.setPalette(paletteRef.current)
-      }
+      ensureProps()
       introStart = clock.getElapsedTime()
       parent.classList.add("is-ready")
       requestDraw()
@@ -503,6 +507,7 @@ export function AmbientAtmosphere() {
       camera.aspect = nw / nh
       camera.updateProjectionMatrix()
       renderer.setSize(nw, nh)
+      if (introStart >= 0) ensureProps()
       remeasure()
       requestDraw()
     }

@@ -11,7 +11,7 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  /* Phase 06 — cosmic geometric type scale (nudged for Michroma optical size) */
+  /* cosmic geometric type scale (nudged for Michroma optical size) */
   --text-display: clamp(2.55rem, 6.35vw, 5rem);
   --text-title: clamp(1.7rem, 3.4vw, 3rem);
   --text-section: clamp(1.45rem, 2.55vw, 2.2rem);
@@ -124,7 +124,7 @@
   --radius: 8px;
   --content-rail-width: min(100% - 2rem, 80rem);
 
-  /* Phase 08 — motion contract (matches src/lib/motion.ts) */
+  /* motion contract (matches src/lib/motion.ts) */
   --motion-micro: 200ms;
   --motion-ui: 350ms;
   --motion-trace: 500ms;
@@ -1137,7 +1137,7 @@
     backdrop-filter: blur(18px) saturate(1.08);
   }
 
-  /* Mono eyebrows — 12px floor (Phase 06). */
+  /* Mono eyebrows — 12px floor. */
   .section-kicker {
     font-family: var(--font-mono);
     font-size: var(--text-meta);
@@ -2137,22 +2137,6 @@
     line-height: 0;
   }
 
-  .sameward-logo-lockup {
-    min-width: 0;
-  }
-
-  .sameward-logo-wordmark {
-    font-size: 0.72rem;
-    line-height: 1;
-    letter-spacing: 0.12em;
-    white-space: nowrap;
-  }
-
-  .sameward-mobile-brand .sameward-logo-wordmark {
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-  }
-
   @media (min-width: 1024px) {
     .sameward-app {
       grid-template-columns: 12.5rem minmax(0, 1fr) 11.75rem;
@@ -2611,10 +2595,24 @@
   margin-inline: auto;
 }
 
+/* Phones: Michroma is very wide — size the longest line ("a live product
+   system,") to fit, let lines wrap if needed, and let the tagline flow
+   instead of breaking where the desktop layout breaks it. */
 @media (max-width: 639px) {
   .hero-headline {
-    font-size: clamp(1.55rem, 5.8vw, 2.05rem);
-  }}
+    font-size: clamp(1.2rem, 5.1vw, 2.05rem);
+  }
+
+  .hero-headline .hero-line {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .hero-tagline br {
+    display: none;
+  }
+}
 
 /* Accent fill only — never clip the GSAP opacity wrapper (.hero-word) */
 .hero-headline [data-accent]:not(:has(.hero-word)) {
@@ -3257,7 +3255,7 @@ html[data-section-mood="contact"] .space-field-nebula--a {
     opacity: calc(0.55 * var(--atmosphere-reveal));
   }}
 
-/* Phase 09 Task 13 — subtle page mood continuity (atmosphere remains primary) */
+/* subtle page mood continuity (atmosphere remains primary) */
 html[data-section-mood="projects"] .blob-scene-fixed {
   --atmosphere-mood: 0.94;
 }
@@ -3989,7 +3987,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
     --content-rail-width: min(100% - 3rem, 80rem);
   }}
 
-/* Phase 09 Task 12 — contact form (space theme) */
+/* contact form (space theme) */
 .contact-form {
   position: relative;
   display: flex;
@@ -4684,8 +4682,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
 
   .xp-tab.is-training {
     margin-top: 0;
-  }
-}
+  }}
 
 @media (prefers-reduced-motion: reduce) {
   .xp-tab.is-active .xp-tab-orbit::after {
