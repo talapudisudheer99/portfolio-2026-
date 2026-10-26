@@ -155,11 +155,19 @@ export interface ApproachStep {
   detail: string
 }
 
+export interface SkillProof {
+  /** Where it was used */
+  where: "Profolo" | "Sameward" | "Task List App" | "Codegene"
+  text: string
+}
+
 export interface SkillGroup {
   id: string
   title: string
   summary: string
   skills: string[]
+  /** Evidence: where this capability was used in real work */
+  proof: SkillProof[]
 }
 
 export interface ContactFormValues {

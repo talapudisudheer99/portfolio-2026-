@@ -715,12 +715,12 @@ export function createSpaceProps(disposables: Disposable[]): {
         planet: P(0.92, 0.82, 2.2, 0.7),
         rocks: [P(0.93, -0.6, 2.25, 0.85), P(0.95, 0.2, 2.18, 0.55), P(-0.95, -0.75, 2.1, 0.5)],
       },
-      // Capabilities: astronaut in the gap above the cards, a big asteroid
-      // drifts in close on the right
+      // Capabilities: astronaut in the gap above the pipeline; a near asteroid
+      // peeks in at the right edge, below the stage rail
       skills: {
         astro: P(0.02, 0.5, 2.6, 0.5),
         planet: P(0.95, 0.85, 2.3, 1.0),
-        rocks: [P(0.92, -0.2, 3.18, 4.1), P(-0.97, -0.85, 2.4, 1.1), P(0.2, 0.9, 2.2, 0.6)],
+        rocks: [P(1.02, -0.55, 3.1, 2.6), P(-0.98, -0.85, 2.4, 1.0), P(0.2, 0.9, 2.2, 0.6)],
       },
       // Experience (mission log): planet in the open top-right corner above
       // the stats; rocks stay on the outer edges, clear of tabs and panel

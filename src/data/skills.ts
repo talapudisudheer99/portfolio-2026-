@@ -32,6 +32,11 @@ export const skillGroups: SkillGroup[] = [
       "Accessibility",
       "Component architecture",
     ],
+    proof: [
+      { where: "Profolo", text: "Two Next.js apps with feature-based folders, shared form inputs and accessible, responsive screens from Figma." },
+      { where: "Sameward", text: "The whole workspace UI: channels, DMs, chat, files and Channel AI, in React 19 and Tailwind." },
+      { where: "Codegene", text: "Reusable React components for Top Wallet, including a chat composer with drag-and-drop images." },
+    ],
   },
   {
     id: "testing",
@@ -39,6 +44,11 @@ export const skillGroups: SkillGroup[] = [
     summary:
       "Jest and React Testing Library on production work, Vitest on the Task List App, and manual end-to-end release checks on Sameward.",
     skills: ["Jest", "React Testing Library", "Vitest", "Component tests", "End-to-end release checks"],
+    proof: [
+      { where: "Profolo", text: "Unit and component tests with Jest and React Testing Library." },
+      { where: "Task List App", text: "32 Vitest tests covering validation, CSV import and task actions." },
+      { where: "Sameward", text: "Every release type-checked, linted and tested end to end by hand." },
+    ],
   },
   {
     id: "api-data",
@@ -57,6 +67,11 @@ export const skillGroups: SkillGroup[] = [
       "Zod",
       "React Hook Form",
     ],
+    proof: [
+      { where: "Profolo", text: "RTK Query over GraphQL for chat, a feed with optimistic updates and global search with URL filters." },
+      { where: "Sameward", text: "REST API on Next.js Route Handlers with Mongoose models and Zod validation." },
+      { where: "Task List App", text: "Server Actions on Supabase PostgreSQL with Row-Level Security per user." },
+    ],
   },
   {
     id: "realtime",
@@ -69,6 +84,10 @@ export const skillGroups: SkillGroup[] = [
       "Channel rooms",
       "Typing & presence",
       "WebSocket patterns",
+    ],
+    proof: [
+      { where: "Profolo", text: "WebSocket streaming for the ATS Copilot chat: markdown, @mentions and action widgets." },
+      { where: "Sameward", text: "A standalone Socket.IO service that only broadcasts; room membership re-checked on every join." },
     ],
   },
   {
@@ -85,6 +104,10 @@ export const skillGroups: SkillGroup[] = [
       "Role-based access",
       "Logout-all sessions",
     ],
+    proof: [
+      { where: "Profolo", text: "Sign-in for three roles with OTP and Google; fixed users being logged out on every deploy." },
+      { where: "Sameward", text: "HttpOnly cookie sessions, bcrypt, hashed tokens, email verification, password reset and log out of all devices." },
+    ],
   },
   {
     id: "ai",
@@ -96,6 +119,10 @@ export const skillGroups: SkillGroup[] = [
       "Channel AI (summarize / catch-up / ask / draft)",
       "Link-aware context",
       "Grounded workspace prompts",
+    ],
+    proof: [
+      { where: "Sameward", text: "Channel AI on OpenAI: summarize, catch up, ask and draft replies the user sends; SSRF-safe link reading." },
+      { where: "Profolo", text: "Frontend for the ATS Copilot recruiting assistant (the AI team owned the model)." },
     ],
   },
   {
@@ -111,6 +138,11 @@ export const skillGroups: SkillGroup[] = [
       "Git & GitHub",
       "Env / domain wiring",
       "Performance & debugging",
+    ],
+    proof: [
+      { where: "Profolo", text: "Weekly releases from dev to QA, staging and production." },
+      { where: "Sameward", text: "Two services on Railway, S3 presigned uploads and Resend email, live at sameward.com." },
+      { where: "Task List App", text: "Deployed on Vercel with a recorded demo." },
     ],
   },
 ]

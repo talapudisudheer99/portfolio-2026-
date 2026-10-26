@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { useId, useMemo, useRef, useState, type KeyboardEvent } from "react"
 
 import { SectionReveal } from "@/components/motion/section-reveal"
 import {
@@ -9,23 +10,56 @@ import {
   capabilityPipelineIds,
 } from "@/data/capabilities-ui"
 import { skillGroups } from "@/data/skills"
+import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { duration, easeOut } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 
 /**
- * Capabilities — flat editorial grid (no asteroid depth field).
- * Keeps the section clear of local 3D so global cinematic parallax can own depth.
+ * Capabilities as a release pipeline: seven stages from interface to launch.
+ * Pick a stage (click or arrow keys) and the panel shows the tools
+ * AND where each was used in real work — skills tied to proof.
  */
 export function CapabilitiesWorkspace() {
-  const bodies = useMemo(() => {
+  const still = useHydratedReducedMotion()
+  const baseId = useId()
+  const stages = useMemo(() => {
     const byId = new Map(skillGroups.map((g) => [g.id, g]))
     return capabilityPipelineIds
       .map((id) => {
         const group = byId.get(id)
         const meta = capabilityCardMeta[id]
-        if (!group || !meta) return null
-        return { group, meta }
+        return group && meta ? { group, meta } : null
       })
       .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
   }, [])
+
+  const [index, setIndex] = useState(0)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const active = stages[index]!
+  const panelId = `${baseId}-panel`
+  const progress = stages.length > 1 ? index / (stages.length - 1) : 0
+
+  function select(next: number, focus = false) {
+    const clamped = (next + stages.length) % stages.length
+    setIndex(clamped)
+    if (focus) tabRefs.current[clamped]?.focus()
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const map: Record<string, number> = {
+      ArrowRight: index + 1,
+      ArrowDown: index + 1,
+      ArrowLeft: index - 1,
+      ArrowUp: index - 1,
+      Home: 0,
+      End: stages.length - 1,
+    }
+    if (!(event.key in map)) return
+    event.preventDefault()
+    select(map[event.key]!, true)
+  }
+
+  const ActiveIcon = active.meta.icon
 
   return (
     <div className="capabilities-belt">
@@ -50,66 +84,100 @@ export function CapabilitiesWorkspace() {
             </h2>
           </div>
           <div className="capabilities-belt-hero-aside">
-            <p className="capabilities-belt-lead">
-              {capabilitiesHero.description}
-            </p>
-            <p className="capabilities-belt-stance">
-              {capabilitiesHero.stance}
-            </p>
+            <p className="capabilities-belt-lead">{capabilitiesHero.description}</p>
+            <p className="capabilities-belt-stance">{capabilitiesHero.stance}</p>
             <p className="capabilities-belt-count">
-              Pipeline · {String(bodies.length).padStart(2, "0")} stages
+              Pipeline · {String(stages.length).padStart(2, "0")} stages · pick one
             </p>
           </div>
         </SectionReveal>
       </header>
 
-      <div
-        className="capabilities-grid"
-        role="list"
-        aria-label="Capability stages"
-      >
-        {bodies.map(({ group, meta }, index) => {
-          const Icon = meta.icon
-          return (
-            <SectionReveal
-              key={group.id}
-              className="capabilities-grid-item"
-              variant="body"
-              delay={Math.min(index * 0.04, 0.2)}
-            >
-              <article
-                id={`capability-${group.id}`}
-                className="capabilities-card"
-                role="listitem"
-                aria-label={`${meta.stage}: ${group.title}`}
+      <SectionReveal variant="visual" delay={0.05}>
+        {/* Stage rail */}
+        <div
+          className="cap-rail"
+          role="tablist"
+          aria-label="Capability stages"
+          onKeyDown={onKeyDown}
+          style={{ "--cap-progress": progress } as React.CSSProperties}
+        >
+          <span className="cap-rail-track" aria-hidden="true">
+            <span className="cap-rail-fill" />
+          </span>
+          {stages.map(({ group, meta }, i) => {
+            const Icon = meta.icon
+            const selected = i === index
+            return (
+              <button
+                key={group.id}
+                ref={(el) => {
+                  tabRefs.current[i] = el
+                }}
+                type="button"
+                role="tab"
+                id={`${baseId}-tab-${group.id}`}
+                aria-selected={selected}
+                aria-controls={panelId}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => select(i)}
+                className={cn("cap-stage", selected && "is-active", i < index && "is-done")}
               >
-                <div className="capabilities-card-head">
-                  <p className="capabilities-card-meta">
-                    {String(index + 1).padStart(2, "0")} /{" "}
-                    {String(bodies.length).padStart(2, "0")}{" "}
-                    <span className="capabilities-card-stage">{meta.stage}</span>
-                  </p>
-                  <Icon
-                    className="capabilities-card-icon"
-                    aria-hidden="true"
-                    strokeWidth={1.6}
-                  />
-                </div>
-                <h3 className="capabilities-card-title editorial-display">
-                  {group.title}
-                </h3>
-                <ul className="capabilities-card-skills" aria-label="Tools">
-                  {group.skills.slice(0, 4).map((skill) => (
-                    <li key={skill} className="capabilities-card-skill">
-                      {skill}
+                <span className="cap-stage-node" aria-hidden="true">
+                  <Icon className="size-4" strokeWidth={1.8} />
+                </span>
+                <span className="cap-stage-num">{String(i + 1).padStart(2, "0")}</span>
+                <span className="cap-stage-label">{meta.stage}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Stage detail */}
+        <div
+          id={panelId}
+          role="tabpanel"
+          aria-labelledby={`${baseId}-tab-${active.group.id}`}
+          className="cap-panel"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active.group.id}
+              className="cap-panel-grid"
+              initial={still ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={still ? undefined : { opacity: 0, y: -8 }}
+              transition={{ duration: duration.ui, ease: easeOut }}
+            >
+              <div>
+                <p className="cap-panel-kicker">
+                  <ActiveIcon className="size-3.5" strokeWidth={2} aria-hidden="true" />
+                  Stage {String(index + 1).padStart(2, "0")} · {active.meta.layer}
+                </p>
+                <h3 className="cap-panel-title editorial-display">{active.group.title}</h3>
+                <p className="cap-panel-summary">{active.group.summary}</p>
+                <ul className="cap-skills" aria-label="Tools">
+                  {active.group.skills.map((skill) => (
+                    <li key={skill}>{skill}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="cap-proof">
+                <p className="cap-proof-label">Where I used it</p>
+                <ul>
+                  {active.group.proof.map((item) => (
+                    <li key={item.where + item.text} className="cap-proof-item">
+                      <span className="cap-proof-where">{item.where}</span>
+                      <span className="cap-proof-text">{item.text}</span>
                     </li>
                   ))}
                 </ul>
-              </article>
-            </SectionReveal>
-          )
-        })}
-      </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
     </div>
   )
 }
