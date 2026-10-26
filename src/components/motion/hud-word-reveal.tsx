@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { hudLock, revealStart } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -48,13 +49,13 @@ export function HudWordReveal({
       const caret = root.querySelector<HTMLElement>(".hud-caret")
       if (!words.length) return
 
-      gsap.set(words, { opacity: 0.12 })
+      gsap.set(words, { opacity: hudLock.dim })
       if (caret) gsap.set(caret, { autoAlpha: 1 })
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root,
-          start: "top 84%",
+          start: revealStart,
           once: true,
           toggleActions: "play none none none",
         },
@@ -62,9 +63,9 @@ export function HudWordReveal({
 
       tl.to(words, {
         opacity: 1,
-        duration: 0.04,
+        duration: hudLock.step,
         ease: "steps(1)",
-        stagger: 0.038,
+        stagger: hudLock.wordStagger,
       })
 
       if (caret) {

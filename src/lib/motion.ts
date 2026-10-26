@@ -7,7 +7,8 @@ export const easeOut = [0.22, 1, 0.36, 1] as const
 
 /** GSAP-friendly cubic strings */
 export const ease = {
-  reveal: "power3.out",
+  /** GSAP twin of `easeOut` / --motion-ease-out (quint-style out) */
+  reveal: "power4.out",
   hover: "power2.out",
   cinematic: "power2.inOut",
 } as const
@@ -56,10 +57,29 @@ export const gap = {
   facts: 0.08,
 } as const
 
+/**
+ * One trigger line for every scroll reveal (GSAP + Framer): an element
+ * reveals when its top crosses 85% of the viewport height.
+ */
+export const revealStart = "top 85%"
+
 export const viewportOnce = {
   once: true,
-  margin: "-72px" as const,
+  margin: "0px 0px -15% 0px" as const,
 }
+
+/**
+ * HUD "lock-in" family (Talk/Share/Ask, approach cards, problem readout):
+ * dimmed items snap to full ink one after another.
+ */
+export const hudLock = {
+  dim: 0.15,
+  step: 0.06,
+  /** Between words in a readout */
+  wordStagger: 0.038,
+  /** Between cards / steps */
+  itemStagger: 0.14,
+} as const
 
 /** Parallax / depth (conceptual strengths → px or scrub lag) */
 export const parallax = {
@@ -102,72 +122,64 @@ export const depth = {
   visual: 96,
 } as const
 
-/** Atmosphere — felt, not ignored; UI stays primary (Phase 09 Task 3) */
+/**
+ * Depth field — real scroll parallax.
+ *
+ * Every layer moves in the SAME direction as the page, at a fraction of the
+ * scroll speed (`rate`, px per scrolled px). Page content is 1. The farther a
+ * layer is, the slower it moves: stars < moon < content. The hero cast
+ * (astronaut, planet, asteroids) is choreographed per section in
+ * `lib/space-props-3d.ts`.
+ */
+export const depthField = {
+  stars: {
+    far: 0.035,
+    mid: 0.06,
+    near: 0.1,
+    glow: 0.13,
+    ember: 0.08,
+    nebulaA: 0.02,
+    nebulaB: 0.045,
+    dust: 0.03,
+  },
+  /** Moon horizon — rises slowly and fades out behind the Sameward section. */
+  moon: {
+    rate: 0.3,
+    /** Fade window in viewport heights of scroll */
+    fadeStart: 0.2,
+    fadeEnd: 1.35,
+  },
+  /** Entrance: canvas fades in while the moon rises into place (seconds). */
+  intro: { duration: 1.6, rise: 0.42 },
+} as const
+
+/** Atmosphere — felt, not ignored; UI stays primary */
 export const atmosphere = {
-  /** Moon mesh on — horizon composition (Mars-style under the type). */
   moonEnabled: true,
-  /**
-   * Horizon sentinel + slow orbit — limb at the bottom with tiny L/R + yaw.
-   * Hero: full limb · Sameward: slight rise + dim · Deeper: settle + soften.
-   */
+  /** Moon limb at the bottom of the hero (world units). */
   horizonY: -2.56,
   horizonYMobile: -2.04,
   horizonScale: 1.33,
   horizonScaleMobile: 1.08,
   /** Canvas CSS opacity — present, not washed out */
   opacity: 0.95,
-  opacityMobile: 0.75,
-  glowIntensity: 0.11,
-  timeScale: 0.9,
-  /** Mood tint mix into palette (desktop / mobile) */
-  moodMix: 0.34,
-  moodMixMobile: 0.18,
+  opacityMobile: 0.8,
   mouseInfluence: 0.14,
-  /**
-   * Sentinel pose deltas (added to horizon rest).
-   * y > 0 lifts the limb; fade multiplies --atmosphere-scroll-fade.
-   */
-  /**
-   * Sentinel pose per chapter — limb stays the floor; scale is the “approach.”
-   */
-  sentinel: {
-    hero: { y: 0, scale: 1, fade: 1, spin: 1 },
-    /** Sameward — quiet the limb so the product owns the frame */
-    projects: { y: 0.22, scale: 0.88, fade: 0.48, spin: 0.8 },
-    skills: { y: -0.08, scale: 0.96, fade: 0.62, spin: 0.88 },
-    experience: { y: -0.1, scale: 0.92, fade: 0.58, spin: 0.85 },
-    about: { y: 0.04, scale: 1.06, fade: 0.72, spin: 0.7 },
-    contact: { y: -0.22, scale: 0.82, fade: 0.32, spin: 0.52 },
-  },
-  sentinelMobile: {
-    hero: { y: 0, scale: 1, fade: 1, spin: 1 },
-    projects: { y: 0.18, scale: 0.92, fade: 0.55, spin: 0.84 },
-    skills: { y: -0.02, scale: 1.02, fade: 0.7, spin: 0.9 },
-    experience: { y: -0.04, scale: 1.04, fade: 0.74, spin: 0.92 },
-    about: { y: 0.06, scale: 1.12, fade: 0.82, spin: 0.75 },
-    contact: { y: -0.14, scale: 0.88, fade: 0.4, spin: 0.6 },
-  },
-  /**
-   * Slow orbit drift — tiny lateral + yaw; never flies off the horizon.
-   * Angle = time * rate + scroll * scrollTurns * π.
-   */
+  /** Slow idle drift — tiny lateral + yaw; never flies off the horizon. */
   orbit: {
-    x: 0.16,
-    y: 0.04,
-    yaw: 0.07,
-    bank: 0.035,
-    /** Continuous idle radians / second */
+    x: 0.12,
+    y: 0.03,
+    yaw: 0.06,
+    bank: 0.03,
+    /** Idle radians / second */
     rate: 0.085,
-    /** Extra turns across full page scroll */
-    scrollTurns: 0.55,
   },
   orbitMobile: {
-    x: 0.1,
-    y: 0.028,
-    yaw: 0.05,
-    bank: 0.025,
+    x: 0.08,
+    y: 0.02,
+    yaw: 0.04,
+    bank: 0.02,
     rate: 0.07,
-    scrollTurns: 0.45,
   },
 } as const
 

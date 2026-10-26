@@ -191,7 +191,7 @@ export function TraceRule({
     <motion.div
       aria-hidden="true"
       {...motionProps}
-      transition={{ duration: duration.micro, delay, ease: easeOut }}
+      transition={{ duration: duration.trace, delay, ease: easeOut }}
       className={cn(
         "h-px w-full origin-left bg-border",
         origin === "right" && "origin-right",

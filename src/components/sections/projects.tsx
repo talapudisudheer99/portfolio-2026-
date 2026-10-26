@@ -6,7 +6,6 @@ import { HudWordReveal } from "@/components/motion/hud-word-reveal"
 import { MaskedLine, TraceRule } from "@/components/shared/motion"
 import { ContentRail, SectionShell } from "@/components/shared/section-wrapper"
 import { projects } from "@/data/projects"
-import { projectActions } from "@/data/sections"
 
 export function Projects() {
   const featured = projects.find((project) => project.featured) ?? projects[0]
@@ -18,10 +17,7 @@ export function Projects() {
       <div className="projects-sameward-showcase">
         <div className="projects-sameward-stage">
           <ContentRail className="projects-sameward-rail">
-            <FeaturedWorkStage
-              featured={featured}
-              liveDemoLabel={projectActions.liveDemo}
-            />
+            <FeaturedWorkStage />
 
             <div className="projects-inside-sync">
               <div className="projects-inside-block content-grid">
@@ -45,7 +41,7 @@ export function Projects() {
                   >
                     {[
                       ["01", "Talk", "Realtime channels"],
-                      ["02", "Plan", "Shared team context"],
+                      ["02", "Share", "Files and link previews"],
                       ["03", "Ask", "Grounded Channel AI"],
                     ].map(([number, action, detail]) => (
                       <div

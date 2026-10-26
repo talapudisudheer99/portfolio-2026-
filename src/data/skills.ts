@@ -6,44 +6,21 @@ export const workingRange: WorkingRange = {
   note: "New technology joins the stack when it solves a real product need.",
   layers: [
     { layer: "Interface", detail: "React · Next.js · TypeScript" },
-    { layer: "Data", detail: "Node.js · Express · MongoDB" },
+    { layer: "Data", detail: "Node.js · MongoDB · PostgreSQL" },
     { layer: "Live updates", detail: "Socket.IO · presence" },
     { layer: "Sign-in", detail: "Sessions · OAuth" },
     { layer: "AI", detail: "OpenAI · Channel AI" },
-    { layer: "Testing", detail: "Jest · React Testing Library" },
+    { layer: "Testing", detail: "Jest · RTL · Vitest" },
     { layer: "Launch", detail: "Railway · Vercel · AWS S3" },
   ],
 }
 
-/**
- * Hero marquee — the Honey "partners" strip, translated for an interview:
- * the tools a hiring reader actually scans, not a logo wall.
- */
-export const marqueeSkills = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Tailwind CSS",
-  "Node.js",
-  "Express",
-  "TanStack Query",
-  "Socket.IO",
-  "GraphQL",
-  "MongoDB",
-  "OpenAI",
-  "React Testing Library",
-  "OAuth",
-  "Railway",
-  "Vercel",
-  "AWS S3",
-]
-
 export const skillGroups: SkillGroup[] = [
   {
     id: "ui",
-    title: "UI & product design",
+    title: "UI engineering",
     summary:
-      "Responsive product screens, reusable components, and design systems that stay consistent as the product grows.",
+      "Responsive product screens and reusable components built from Figma, consistent as the product grows.",
     skills: [
       "React",
       "Next.js App Router",
@@ -60,8 +37,8 @@ export const skillGroups: SkillGroup[] = [
     id: "testing",
     title: "Testing",
     summary:
-      "Unit and component tests with Jest and React Testing Library on production work, plus end-to-end release checks on Sameward.",
-    skills: ["Jest", "React Testing Library", "Component tests", "End-to-end release checks"],
+      "Jest and React Testing Library on production work, Vitest on the Task List App, and manual end-to-end release checks on Sameward.",
+    skills: ["Jest", "React Testing Library", "Vitest", "Component tests", "End-to-end release checks"],
   },
   {
     id: "api-data",
@@ -73,10 +50,10 @@ export const skillGroups: SkillGroup[] = [
       "Route Handlers",
       "REST APIs",
       "GraphQL",
-      "TanStack Query",
       "Redux Toolkit",
       "RTK Query",
       "MongoDB / Mongoose",
+      "PostgreSQL / Supabase",
       "Zod",
       "React Hook Form",
     ],
@@ -98,10 +75,11 @@ export const skillGroups: SkillGroup[] = [
     id: "auth",
     title: "Sign-in & access",
     summary:
-      "Secure sign-in with sessions and OAuth across providers, account recovery, session control, and access by role.",
+      "Secure sign-in with HttpOnly cookie sessions, Google OAuth and OTP, account recovery, session control, and access by role.",
     skills: [
       "Session cookies",
-      "OAuth (Google and other providers)",
+      "Google OAuth",
+      "OTP sign-in",
       "Email verification",
       "Password reset",
       "Role-based access",

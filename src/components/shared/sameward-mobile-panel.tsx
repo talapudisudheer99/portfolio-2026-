@@ -53,7 +53,8 @@ export function SamewardMobilePanel({
         </div>
       </SamewardLine>
 
-      <div className="sameward-mobile-feed min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2.5">
+      {/* Not scrollable: a swipe on the phone mock must scroll the page, not the feed. Newest messages stay pinned to the bottom. */}
+      <div className="sameward-mobile-feed flex min-h-0 flex-1 flex-col justify-end overflow-hidden px-3 py-2.5">
         <div className="flex flex-col gap-2.5">
           {samewardMessages.map((message, index) => (
             <SamewardLine

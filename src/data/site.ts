@@ -4,7 +4,7 @@ export const siteConfig: SiteConfig = {
   metadata: {
     title: "Sudheer Talapudi | Frontend Engineer & Product Builder",
     description:
-      "Frontend-strong engineer in Hyderabad. I built Sameward — a live workspace for team chat, plans, files, and Channel AI — and ship full product systems: interface, realtime, auth, and launch.",
+      "Frontend-strong engineer in Hyderabad. I built Sameward — a live team workspace with channels, direct messages, file sharing and Channel AI — and ship full product systems: interface, realtime, auth, and launch.",
     keywords: [
       "Sudheer Talapudi",
       "Frontend Engineer",
@@ -25,10 +25,10 @@ export const siteConfig: SiteConfig = {
     name: "Sudheer Talapudi",
     phone: "+91 9676234130",
     email: "sudheertalaudi@gmail.com",
-    location: "Hyderabad, India · Onsite / Hybrid / Remote",
+    location: "Hyderabad, India · Open to Bengaluru, Chennai and remote (India)",
   },
   navLinks: [
-    { label: "Work", href: "#projects" },
+    { label: "Work", href: "#work" },
     { label: "Capabilities", href: "#skills" },
     { label: "Experience", href: "#experience" },
     { label: "Profile", href: "#about" },
@@ -52,7 +52,8 @@ export const siteConfig: SiteConfig = {
     },
   ],
   hero: {
-    badge: "Sudheer Talapudi · Hyderabad · Onsite / Hybrid / Remote",
+    kicker: "Sudheer Talapudi · Frontend Engineer",
+    badge: "Sudheer Talapudi · Hyderabad · Open to Bengaluru, Chennai and remote",
     wordmark: "Sudheer",
     surname: "Talapudi",
     headline: [
@@ -65,8 +66,8 @@ export const siteConfig: SiteConfig = {
       "Frontend-strong engineer. Interface, realtime, auth,",
       "AI tools, and launch — shipped as one product, not a demo.",
     ],
-    availability: "Sameward is live",
-    availabilityHref: "https://sameward.com/",
+    availability: "Open to work · Immediate joiner",
+    availabilityHref: "#contact",
     systemLabel: "How a product ships",
     layers: [
       { label: "Interface", detail: "Screens, states, motion" },

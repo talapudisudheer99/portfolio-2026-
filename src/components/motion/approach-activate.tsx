@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { hudLock, revealStart } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -33,15 +34,15 @@ export function ApproachActivate({
       )
       if (!steps.length) return
 
-      gsap.set(steps, { opacity: 0.16 })
+      gsap.set(steps, { opacity: hudLock.dim })
       gsap.to(steps, {
         opacity: 1,
-        duration: 0.08,
+        duration: hudLock.step,
         ease: "steps(1)",
-        stagger: 0.16,
+        stagger: hudLock.itemStagger,
         scrollTrigger: {
           trigger: root,
-          start: "top 78%",
+          start: revealStart,
           once: true,
           toggleActions: "play none none none",
         },

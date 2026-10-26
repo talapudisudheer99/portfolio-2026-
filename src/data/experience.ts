@@ -11,7 +11,7 @@ export const experience: Experience[] = [
       "Split it into two services: a Next.js REST API that handles every write, and a standalone Node.js Socket.IO service that only broadcasts, linked by a shared-secret internal endpoint.",
       "Built sign-in and team roles with HttpOnly cookie sessions, bcrypt, hashed tokens and Google OAuth.",
       "Built Channel AI on the OpenAI API: it summarizes channels, answers questions and drafts replies that the user sends.",
-      "Deployed both services on Railway with S3 uploads and Resend email, and tested every release end to end.",
+      "Deployed both services on Railway with S3 uploads and Resend email; every release is type-checked, linted and tested end to end by hand.",
     ],
   },
   {

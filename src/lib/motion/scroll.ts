@@ -21,7 +21,9 @@ export function bindLenisToScrollTrigger(lenis: Lenis) {
     lenis.raf(time * 1000)
   }
 
-  gsap.ticker.add(tick)
+  // Prioritised: Lenis moves the page first, so every layer that reads
+  // scrollY later in the same tick (WebGL, stars) is in sync with content.
+  gsap.ticker.add(tick, false, true)
   gsap.ticker.lagSmoothing(0)
 
   const refresh = () => ScrollTrigger.refresh()

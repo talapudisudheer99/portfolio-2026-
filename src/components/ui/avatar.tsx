@@ -34,6 +34,7 @@ function AvatarImage({ className, onError, ...props }: ComponentProps<"img">) {
         setFailed(true)
         onError?.(event)
       }}
+      alt=""
       {...props}
     />
   )

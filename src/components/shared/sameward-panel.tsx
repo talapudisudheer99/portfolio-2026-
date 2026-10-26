@@ -55,7 +55,8 @@ export function SamewardPanel({
       )}
     >
       <aside className="sameward-rail sameward-rail--nav">
-        <div className="sameward-rail-body min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        {/* Decorative mock — never a scroll container (it would trap touch scrolling on phones). */}
+        <div className="sameward-rail-body min-h-0 flex-1 overflow-hidden">
           <div className="sameward-brand">
             <SamewardLogo variant="horizontal" size={24} tone="onDark" />
           </div>
@@ -112,7 +113,7 @@ export function SamewardPanel({
           </span>
         </SamewardLine>
 
-        <div className="sameward-thread-feed flex flex-1 flex-col px-4 py-3.5">
+        <div className="sameward-thread-feed flex flex-1 flex-col justify-end overflow-hidden px-4 py-3.5">
           <div className="flex flex-col gap-3.5 pb-1">
             {samewardMessages.map((message, index) => (
               <SamewardLine
