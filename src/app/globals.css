@@ -1879,7 +1879,7 @@
   /* ---------- Sameward showcase: floating glass window ---------- */
   .fd-window-stage {
     position: relative;
-    width: min(100%, 62rem, calc((100svh - 8rem) * 1.78));
+    width: min(100%, 60rem, calc((100svh - 8rem) * 1.62));
     margin-inline: auto;
     perspective: 1800px;
     perspective-origin: 50% 35%;
@@ -1888,7 +1888,7 @@
   .sw-scene {
     position: relative;
     width: 100%;
-    aspect-ratio: 1.78;
+    aspect-ratio: 1.62;
     container-type: inline-size;
     transform-style: preserve-3d;
   }
@@ -2243,9 +2243,8 @@
     will-change: transform;
   }
 
-  /* Sits below the channel header, over the thread's empty right side */
   .sw-float--ai {
-    top: 22%;
+    top: 14%;
     right: -6%;
     width: 33%;
   }

@@ -709,7 +709,7 @@ export function createSpaceProps(disposables: Disposable[]): {
       },
       // Sameward: astronaut floats up beside the tablet's top-left corner
       projects: {
-        astro: P(-0.89, 0.36, 2.9, 0.66),
+        astro: P(-0.84, 0.42, 2.9, 0.85),
         planet: P(0.92, 0.82, 2.2, 0.7),
         rocks: [P(0.93, -0.6, 2.25, 0.85), P(0.95, 0.2, 2.18, 0.55), P(-0.95, -0.75, 2.1, 0.5)],
       },
