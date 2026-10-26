@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { hudLock, revealStart } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -17,7 +18,7 @@ interface FragmentDriftProps {
 }
 
 /**
- * Talk / Plan / Ask — sequential HUD lock, not scrubbed drift.
+ * Talk / Share / Ask — sequential HUD lock, not scrubbed drift.
  */
 export function FragmentDrift({
   children,
@@ -38,15 +39,15 @@ export function FragmentDrift({
 
       if (items.length < 2) return
 
-      gsap.set(items, { opacity: 0.18 })
+      gsap.set(items, { opacity: hudLock.dim })
       gsap.to(items, {
         opacity: 1,
-        duration: 0.06,
+        duration: hudLock.step,
         ease: "steps(1)",
-        stagger: 0.12,
+        stagger: hudLock.itemStagger,
         scrollTrigger: {
           trigger: root,
-          start: "top 82%",
+          start: revealStart,
           once: true,
           toggleActions: "play none none none",
         },

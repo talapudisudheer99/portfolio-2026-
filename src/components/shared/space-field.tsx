@@ -2,13 +2,13 @@
 
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useMemo, useRef } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
+import { depthField } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+gsap.registerPlugin(useGSAP)
 
 function mulberry(seed: number) {
   return () => {
@@ -45,9 +45,13 @@ function buildStarShadows(
       ? `color-mix(in srgb, var(--primary) ${45 + Math.floor(rand() * 35)}%, white)`
       : `rgb(255 255 255 / ${alpha.toFixed(3)})`
 
-    parts.push(
-      `${x.toFixed(2)}vw ${y.toFixed(2)}vh ${blur.toFixed(2)}px ${spread.toFixed(2)}px ${color}`
-    )
+    // Each star is drawn twice, one viewport apart: the layer is two tiles
+    // tall and wraps, so scrolling never runs out of sky.
+    for (const offset of [0, 100]) {
+      parts.push(
+        `${x.toFixed(2)}vw ${(y + offset).toFixed(2)}vh ${blur.toFixed(2)}px ${spread.toFixed(2)}px ${color}`
+      )
+    }
   }
 
   return parts.join(", ")
@@ -105,6 +109,8 @@ function upperSkyIsClear() {
 
 /**
  * Global space world: starfield + twinkles + meteors + rare SVG craft flyby.
+ * Sits BEHIND the WebGL layer (stars are farther than the moon) and scrolls on
+ * the depth field: far stars barely move, near stars a little more.
  * CSS/SVG + GSAP only — WebGL props live in AmbientAtmosphere.
  */
 export function SpaceField() {
@@ -200,25 +206,50 @@ export function SpaceField() {
       const nebulaB = root.querySelector(".space-field-nebula--b")
       const dust = root.querySelector(".space-field-dust")
 
-      const parallax = gsap.timeline({
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1.1,
-        },
-      })
-      if (far) parallax.to(far, { yPercent: -8, ease: "none" }, 0)
-      if (mid) parallax.to(mid, { yPercent: -14, xPercent: 2, ease: "none" }, 0)
-      if (near)
-        parallax.to(near, { yPercent: -22, xPercent: -1.5, ease: "none" }, 0)
-      if (glow) parallax.to(glow, { yPercent: -26, ease: "none" }, 0)
-      if (ember) parallax.to(ember, { yPercent: -18, xPercent: 3, ease: "none" }, 0)
-      if (nebulaA)
-        parallax.to(nebulaA, { yPercent: -12, xPercent: 4, ease: "none" }, 0)
-      if (nebulaB)
-        parallax.to(nebulaB, { yPercent: -20, xPercent: -5, ease: "none" }, 0)
-      if (dust) parallax.to(dust, { yPercent: -10, opacity: 0.55, ease: "none" }, 0)
+      // Real parallax: each layer follows the page at its own fraction of the
+      // scroll speed — no scrub lag, read after Lenis in the same tick.
+      const rates = depthField.stars
+      const wrapping: { el: HTMLElement; rate: number }[] = []
+      const drifting: { el: HTMLElement; rate: number }[] = []
+      const addWrap = (el: Element | null, rate: number) => {
+        if (el instanceof HTMLElement) wrapping.push({ el, rate })
+      }
+      const addDrift = (el: Element | null, rate: number) => {
+        if (el instanceof HTMLElement) drifting.push({ el, rate })
+      }
+      addWrap(far, rates.far)
+      addWrap(mid, rates.mid)
+      addWrap(near, rates.near)
+      addWrap(glow, rates.glow)
+      addWrap(ember, rates.ember)
+      addDrift(nebulaA, rates.nebulaA)
+      addDrift(nebulaB, rates.nebulaB)
+      addDrift(dust, rates.dust)
+
+      // One tile = 100vh in CSS px (measured, so mobile URL-bar resizes are safe)
+      let tile = (far as HTMLElement | null)?.offsetHeight
+        ? (far as HTMLElement).offsetHeight / 2
+        : window.innerHeight
+      const onResize = () => {
+        const h = (far as HTMLElement | null)?.offsetHeight
+        tile = h ? h / 2 : window.innerHeight
+      }
+      window.addEventListener("resize", onResize)
+
+      let lastY = -1
+      const tick = () => {
+        const y = Math.max(0, window.scrollY)
+        if (y === lastY) return
+        lastY = y
+        for (const { el, rate } of wrapping) {
+          el.style.translate = `0 ${-((y * rate) % tile)}px`
+        }
+        for (const { el, rate } of drifting) {
+          el.style.translate = `0 ${-(y * rate)}px`
+        }
+      }
+      tick()
+      gsap.ticker.add(tick)
 
       gsap.set(craft, { autoAlpha: 0, left: "-12%", top: "28%" })
       meteorNodes.forEach((node, i) => {
@@ -394,8 +425,11 @@ export function SpaceField() {
 
       return () => {
         timers.forEach((t) => t.kill())
-        parallax.scrollTrigger?.kill()
-        parallax.kill()
+        gsap.ticker.remove(tick)
+        window.removeEventListener("resize", onResize)
+        ;[...wrapping, ...drifting].forEach(({ el }) => {
+          el.style.translate = ""
+        })
         gsap.killTweensOf(craft)
         meteorNodes.forEach((n) => gsap.killTweensOf(n))
       }
@@ -429,6 +463,24 @@ export function SpaceField() {
           className="space-field-dots space-field-dots--mid"
           style={{ boxShadow: layers.mid }}
         />
+        {!prefersReducedMotion
+          ? [0, 100].flatMap((offset) =>
+              twinkles.map((star) => (
+                <span
+                  key={`${offset}-${star.id}`}
+                  className="space-field-twinkle"
+                  style={{
+                    left: `${star.x}%`,
+                    top: `${(star.y + offset) / 2}%`,
+                    width: star.size,
+                    height: star.size,
+                    animationDelay: `${star.delay}s`,
+                    animationDuration: `${star.dur}s`,
+                  }}
+                />
+              ))
+            )
+          : null}
       </div>
       <div className="space-field-parallax space-field-parallax--near">
         <span
@@ -448,23 +500,6 @@ export function SpaceField() {
           style={{ boxShadow: layers.ember }}
         />
       </div>
-
-      {!prefersReducedMotion
-        ? twinkles.map((star) => (
-            <span
-              key={star.id}
-              className="space-field-twinkle"
-              style={{
-                left: `${star.x}%`,
-                top: `${star.y}%`,
-                width: star.size,
-                height: star.size,
-                animationDelay: `${star.delay}s`,
-                animationDuration: `${star.dur}s`,
-              }}
-            />
-          ))
-        : null}
 
       {!prefersReducedMotion ? (
         <div ref={meteorsRef} className="space-field-meteors">

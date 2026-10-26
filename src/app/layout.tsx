@@ -57,11 +57,30 @@ export default function RootLayout({
     >
       <head>
         <PaletteInitScript />
+        {/* Reload always starts at the hero (deep links with #hash still work). */}
+        <script
+          id="portfolio-scroll-top"
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)window.scrollTo(0,0)}catch(e){}",
+          }}
+        />
+        {/* crossOrigin matches three.js TextureLoader — otherwise the browser downloads it twice. */}
         <link
           rel="preload"
           href="/moon/color-1k.jpg"
           as="image"
           type="image/jpeg"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          href="/space/astronaut.png"
+          as="image"
+          type="image/png"
+          crossOrigin="anonymous"
+          media="(min-width: 1024px)"
         />
         <script
           type="application/ld+json"

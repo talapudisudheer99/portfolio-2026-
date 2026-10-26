@@ -18,7 +18,7 @@ import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { SectionWrapper } from "@/components/shared/section-wrapper"
 import { experience } from "@/data/experience"
 import { sections } from "@/data/sections"
-import { duration, easeOut, rise } from "@/lib/motion"
+import { duration, easeOut, rise, viewportOnce } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import type { Experience as Role } from "@/types"
 
@@ -26,7 +26,6 @@ gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const isCurrent = (period: string) => /present/i.test(period)
 
-const rowViewport = { once: true, margin: "0px 0px -20% 0px" } as const
 
 const rowSequence = {
   hidden: {},
@@ -124,14 +123,16 @@ export function Experience() {
           trigger: rail,
           start: "top 70%",
           end: "bottom 70%",
-          scrub: 0.45,
+          scrub: true,
         },
       })
     },
     { dependencies: [prefersReducedMotion], revertOnUpdate: true }
   )
 
-  const years = experience
+  // Stats count professional roles only — the internship stays in the list.
+  const professional = experience.filter((role) => !/intern/i.test(role.role))
+  const years = professional
     .flatMap((role) => role.period.match(/\d{4}/g) ?? [])
     .map(Number)
   const currentCount = experience.filter((r) => isCurrent(r.period)).length
@@ -161,7 +162,7 @@ export function Experience() {
               <div className="experience-stat min-w-0">
                 <dt className="type-meta text-muted-foreground">Roles</dt>
                 <dd className="experience-stat-value mt-2 text-foreground">
-                  <CountUp value={experience.length} pad={2} />
+                  <CountUp value={professional.length} pad={2} />
                 </dd>
               </div>
               <div className="experience-stat min-w-0">
@@ -311,7 +312,7 @@ function ExperienceRow({
       variants={rowSequence}
       initial="hidden"
       whileInView="visible"
-      viewport={rowViewport}
+      viewport={viewportOnce}
       className={cn("reduce-show", rowClass)}
     >
       <motion.span aria-hidden="true" variants={rowNode} className={dotClass} />

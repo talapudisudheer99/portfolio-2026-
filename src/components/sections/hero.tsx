@@ -1,31 +1,31 @@
-"use client"
-
-import { useGSAP } from "@gsap/react"
-import gsap from "gsap"
 import { ArrowUpRight, Download, ExternalLink } from "lucide-react"
-import { useEffect, useRef } from "react"
+import type { CSSProperties } from "react"
 
 import { MotionParallax } from "@/components/motion/parallax-layer"
-import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
-import { waitForAtmosphere } from "@/hooks/use-deferred-layer"
 import { siteConfig } from "@/data/site"
 
-gsap.registerPlugin(useGSAP)
+type IndexStyle = CSSProperties & { "--i": number }
 
-function BootWords({
-  text,
-  accent = false,
-}: {
+interface WordsProps {
   text: string
+  /** Global word index the stagger starts from */
+  start: number
   accent?: boolean
-}) {
-  const words = text.split(" ")
+}
+
+/**
+ * Words animate in with pure CSS (`--i` drives the stagger), so the hero
+ * starts revealing on first paint — it never waits for JS, WebGL or images.
+ * Opacity lives on `.hero-word`; the gradient clip stays on the inner fill
+ * (clip + opacity on one node does not fade in WebKit).
+ */
+function Words({ text, start, accent = false }: WordsProps) {
   return (
     <>
-      {words.map((word, i) => (
+      {text.split(" ").map((word, i) => (
         <span key={`${word}-${i}`}>
           {i > 0 ? " " : null}
-          <span className="hero-word">
+          <span className="hero-word" style={{ "--i": start + i } as IndexStyle}>
             <span className={accent ? "hero-accent-word" : "hero-word-inner"}>
               {word}
             </span>
@@ -36,170 +36,31 @@ function BootWords({
   )
 }
 
-/**
- * Opacity lives on `.hero-word` (plain span). Gradient clip stays on the inner
- * fill — clip + opacity on the same node does not fade in WebKit.
- */
+const countWords = (text: string) => text.split(" ").length
+
 export function Hero() {
   const { hero } = siteConfig
-  const still = useHydratedReducedMotion()
-  const stillRef = useRef(still)
-  useEffect(() => {
-    stillRef.current = still
-  }, [still])
-  const root = useRef<HTMLElement>(null)
+  const taglineLines =
+    typeof hero.tagline === "string" ? [hero.tagline] : hero.tagline
 
-  useGSAP(
-    () => {
-      const section = root.current
-      if (!section) return
+  // Headline words, counted so every word gets its own stagger slot.
+  const line1a = "I built"
+  const line1b = "Sameward"
+  const line2 = "a live product system,"
+  const line3 = "end to end."
+  const i1b = countWords(line1a)
+  const i2 = i1b + countWords(line1b)
+  const i3 = i2 + countWords(line2)
 
-      const kickerEl = section.querySelector("[data-h-kicker]")
-      const lines = gsap.utils.toArray<HTMLElement>(
-        section.querySelectorAll(".hero-line")
-      )
-      const tagWords = gsap.utils.toArray<HTMLElement>(
-        section.querySelectorAll(".hero-tagline .hero-word")
-      )
-      const statusEl = section.querySelector("[data-h-status]")
-      const ctaEls = gsap.utils.toArray<HTMLElement>("[data-h-cta]", section)
-      const cueEl = section.querySelector("[data-h-cue]")
-      const chrome = [statusEl, ...ctaEls, cueEl].filter(Boolean) as HTMLElement[]
-
-      let cancelled = false
-      let done = false
-      let failsafe = 0
-      let tl: gsap.core.Timeline | null = null
-
-      const finish = () => {
-        if (done) return
-        done = true
-        section.classList.add("hero-booted")
-      }
-
-      const play = () => {
-        if (cancelled || done) return
-
-        const content = section.querySelector<HTMLElement>(".hero-content")
-        const headlineWords = gsap.utils.toArray<HTMLElement>(
-          section.querySelectorAll(".hero-headline .hero-word")
-        )
-
-        if (stillRef.current) {
-          if (content) gsap.set(content, { autoAlpha: 1 })
-          gsap.set([...headlineWords, ...tagWords, kickerEl, ...chrome].filter(Boolean), {
-            autoAlpha: 1,
-            y: 0,
-          })
-          finish()
-          return
-        }
-
-        gsap.set(kickerEl, { autoAlpha: 0 })
-        gsap.set(headlineWords, { autoAlpha: 0, y: 8 })
-        gsap.set(tagWords, { autoAlpha: 0, y: 0 })
-        gsap.set(chrome, { autoAlpha: 0, y: 0 })
-        section.classList.add("hero-playing")
-        if (content) gsap.set(content, { autoAlpha: 1 })
-
-        tl = gsap.timeline({
-          defaults: { ease: "power2.inOut" },
-        })
-
-        if (kickerEl) {
-          tl.to(kickerEl, { autoAlpha: 1, duration: 0.16 }, 0)
-        }
-
-        const wordDur = 0.14
-        const wordStagger = 0.032
-        const lineGap = 0.03
-        let headlineT = 0
-
-        lines.forEach((line, lineIndex) => {
-          const lineWords = gsap.utils.toArray<HTMLElement>(
-            line.querySelectorAll(".hero-word")
-          )
-          if (!lineWords.length) return
-          const n = lineWords.length
-          tl!.fromTo(
-            lineWords,
-            { autoAlpha: 0, y: 8 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: wordDur,
-              stagger: wordStagger,
-              immediateRender: lineIndex === 0,
-            },
-            headlineT
-          )
-          headlineT +=
-            wordDur + wordStagger * (n - 1) + (lineIndex < lines.length - 1 ? lineGap : 0)
-        })
-
-        if (tagWords.length) {
-          tl.fromTo(
-            tagWords,
-            { autoAlpha: 0 },
-            {
-              autoAlpha: 1,
-              duration: 0.24,
-              stagger: 0.012,
-              immediateRender: false,
-            },
-            0.72
-          )
-        }
-
-        if (statusEl) {
-          tl.fromTo(
-            statusEl,
-            { autoAlpha: 0, y: 5 },
-            { autoAlpha: 1, y: 0, duration: 0.2, immediateRender: false },
-            1.12
-          )
-        }
-        if (ctaEls.length) {
-          tl.fromTo(
-            ctaEls,
-            { autoAlpha: 0, y: 6 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.24,
-              stagger: 0.06,
-              immediateRender: false,
-            },
-            1.22
-          )
-        }
-        if (cueEl) {
-          tl.to(cueEl, { autoAlpha: 1, duration: 0.2 }, 1.42)
-        }
-
-        failsafe = window.setTimeout(finish, 10000)
-        tl.eventCallback("onComplete", () => {
-          window.clearTimeout(failsafe)
-          finish()
-        })
-      }
-
-      void waitForAtmosphere(520, () => cancelled).then(play)
-
-      return () => {
-        cancelled = true
-        window.clearTimeout(failsafe)
-        tl?.kill()
-      }
-    },
-    { scope: root, dependencies: [] }
+  const taglineStarts = taglineLines.map((_, i) =>
+    taglineLines.slice(0, i).reduce((sum, line) => sum + countWords(line), 0)
   )
 
   return (
-    <section ref={root} id="hero" className="hero-editorial">
+    <section id="hero" className="hero-editorial">
       <div className="hero-content" data-h-content="">
         {hero.kicker ? (
-          <p data-h-kicker="" className="hero-kicker">
+          <p data-h-kicker="" className="hero-kicker hero-enter hero-enter--kicker">
             <span className="hero-kicker-dot" aria-hidden="true" />
             {hero.kicker}
           </p>
@@ -207,47 +68,49 @@ export function Hero() {
 
         <h1 className="hero-headline">
           <span className="hero-line">
-            <BootWords text="I built" />{" "}
+            <Words text={line1a} start={0} />{" "}
             <span data-accent="">
-              <BootWords text="Sameward" accent />
+              <Words text={line1b} start={i1b} accent />
             </span>
           </span>
           <span className="hero-line">
-            <BootWords text="a live product system," />
+            <Words text={line2} start={i2} />
           </span>
           <span className="hero-line">
-            <BootWords text="end to end." />
+            <Words text={line3} start={i3} />
           </span>
         </h1>
 
         <p data-h-tagline="" className="hero-tagline">
-          {typeof hero.tagline === "string" ? (
-            <BootWords text={hero.tagline} />
-          ) : (
-            hero.tagline.map((line, i) => (
-              <span key={line}>
-                {i > 0 ? <br /> : null}
-                <BootWords text={line} />
-              </span>
-            ))
-          )}
+          {taglineLines.map((line, i) => (
+            <span key={line} className="hero-tagline-line">
+              {i > 0 ? <br /> : null}
+              <Words text={line} start={taglineStarts[i] ?? 0} />
+            </span>
+          ))}
         </p>
 
-        <div data-h-status="" className="hero-status">
+        <div data-h-status="" className="hero-status hero-enter hero-enter--status">
           <span className="hero-status-dot" />
-          <a
-            href={hero.availabilityHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hero-status-text"
-          >
-            {hero.availability}
-            <ExternalLink className="size-3.5 ml-1.5 inline" />
-          </a>
+          {hero.availabilityHref?.startsWith("http") ? (
+            <a
+              href={hero.availabilityHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-status-text"
+            >
+              {hero.availability}
+              <ExternalLink className="ml-1.5 inline size-3.5" aria-hidden="true" />
+            </a>
+          ) : (
+            <a href={hero.availabilityHref ?? "#contact"} className="hero-status-text">
+              {hero.availability}
+            </a>
+          )}
         </div>
 
         <div className="hero-actions">
-          {hero.ctas.map((cta) => {
+          {hero.ctas.map((cta, i) => {
             const Icon = cta.variant === "primary" ? ArrowUpRight : Download
             return (
               <a
@@ -257,10 +120,11 @@ export function Hero() {
                 href={cta.href}
                 target={cta.external ? "_blank" : undefined}
                 rel={cta.external ? "noopener noreferrer" : undefined}
+                style={{ "--i": i } as IndexStyle}
                 className={
                   cta.variant === "primary"
-                    ? "hero-btn hero-btn--primary"
-                    : "hero-btn hero-btn--ghost"
+                    ? "hero-btn hero-btn--primary hero-enter hero-enter--cta"
+                    : "hero-btn hero-btn--ghost hero-enter hero-enter--cta"
                 }
               >
                 {cta.label}
@@ -273,7 +137,7 @@ export function Hero() {
 
       <MotionParallax
         strength="decoration"
-        className="hero-scroll-cue"
+        className="hero-scroll-cue hero-enter hero-enter--cue"
         aria-hidden="true"
       >
         <div data-h-cue="" className="hero-scroll-line" />

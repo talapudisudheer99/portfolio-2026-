@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 import { SmoothScroll } from "@/components/smooth-scroll"
-import { useDeferredLayer } from "@/hooks/use-deferred-layer"
+import { useDeferredLayer, useIdleLayer } from "@/hooks/use-deferred-layer"
 import { siteConfig } from "@/data/site"
 
 const AmbientAtmosphere = dynamic(
@@ -51,17 +51,20 @@ interface MotionRootProps {
 }
 
 /**
- * World (moon + stars + props) mounts with the page so the hero tick
- * can run over the scene, not over empty black.
+ * Stars paint with the page (CSS). The WebGL world (moon + props) mounts
+ * when the browser is idle so it never delays the hero.
  */
 export function MotionRoot({ children }: Readonly<MotionRootProps>) {
   const chrome = useDeferredLayer(240)
+  // three.js (~550 kB) loads when the main thread is idle, after the hero has
+  // painted and hydrated — the moon then rises in on its own entrance.
+  const world = useIdleLayer(1200)
 
   return (
     <>
       {chrome ? <CursorInteraction /> : null}
       <SmoothScroll>
-        <AmbientAtmosphere />
+        {world ? <AmbientAtmosphere /> : null}
         <SpaceField />
         {chrome ? <ScrollGrain /> : null}
         <a

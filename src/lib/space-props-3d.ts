@@ -1,7 +1,6 @@
 import * as THREE from "three"
 
 import { getBlobPalette, type BlobPaletteId } from "@/data/blob-palettes"
-import type { SectionMoodId } from "@/lib/motion"
 
 type Disposable = { dispose: () => void }
 
@@ -431,6 +430,7 @@ function buildRingedSystem(disposables: Disposable[]): {
 function buildAstronautRelief(disposables: Disposable[]): {
   group: THREE.Group
   setPalette: (id: BlobPaletteId) => void
+  fade: (target: number) => void
 } {
   const root = new THREE.Group()
   root.name = "prop-astronaut"
@@ -530,321 +530,407 @@ vec3 astroHsv2Rgb(vec3 c) {
     track(disposables, geo)
 
     mat.map = tex
-    mat.opacity = 1
     mat.depthWrite = false
     mat.needsUpdate = true
+    textureReady = true
   })
+
+  let textureReady = false
 
   function setPalette(id: BlobPaletteId) {
     accent.value.setHex(getBlobPalette(id).blob.color1)
   }
 
-  return { group: root, setPalette }
+  /** Ease opacity up once the PNG is in — no pop on slow networks. */
+  function fade(target: number) {
+    const goal = textureReady ? target : 0
+    mat.opacity += (goal - mat.opacity) * 0.08
+    if (Math.abs(goal - mat.opacity) < 0.002) mat.opacity = goal
+  }
+
+  return { group: root, setPalette, fade }
 }
 
-/** Realistic-ish PBR props — same scene/lights as the moon (no second canvas). */
-export function createSpaceProps(
-  disposables: Disposable[],
-  options: { aspect: number } = { aspect: 16 / 10 }
-): {
+/** Section tops in scroll px (measured from the DOM by the scene). */
+export interface SectionScrolls {
+  work: number
+  projects: number
+  skills: number
+  experience: number
+  about: number
+  contact: number
+  /** Last scrollable px */
+  max: number
+}
+
+export interface PropsFrame {
+  /** Seconds since mount */
+  t: number
+  /** Seconds since the last frame */
+  dt: number
+  scrollY: number
+  /** Viewport size in CSS px */
+  vw: number
+  vh: number
+  mouse: { x: number; y: number }
+  /** 0..1 smoothed scroll speed */
+  velocity: number
+  /** Signed px scrolled since the last frame */
+  scrollDelta: number
+  sections: SectionScrolls
+  /** 0 → 1 entrance progress (eased) */
+  intro: number
+}
+
+/** World-space pose. z is depth (bigger = closer to the camera). */
+interface Pose {
+  x: number
+  y: number
+  z: number
+  s: number
+}
+
+interface Layout {
+  astro: Pose
+  planet: Pose
+  rocks: [Pose, Pose, Pose]
+}
+
+type SectionId = "hero" | "work" | "projects" | "skills" | "experience" | "about" | "contact"
+
+const CAMERA_Z = 4.35
+const smoothstep = (x: number) => {
+  const t = Math.min(1, Math.max(0, x))
+  return t * t * (3 - 2 * t)
+}
+
+/**
+ * The hero cast — astronaut, ringed planet, three asteroids — stays with the
+ * reader through the whole page.
+ *
+ * Every section has its own composition (props placed in that section's
+ * open space, at different depths). While you read a section the cast holds
+ * its composition and drifts slowly upward (parallax: near props drift more).
+ * Between sections the cast travels to the next composition, scrubbed by the
+ * scroll position. On top, every prop follows its target through a soft
+ * spring — so motion has weight and keeps easing for a moment after the
+ * scroll stops — banks into its direction of travel, and bobs when idle.
+ */
+export function createSpaceProps(disposables: Disposable[]): {
   group: THREE.Group
-  update: (
-    t: number,
-    scroll: number,
-    mouse: { x: number; y: number },
-    section: SectionMoodId,
-    velocity: number
-  ) => void
+  update: (frame: PropsFrame) => boolean
   setPalette: (id: BlobPaletteId) => void
 } {
   const group = new THREE.Group()
   group.name = "space-props"
 
-  // Far margins — clear of hero copy + post-portal right companion
-  const camZ = 4.35
-  const fovRad = THREE.MathUtils.degToRad(36)
-  const propZ = 2.85
-  const dist = camZ - propZ
-  const vHalf = Math.tan(fovRad * 0.5) * dist
-  const hHalf = vHalf * Math.max(1.25, Math.min(options.aspect, 2.2))
-  const edgeX = hHalf * 0.82
-  const edgeY = vHalf * 0.62
-
-  // —— Astronaut — left, above the moon, approaching the limb ——
   const astroBuilt = buildAstronautRelief(disposables)
   const astro = astroBuilt.group
-  astro.scale.setScalar(0.4)
-  astro.position.set(-edgeX * 0.86, -edgeY * 0.34, propZ - 0.02)
-  astro.rotation.set(0.04, 0.08, 0.12)
   group.add(astro)
 
-  // —— Asteroids — hero: one on the right limb + one speck (third parked) ——
-  const rocks: THREE.Mesh[] = []
+  const ringed = buildRingedSystem(disposables)
+  const system = ringed.group
+  group.add(system)
+
   const rockBank = createRockTextureBank(disposables)
   const rockSpecs = [
-    {
-      seed: 11,
-      scale: 0.04,
-      stretch: [1.28, 0.78, 1.08] as const,
-      pos: [edgeX * 0.7, -edgeY * 0.52, propZ - 0.02] as const,
-      amount: 0.32,
-    },
-    {
-      seed: 29,
-      scale: 0.022,
-      stretch: [0.82, 1.22, 0.9] as const,
-      pos: [edgeX * 0.88, -edgeY * 0.34, propZ + 0.04] as const,
-      amount: 0.28,
-    },
-    {
-      seed: 47,
-      scale: 0.02,
-      stretch: [1.14, 0.88, 1.16] as const,
-      pos: [edgeX * 1.2, edgeY * 0.95, propZ] as const,
-      amount: 0.26,
-    },
-  ]
-
-  for (const spec of rockSpecs) {
-    // Sphere UVs match moon equirect maps; high segment count avoids faceting
-    const geo = new THREE.SphereGeometry(1, 96, 72)
+    { seed: 11, scale: 0.04, stretch: [1.28, 0.78, 1.08], amount: 0.32 },
+    { seed: 29, scale: 0.022, stretch: [0.82, 1.22, 0.9], amount: 0.28 },
+    { seed: 47, scale: 0.02, stretch: [1.14, 0.88, 1.16], amount: 0.26 },
+  ] as const
+  const rocks = rockSpecs.map((spec) => {
+    const geo = new THREE.SphereGeometry(1, 64, 48)
     displaceRock(geo, spec.amount, spec.seed)
     const mat = new THREE.MeshStandardMaterial({
       color: 0x9a9084,
       roughness: 0.97,
       metalness: 0.01,
-      flatShading: false,
     })
     applyRockMaps(mat, rockBank, spec.seed)
     track(disposables, geo, mat)
     const mesh = new THREE.Mesh(geo, mat)
     mesh.name = `prop-asteroid-${spec.seed}`
-    mesh.castShadow = false
-    mesh.receiveShadow = false
-    mesh.scale.set(
-      spec.scale * spec.stretch[0],
-      spec.scale * spec.stretch[1],
-      spec.scale * spec.stretch[2]
-    )
-    mesh.position.set(spec.pos[0], spec.pos[1], spec.pos[2])
     mesh.rotation.set(spec.seed * 0.1, spec.seed * 0.07, spec.seed * 0.04)
     group.add(mesh)
-    rocks.push(mesh)
-  }
+    return {
+      mesh,
+      base: new THREE.Vector3(
+        spec.scale * spec.stretch[0],
+        spec.scale * spec.stretch[1],
+        spec.scale * spec.stretch[2]
+      ),
+    }
+  })
 
-  // —— Ringed system (small accent — 40% of prior scale) ——
-  const ringed = buildRingedSystem(disposables)
-  const system = ringed.group
-  system.scale.setScalar(0.085)
-  system.position.set(edgeX * 0.92, edgeY * 0.78, propZ - 0.22)
-  group.add(system)
+  const ASTRO_BASE = 0.4
+  const PLANET_BASE = 0.085
 
-  const astroHome = astro.position.clone()
-  const systemHome = system.position.clone()
-  const rockHomes = rocks.map((r) => r.position.clone())
-  const rockScale0 = rocks.map((r) => r.scale.clone())
-  const astroScale0 = astro.scale.x
-  const systemScale0 = system.scale.x
+  let layouts: Record<SectionId, Layout> | null = null
+  let aspectKey = 0
 
-  const astroPos = astroHome.clone()
-  const systemPos = systemHome.clone()
-  const rockPos = rockHomes.map((p) => p.clone())
-  let astroS = astroScale0
-  let systemS = systemScale0
+  /**
+   * Section compositions. Authored in SCREEN terms so they hold at any depth:
+   * sx -1 (left edge) .. 1 (right edge), sy -1 (bottom) .. 1 (top), z depth
+   * (bigger = closer), s scale. Each sits in that section's open space.
+   */
+  function buildLayouts(aspect: number): Record<SectionId, Layout> {
+    const tan = Math.tan(THREE.MathUtils.degToRad(18))
+    const P = (sx: number, sy: number, z: number, s: number): Pose => {
+      const vHalf = tan * (CAMERA_Z - z)
+      return { x: sx * vHalf * aspect, y: sy * vHalf, z, s }
+    }
+    const hidden = (sx: number, sy: number): Pose => P(sx, sy, 2.2, 0)
 
-  type HeroFocus = "astro" | "rocks" | "system" | "balanced"
-  type Pose = { x: number; y: number; z: number; scale: number }
+    // Hero keeps the original (live-site) composition, authored in world
+    // units against the prop plane at z 2.85.
+    const z0 = 2.85
+    const vHalf0 = tan * (CAMERA_Z - z0)
+    const ex = vHalf0 * Math.max(1.25, Math.min(aspect, 2.2)) * 0.82
+    const ey = vHalf0 * 0.62
+    const W = (x: number, y: number, z: number, s: number): Pose => ({
+      x: x * ex,
+      y: y * ey,
+      z,
+      s,
+    })
 
-  /** Section roles — one hero prop, others support (clear of right companion + copy). */
-  function sectionLayout(section: SectionMoodId): {
-    astro: Pose
-    rocks: Pose[]
-    system: Pose
-    hero: HeroFocus
-    float: number
-  } {
-    const ex = edgeX
-    const ey = edgeY
-    const z = propZ
-    switch (section) {
-      case "projects":
-        // Sameward — full figure in the left gutter, not a helmet fill
-        return {
-          hero: "astro",
-          float: 0.32,
-          astro: { x: -ex * 0.88, y: -ey * 0.38, z: 3.12, scale: 1.46 },
-          system: { x: ex * 1.08, y: ey * 0.92, z: 2.2, scale: 0.7 },
-          rocks: [
-            { x: ex * 1.1, y: -ey * 0.72, z: 2.25, scale: 0.85 },
-            { x: ex * 1.15, y: ey * 0.25, z: 2.18, scale: 0.55 },
-            { x: ex * 1.22, y: ey * 0.95, z: 2.1, scale: 0 },
-          ],
-        }
-      case "skills":
-        // Capabilities — one asteroid in the right gutter (readable, not a wall)
-        return {
-          hero: "rocks",
-          float: 0.38,
-          astro: { x: -ex * 0.82, y: -ey * 0.82, z: 2.55, scale: 0.7 },
-          system: { x: ex * 0.95, y: ey * 0.82, z: 2.35, scale: 1.38 },
-          rocks: [
-            { x: ex * 0.9, y: -ey * 0.28, z: 3.18, scale: 4.32 },
-            { x: -ex * 1.05, y: ey * 0.72, z: 2.4, scale: 1.38 },
-            { x: ex * 1.12, y: ey * 0.45, z: 2.28, scale: 0.84 },
-          ],
-        }
-      case "experience":
-        // Experience — system as a corner accent, rings stay off the timeline
-        return {
-          hero: "system",
-          float: 0.36,
-          astro: { x: -ex * 1.12, y: ey * 0.35, z: 2.2, scale: 0.38 },
-          system: { x: ex * 0.92, y: ey * 0.7, z: 3.08, scale: 3.12 },
-          rocks: [
-            { x: -ex * 1.08, y: -ey * 0.75, z: 2.35, scale: 1.1 },
-            { x: ex * 1.12, y: -ey * 0.78, z: 2.28, scale: 0.8 },
-            { x: -ex * 1.15, y: ey * 0.85, z: 2.18, scale: 0.55 },
-          ],
-        }
-      case "about":
-        // Profile — props recede; moon fills the floor
-        return {
-          hero: "balanced",
-          float: 0.3,
-          astro: { x: -ex * 1.12, y: -ey * 0.55, z: 2.08, scale: 0.42 },
-          system: { x: ex * 1.05, y: ey * 0.88, z: 2.05, scale: 0.48 },
-          rocks: [
-            { x: -ex * 0.95, y: -ey * 0.92, z: 2.0, scale: 0.32 },
-            { x: ex * 0.92, y: -ey * 0.78, z: 1.98, scale: 0.3 },
-            { x: -ex * 1.05, y: ey * 0.85, z: 1.95, scale: 0.26 },
-          ],
-        }
-      case "contact":
-        return {
-          hero: "balanced",
-          float: 0.22,
-          astro: { x: -ex * 0.7, y: ey * 0.55, z: 1.85, scale: 0.28 },
-          system: { x: ex * 0.88, y: ey * 0.9, z: 1.8, scale: 0.32 },
-          rocks: [
-            { x: -ex * 0.55, y: ey * 0.82, z: 1.78, scale: 0.22 },
-            { x: ex * 0.5, y: ey * 0.62, z: 1.75, scale: 0.2 },
-            { x: -ex * 0.35, y: ey * 1.05, z: 1.72, scale: 0.18 },
-          ],
-        }
-      case "hero":
-      default:
-        return {
-          hero: "balanced",
-          float: 0.4,
-          astro: { x: -ex * 0.86, y: -ey * 0.34, z: z - 0.02, scale: 1.12 },
-          system: { x: ex * 0.92, y: ey * 0.78, z: z - 0.22, scale: 1.2 },
-          rocks: [
-            { x: ex * 0.7, y: -ey * 0.52, z: z - 0.02, scale: 1.2 },
-            { x: ex * 0.88, y: -ey * 0.34, z: z + 0.04, scale: 0.84 },
-            { x: ex * 1.2, y: ey * 0.95, z, scale: 0 },
-          ],
-        }
+    return {
+      // Astronaut left above the limb, planet top-right, rocks on the right limb
+      hero: {
+        astro: W(-0.86, -0.34, z0 - 0.02, 1.12),
+        planet: W(0.92, 0.78, z0 - 0.22, 1.2),
+        rocks: [W(0.7, -0.52, z0 - 0.02, 1.2), W(0.88, -0.34, z0 + 0.04, 0.84), hidden(1.3, 0.8)],
+      },
+      // Selected work: cast settles in the open space under the cards
+      work: {
+        astro: P(-0.76, -0.7, 2.7, 0.6),
+        planet: P(0.9, 0.85, 2.4, 0.8),
+        rocks: [P(0.95, -0.75, 2.6, 1.0), P(0.5, -0.86, 2.3, 0.7), P(-0.97, 0.4, 2.2, 0.5)],
+      },
+      // Sameward: astronaut floats up beside the tablet's top-left corner
+      projects: {
+        astro: P(-0.84, 0.25, 2.9, 0.95),
+        planet: P(0.92, 0.82, 2.2, 0.7),
+        rocks: [P(0.93, -0.6, 2.25, 0.85), P(0.95, 0.2, 2.18, 0.55), P(-0.95, -0.75, 2.1, 0.5)],
+      },
+      // Capabilities: astronaut in the gap above the cards, a big asteroid
+      // drifts in close on the right
+      skills: {
+        astro: P(0.02, 0.5, 2.6, 0.5),
+        planet: P(0.95, 0.85, 2.3, 1.0),
+        rocks: [P(0.92, -0.2, 3.18, 4.1), P(-0.97, -0.85, 2.4, 1.1), P(0.2, 0.9, 2.2, 0.6)],
+      },
+      // Experience: the planet comes close in the open space under the stats
+      experience: {
+        astro: P(-1.4, 0.3, 2.2, 0.38),
+        planet: P(-0.72, -0.6, 2.95, 2.5),
+        rocks: [P(0.97, -0.7, 2.35, 1.1), P(0.98, 0.7, 2.28, 0.8), P(-0.98, 0.9, 2.18, 0.55)],
+      },
+      // Profile: astronaut drifts in the open space under the stats (right)
+      about: {
+        astro: P(0.55, -0.6, 2.4, 0.6),
+        planet: P(0.97, 0.92, 2.05, 0.5),
+        rocks: [P(-0.97, -0.6, 2.0, 0.6), P(0.2, -0.8, 1.98, 0.5), P(-0.98, 0.85, 1.95, 0.3)],
+      },
+      // Contact: astronaut settles in the open space under the socials
+      contact: {
+        astro: P(-0.6, -0.68, 2.85, 0.47),
+        planet: P(0.97, 0.9, 1.9, 0.35),
+        rocks: [P(-0.98, 0.75, 1.8, 0.35), P(0.97, -0.8, 1.8, 0.3), hidden(-1.3, 0.8)],
+      },
     }
   }
 
-  function heroBoost(hero: HeroFocus, which: HeroFocus) {
-    if (hero === "balanced") return 1
-    if (hero === which) return 1
-    return 0.42
+  const order: SectionId[] = ["hero", "work", "projects", "skills", "experience", "about", "contact"]
+
+  /**
+   * Hold windows in scroll px: a composition holds while its section fills
+   * the screen; the cast travels in the gaps between windows.
+   */
+  function holds(S: SectionScrolls, vh: number): [number, number][] {
+    const tops = [0, S.work, S.projects, S.skills, S.experience, S.about, S.contact, S.max + vh]
+    return order.map((_, i) => {
+      const top = tops[i]!
+      const nextTop = tops[i + 1]!
+      const start = i === 0 ? 0 : Math.min(top - vh * 0.15, S.max)
+      const end = Math.min(Math.max(start, nextTop - vh * 0.85), S.max)
+      return [start, end]
+    })
   }
 
-  function update(
-    t: number,
-    _scroll: number,
-    mouse: { x: number; y: number },
-    section: SectionMoodId,
-    velocity: number
+  const blendTarget = (out: Pose, a: Pose, b: Pose, k: number) => {
+    out.x = a.x + (b.x - a.x) * k
+    out.y = a.y + (b.y - a.y) * k
+    out.z = a.z + (b.z - a.z) * k
+    out.s = a.s + (b.s - a.s) * k
+    return out
+  }
+
+  /** Target poses for the current scroll, plus how far through the hold we are. */
+  function targetFor(
+    scroll: number,
+    S: SectionScrolls,
+    vh: number,
+    pick: (l: Layout) => Pose,
+    out: Pose
   ) {
-    const contactExit = section === "contact" ? 1 : 0
-    const breath = 1 - contactExit * 0.55
+    const L = layouts!
+    const H = holds(S, vh)
+    for (let i = 0; i < order.length; i++) {
+      const [start, end] = H[i]!
+      const here = pick(L[order[i]!])
+      if (scroll <= end || i === order.length - 1) {
+        if (scroll >= start || i === 0) {
+          // Inside a hold: slow upward drift (parallax) across the section
+          const span = Math.max(1, end - start)
+          const p = Math.min(1, Math.max(0, (scroll - start) / span))
+          blendTarget(out, here, here, 0)
+          // Hero starts exactly on its composition (no offset on first paint)
+          const drift = i === 0 ? p * 0.5 : p - 0.5
+          out.y += drift * 0.22 * (here.z / 2.85)
+          return out
+        }
+        // Travelling from the previous composition into this one
+        const prev = pick(L[order[i - 1]!])
+        const prevEnd = H[i - 1]![1]
+        const k = smoothstep((scroll - prevEnd) / Math.max(1, start - prevEnd))
+        blendTarget(out, prev, here, k)
+        out.y += (0.5 * (1 - k) - 0.5 * k) * 0.22 * (out.z / 2.85)
+        return out
+      }
+    }
+    return out
+  }
+
+  // Live (spring-smoothed) state per prop
+  type Live = { p: THREE.Vector3; v: THREE.Vector3; s: number; roll: number }
+  const mkLive = (): Live => ({ p: new THREE.Vector3(), v: new THREE.Vector3(), s: 0, roll: 0 })
+  const astroLive = mkLive()
+  const planetLive = mkLive()
+  const rockLive = rocks.map(mkLive)
+  let primed = false
+
+  const target: Pose = { x: 0, y: 0, z: 0, s: 0 }
+  let spinBoost = 0
+
+  /**
+   * Critically-damped spring toward the target — weight + overshoot-free
+   * settle. `stiffness` ~ how fast it catches up (1/s).
+   */
+  function follow(live: Live, tgt: Pose, dt: number, stiffness: number) {
+    if (!primed) {
+      live.p.set(tgt.x, tgt.y, tgt.z)
+      live.s = tgt.s
+      return
+    }
+    const w = stiffness
+    const steps = Math.max(1, Math.ceil(dt / (1 / 120)))
+    const h = dt / steps
+    for (let i = 0; i < steps; i++) {
+      const ax = w * w * (tgt.x - live.p.x) - 2 * w * live.v.x
+      const ay = w * w * (tgt.y - live.p.y) - 2 * w * live.v.y
+      const az = w * w * (tgt.z - live.p.z) - 2 * w * live.v.z
+      live.v.x += ax * h
+      live.v.y += ay * h
+      live.v.z += az * h
+      live.p.x += live.v.x * h
+      live.p.y += live.v.y * h
+      live.p.z += live.v.z * h
+    }
+    live.s += (tgt.s - live.s) * (1 - Math.exp(-dt * stiffness * 0.9))
+    // Bank into the direction of travel
+    const bankTarget = THREE.MathUtils.clamp(-live.v.x * 0.35, -0.5, 0.5)
+    live.roll += (bankTarget - live.roll) * (1 - Math.exp(-dt * 6))
+  }
+
+  function visibleAt(live: Live, radius: number, aspect: number) {
+    if (live.s < 0.02) return false
+    const d = CAMERA_Z - live.p.z
+    const vHalf = Math.tan(THREE.MathUtils.degToRad(18)) * d
+    const hHalf = vHalf * aspect
+    const r = radius * live.s
+    return Math.abs(live.p.x) - r < hHalf * 1.05 && Math.abs(live.p.y) - r < vHalf * 1.05
+  }
+
+  /** Returns true when at least one prop is on screen. */
+  function update(frame: PropsFrame) {
+    const { t, dt, scrollY, vw, vh, mouse, velocity, scrollDelta, sections, intro } = frame
+    const aspect = vw / Math.max(vh, 1)
+    if (!layouts || Math.abs(aspect - aspectKey) > 0.01) {
+      layouts = buildLayouts(aspect)
+      aspectKey = aspect
+    }
     const vel = Math.min(1, velocity)
-    const layout = sectionLayout(section)
-    const floatAmp = 0.014 * layout.float * breath
-    const follow = 0.055 + vel * 0.04
+    spinBoost += (Math.min(Math.abs(scrollDelta) * 0.0009, 0.05) - spinBoost) * 0.2
+    const introDrop = (1 - intro) * 0.18
+    let anyVisible = false
 
     // —— Astronaut ——
-    const astL = layout.astro
-    const astTx =
-      astL.x +
-      Math.sin(t * 0.38 + 1) * floatAmp * 1.1 +
-      mouse.x * 0.02 * breath
-    const astTy =
-      astL.y +
-      Math.cos(t * 0.45) * floatAmp +
-      Math.sin(t * 0.7) * 0.012 * layout.float +
-      mouse.y * 0.014 * breath
-    const astTz = astL.z + Math.cos(t * 0.3) * 0.02
-    const astTargetS =
-      astroScale0 * astL.scale * heroBoost(layout.hero, "astro")
+    targetFor(scrollY, sections, vh, (l) => l.astro, target)
+    target.y -= introDrop
+    follow(astroLive, target, dt, 4.2)
+    const bobA = Math.sin(t * 0.7) * 0.025
+    astro.position.set(
+      astroLive.p.x + Math.sin(t * 0.38 + 1) * 0.02 + mouse.x * 0.03,
+      astroLive.p.y + Math.cos(t * 0.45) * 0.022 + bobA + mouse.y * 0.02,
+      astroLive.p.z
+    )
+    astro.scale.setScalar(ASTRO_BASE * Math.max(astroLive.s, 0.001))
+    astro.rotation.set(
+      0.04 + Math.cos(t * 0.24) * 0.03,
+      0.08 + Math.sin(t * 0.28) * 0.05 + mouse.x * 0.08,
+      0.12 + Math.sin(t * 0.38) * 0.04 + astroLive.roll
+    )
+    astro.visible = visibleAt(astroLive, ASTRO_BASE * 0.75, aspect)
+    astroBuilt.fade(astro.visible ? 1 : 0)
+    anyVisible ||= astro.visible
 
-    astroPos.x += (astTx - astroPos.x) * follow
-    astroPos.y += (astTy - astroPos.y) * follow
-    astroPos.z += (astTz - astroPos.z) * (follow + 0.015)
-    astroS += (astTargetS - astroS) * 0.07
-    astro.position.copy(astroPos)
-    astro.scale.setScalar(astroS)
-    astro.rotation.y = 0.08 + Math.sin(t * 0.28) * 0.03
-    astro.rotation.z = 0.12 + Math.sin(t * 0.38) * 0.02
-    astro.rotation.x = 0.04 + Math.cos(t * 0.24) * 0.02
-
-    // —— Ringed system ——
-    const sysL = layout.system
-    const sysTx =
-      sysL.x +
-      Math.cos(t * 0.32) * floatAmp * 1.15 +
-      mouse.x * 0.018 * breath
-    const sysTy =
-      sysL.y +
-      Math.sin(t * 0.28) * floatAmp +
-      mouse.y * 0.012 * breath
-    const sysTz = sysL.z
-    const sysTargetS =
-      systemScale0 * sysL.scale * heroBoost(layout.hero, "system")
-
-    systemPos.x += (sysTx - systemPos.x) * follow
-    systemPos.y += (sysTy - systemPos.y) * follow
-    systemPos.z += (sysTz - systemPos.z) * (follow + 0.015)
-    systemS += (sysTargetS - systemS) * 0.07
-    system.position.copy(systemPos)
-    system.scale.setScalar(systemS)
-    system.rotation.y = t * 0.05
-    system.rotation.z = Math.sin(t * 0.22) * 0.04
-    ringed.updateLocal(t)
+    // —— Planet ——
+    targetFor(scrollY, sections, vh, (l) => l.planet, target)
+    target.y -= introDrop
+    follow(planetLive, target, dt, 3.2)
+    system.position.set(
+      planetLive.p.x + Math.cos(t * 0.32) * 0.018 + mouse.x * 0.02,
+      planetLive.p.y + Math.sin(t * 0.28) * 0.016 + mouse.y * 0.014,
+      planetLive.p.z
+    )
+    system.scale.setScalar(PLANET_BASE * Math.max(planetLive.s, 0.001))
+    // Ring plane tilts with the page — reads as a real 3D body
+    system.rotation.set(
+      Math.sin(scrollY * 0.0008) * 0.32,
+      t * 0.05,
+      Math.sin(t * 0.22) * 0.04 + planetLive.roll * 0.6
+    )
+    system.visible = visibleAt(planetLive, PLANET_BASE * 1.2, aspect)
+    if (system.visible) ringed.updateLocal(t)
+    anyVisible ||= system.visible
 
     // —— Asteroids ——
-    const rockHero = heroBoost(layout.hero, "rocks")
     rocks.forEach((rock, i) => {
-      const L = layout.rocks[i] ?? layout.rocks[0]!
+      const live = rockLive[i]!
+      targetFor(scrollY, sections, vh, (l) => l.rocks[i]!, target)
+      target.y -= introDrop
+      follow(live, target, dt, 3.6 + i * 0.5)
       const phase = i * 1.7
-      const tx =
-        L.x +
-        Math.sin(t * (0.25 + i * 0.06) + phase) * floatAmp * 0.9 -
-        mouse.x * 0.012 * breath
-      const ty =
-        L.y +
-        Math.cos(t * (0.22 + i * 0.05) + phase) * floatAmp * 0.8 +
-        mouse.y * 0.01 * breath
-      const tz = L.z
-      const rp = rockPos[i]!
-      rp.x += (tx - rp.x) * follow
-      rp.y += (ty - rp.y) * follow
-      rp.z += (tz - rp.z) * (follow + 0.015)
-      rock.position.copy(rp)
-
-      const base = rockScale0[i]!
-      const rockS = L.scale * rockHero
-      rock.visible = rockS > 0.02
-      rock.scale.copy(base).multiplyScalar(Math.max(rockS, 0.001))
-
-      rock.rotation.x += 0.0007 + i * 0.00025 + vel * 0.002
-      rock.rotation.y += 0.001 + i * 0.0002 + vel * 0.0025
-      rock.rotation.z += 0.0004 + vel * 0.001
+      rock.mesh.position.set(
+        live.p.x + Math.sin(t * (0.25 + i * 0.06) + phase) * 0.016 - mouse.x * 0.016,
+        live.p.y + Math.cos(t * (0.22 + i * 0.05) + phase) * 0.014 + mouse.y * 0.012,
+        live.p.z
+      )
+      rock.mesh.scale.copy(rock.base).multiplyScalar(Math.max(live.s, 0.001))
+      rock.mesh.rotation.x += 0.0007 + i * 0.00025 + spinBoost + vel * 0.002
+      rock.mesh.rotation.y += 0.001 + i * 0.0002 + spinBoost * 1.3 + vel * 0.0025
+      rock.mesh.rotation.z += 0.0004 + live.roll * 0.01
+      rock.mesh.visible = visibleAt(live, rock.base.x * 1.4, aspect)
+      anyVisible ||= rock.mesh.visible
     })
+
+    primed = true
+    // Keep drawing while springs are still settling
+    const settling =
+      astroLive.v.lengthSq() + planetLive.v.lengthSq() > 1e-7 ||
+      rockLive.some((l) => l.v.lengthSq() > 1e-7)
+    return anyVisible || settling
   }
 
   function setPalette(id: BlobPaletteId) {

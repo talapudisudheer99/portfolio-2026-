@@ -56,7 +56,7 @@ export function MotionParallax({
               trigger: el,
               start: "top bottom",
               end: "bottom top",
-              scrub: 0.7,
+              scrub: true,
             },
           }
         )
@@ -74,7 +74,7 @@ export function MotionParallax({
               trigger: el,
               start: "top bottom",
               end: "bottom top",
-              scrub: 0.75,
+              scrub: true,
             },
           }
         )

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 /**
  * False until the browser has painted once (optional extra delay).
- * Cursor / grain only — world mounts immediately so it can sync with hero.
+ * Cursor / grain / toaster only — the space world mounts with the page.
  */
 export function useDeferredLayer(delayMs = 0) {
   const [ready, setReady] = useState(false)
@@ -28,27 +28,32 @@ export function useDeferredLayer(delayMs = 0) {
   return ready
 }
 
-export const ATMOSPHERE_READY = "portfolio:atmosphere-ready"
+/**
+ * True once the browser is idle after first paint (or after `timeoutMs`).
+ * Heavy layers (three.js) wait for this so they never compete with the
+ * hero's first paint and hydration.
+ */
+export function useIdleLayer(timeoutMs = 1200) {
+  const [ready, setReady] = useState(false)
 
-export function waitForAtmosphere(fallbackMs: number, isCancelled: () => boolean) {
-  return new Promise<void>((resolve) => {
-    if (typeof document !== "undefined") {
-      if (document.querySelector(".blob-scene-fixed.is-ready")) {
-        resolve()
-        return
-      }
+  useEffect(() => {
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+      cancelIdleCallback?: (id: number) => void
     }
-
-    let settled = false
-    const done = () => {
-      if (settled || isCancelled()) return
-      settled = true
-      window.removeEventListener(ATMOSPHERE_READY, done)
+    let idleId = 0
+    let timeoutId = 0
+    const go = () => setReady(true)
+    if (w.requestIdleCallback) {
+      idleId = w.requestIdleCallback(go, { timeout: timeoutMs })
+    } else {
+      timeoutId = window.setTimeout(go, 200)
+    }
+    return () => {
+      if (idleId && w.cancelIdleCallback) w.cancelIdleCallback(idleId)
       window.clearTimeout(timeoutId)
-      resolve()
     }
+  }, [timeoutMs])
 
-    window.addEventListener(ATMOSPHERE_READY, done)
-    const timeoutId = window.setTimeout(done, fallbackMs)
-  })
+  return ready
 }

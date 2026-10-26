@@ -1,9 +1,13 @@
-import { Code2, Layers, Rocket } from "lucide-react"
+import { GitPullRequest, Rocket, ShieldCheck } from "lucide-react"
 
 import type { AboutContent } from "@/types"
 
+/**
+ * Profile — every line here is a fact from real work (no self-rated scores).
+ * Source of truth: Sudheer's career profile.
+ */
 export const aboutContent: AboutContent = {
-  kicker: "Behind the code",
+  kicker: "Profile",
   headline: {
     lead: "More than",
     accent: "the screen.",
@@ -11,46 +15,55 @@ export const aboutContent: AboutContent = {
   section: {
     title: "More than the screen",
     description:
-      "Business thinking, strong frontend work, and full-stack ownership\nbehind the screen.",
+      "Business degree, full-stack training, then about 2.5 years shipping production frontends for an AI hiring platform, plus a product of my own.",
   },
   featureCards: [
     {
-      title: "Build Thoughtfully",
+      title: "Own the hard parts",
       detail:
-        "Turning business needs into clean, scalable and\nmaintainable solutions.",
+        "Built sign-in for three user roles at Profolo, then fixed the bug that logged users out on every deploy.",
       accent: "gold",
-      icon: Code2,
+      icon: ShieldCheck,
     },
     {
-      title: "Ship End-to-End",
+      title: "Raise the team",
       detail:
-        "From clean architecture to production-ready\nsystems.",
+        "Senior of three frontend engineers. Reviewed every pull request from two juniors and wrote 15+ module docs.",
       accent: "gold",
-      icon: Layers,
+      icon: GitPullRequest,
     },
     {
-      title: "Solve Real Problems",
+      title: "Ship it myself",
       detail:
-        "Creating smooth, performant and delightful\nexperiences.",
+        "Built and launched Sameward alone: two services on Railway, live at sameward.com.",
       accent: "gold",
       icon: Rocket,
     },
   ],
   impact: {
-    floatBadge: "Engineering Mindset",
-    title: "Engineering Impact",
-    liveBadge: "Live Systems",
+    title: "Proof",
     stats: [
-      { value: "2.5+ Years", label: "Frontend Engineering" },
-      { value: "1 Live Product", label: "Built End-to-End" },
-      { value: "∞", label: "Learning Mode" },
+      {
+        value: "~2.5 yrs",
+        label: "Production frontend",
+        detail: "Feb 2024 to now, at three companies",
+      },
+      {
+        value: "2 apps",
+        label: "Phrontier AI",
+        detail: "Candidate and Employer apps in Next.js + TypeScript",
+      },
+      {
+        value: "Weekly",
+        label: "Releases",
+        detail: "dev → QA → staging → production",
+      },
+      {
+        value: "32 tests",
+        label: "Vitest",
+        detail: "Task List App; Jest + RTL at Profolo",
+      },
     ],
   },
-  radarAxes: [
-    { label: "Frontend", value: 0.92 },
-    { label: "Prod", value: 0.8 },
-    { label: "Performance", value: 0.85 },
-    { label: "Architecture", value: 0.9 },
-    { label: "Tools", value: 0.78 },
-  ],
+  availability: "Open to frontend roles · Immediate joiner · Hyderabad, Bengaluru, Chennai or remote",
 }

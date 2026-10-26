@@ -9,23 +9,14 @@ import { FeaturedWorkMobileStage } from "@/components/sections/featured-work-mob
 import { FeaturedWorkTabletStage } from "@/components/sections/featured-work-tablet-stage"
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { parallax } from "@/lib/motion"
-import type { Project } from "@/types"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
-
-interface FeaturedWorkStageProps {
-  featured: Project
-  liveDemoLabel: string
-}
 
 /**
  * Sameward tablet — opens with scroll (depth → frame), then light lag + tilt.
  * Product UI unchanged.
  */
-export function FeaturedWorkStage({
-  featured: _featured,
-  liveDemoLabel: _liveDemoLabel,
-}: Readonly<FeaturedWorkStageProps>) {
+export function FeaturedWorkStage() {
   const still = useHydratedReducedMotion()
   const stillRef = useRef(still)
   useEffect(() => {
@@ -78,7 +69,7 @@ export function FeaturedWorkStage({
             trigger: section,
             start: "top 95%",
             end: "top 45%",
-            scrub: 0.7,
+            scrub: true,
           },
         })
       })
@@ -98,20 +89,18 @@ export function FeaturedWorkStage({
             y: 110,
             scale: 0.58,
             rotateX: 14,
-            filter: "brightness(0.72)",
           },
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
             rotateX: 0,
-            filter: "brightness(1)",
             ease: "none",
             scrollTrigger: {
               trigger: section,
               start: "top 95%",
               end: "top 32%",
-              scrub: 0.8,
+              scrub: true,
             },
           }
         )
@@ -130,7 +119,7 @@ export function FeaturedWorkStage({
                 trigger: section,
                 start: "top 40%",
                 end: "bottom top",
-                scrub: 0.7,
+                scrub: true,
               },
             }
           )

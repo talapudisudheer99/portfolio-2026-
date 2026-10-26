@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useRef, type ReactNode } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
-import { duration, ease, rise } from "@/lib/motion"
+import { duration, ease, revealStart, rise } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -66,7 +66,7 @@ export function SectionReveal({
             ease: ease.reveal,
             scrollTrigger: {
               trigger: el,
-              start: "top 92%",
+              start: revealStart,
               toggleActions: "play none none none",
               once: true,
             },
@@ -91,7 +91,7 @@ export function SectionReveal({
           ease: ease.reveal,
           scrollTrigger: {
             trigger: el,
-            start: "top 88%",
+            start: revealStart,
             toggleActions: "play none none none",
             once: true,
           },

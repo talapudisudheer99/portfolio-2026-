@@ -7,8 +7,12 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react"
+
+/** Boot palette never changes on its own — nothing to subscribe to. */
+const subscribeNever = () => () => {}
 
 import { PALETTE_STORAGE_KEY } from "@/components/palette-init-script"
 import {
@@ -62,17 +66,20 @@ function applyPaletteTokens(palette: BlobPalette) {
 export function PaletteProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  // SSR + first client render stay on default; boot script already painted stored tokens.
-  const [paletteId, setPaletteIdState] =
-    useState<BlobPaletteId>(defaultBlobPaletteId)
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    const stored = readBootPaletteId()
-    setPaletteIdState(stored)
-    applyPaletteTokens(getBlobPalette(stored))
-    setReady(true)
-  }, [])
+  // Server + hydration render use the default; right after hydration the
+  // stored palette (already painted by the boot script) takes over.
+  const bootId = useSyncExternalStore(
+    subscribeNever,
+    readBootPaletteId,
+    () => defaultBlobPaletteId
+  )
+  const ready = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false
+  )
+  const [chosenId, setChosenId] = useState<BlobPaletteId | null>(null)
+  const paletteId = chosenId ?? bootId
 
   const palette = useMemo(() => getBlobPalette(paletteId), [paletteId])
 
@@ -87,7 +94,7 @@ export function PaletteProvider({
   }, [palette, paletteId, ready])
 
   const setPaletteId = useCallback((id: BlobPaletteId) => {
-    setPaletteIdState(id)
+    setChosenId(id)
   }, [])
 
   const value = useMemo(
