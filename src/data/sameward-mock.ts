@@ -92,7 +92,7 @@ export const samewardMockTiming = {
   aiSummary:
     "Catch-up · last 7 days — sync today, Friday deploy runbook linked.",
   aiBlocker: "1 linked page read for context.",
-  aiTypeStartMs: 1500,
-  lineStart: 0.5,
-  lineStep: 0.14,
+  aiTypeStartMs: 900,
+  lineStart: 0.15,
+  lineStep: 0.12,
 } as const

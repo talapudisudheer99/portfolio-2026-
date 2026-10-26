@@ -74,32 +74,29 @@ export function FeaturedWorkStage() {
         })
       })
 
-      // Tablet / desktop — physical open: deep → framed as it enters
+      // Tablet / desktop — a calm rise: the tablet floats up a short way,
+      // grows the last few percent and fades in, easing out so it has
+      // settled well before the reader reaches it. The chat inside then
+      // fills in line by line (see SamewardLine).
       mmEnter.add("(min-width: 768px)", () => {
-        gsap.set(enter, {
-          transformOrigin: "50% 88%",
-          transformPerspective: 1400,
-          force3D: true,
-        })
-
         gsap.fromTo(
           enter,
           {
-            autoAlpha: 0.1,
-            y: 110,
-            scale: 0.58,
-            rotateX: 14,
+            autoAlpha: 0,
+            y: 72,
+            scale: 0.94,
+            transformOrigin: "50% 100%",
+            force3D: true,
           },
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            rotateX: 0,
-            ease: "none",
+            ease: "power3.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 95%",
-              end: "top 32%",
+              start: "top 92%",
+              end: "top 38%",
               scrub: true,
             },
           }

@@ -1,9 +1,9 @@
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, useInView } from "framer-motion"
 import { Download, FileText, Globe, User } from "lucide-react"
 import type { ReactNode } from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { useHydratedReducedMotion } from "@/hooks/use-hydrated-reduced-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -33,11 +33,14 @@ export function SamewardLine({
     return <div className={className}>{children}</div>
   }
 
+  // Lines fill in when the mock scrolls into view (not on page load,
+  // when nobody can see them).
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{
         duration: duration.trace,
         ease: easeOut,
@@ -86,9 +89,11 @@ export function SamewardPersonAvatar({
 export function SamewardAiReply({ still }: Readonly<{ still: boolean }>) {
   const [count, setCount] = useState(0)
   const [done, setDone] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
 
   useEffect(() => {
-    if (still) return
+    if (still || !inView) return
 
     let cancelled = false
     let step: ReturnType<typeof setTimeout>
@@ -114,13 +119,13 @@ export function SamewardAiReply({ still }: Readonly<{ still: boolean }>) {
       clearTimeout(step)
       clearTimeout(kickoff)
     }
-  }, [still])
+  }, [still, inView])
 
   const summary = still ? samewardMockTiming.aiSummary : samewardMockTiming.aiSummary.slice(0, count)
   const finished = still || done
 
   return (
-    <div className="sameward-ai-reply border-l-2 border-primary pl-3">
+    <div ref={ref} className="sameward-ai-reply border-l-2 border-primary pl-3">
       <p className="type-micro text-primary">Channel AI</p>
       <p className="sameward-ai-reply-body sameward-message-body mt-1.5 text-foreground">
         {summary}
