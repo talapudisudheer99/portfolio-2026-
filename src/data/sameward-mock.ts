@@ -77,20 +77,16 @@ export const samewardMessages: readonly SamewardMessage[] = [
 ]
 
 export const samewardAiActions = [
-  { id: "summarize", label: "Summarize", accent: "orange" },
-  { id: "catch-up", label: "Catch up", accent: "amber" },
-  { id: "ask", label: "Ask", accent: "lime" },
-  { id: "draft", label: "Draft reply", accent: "coral" },
+  { id: "summarize", label: "Summarize", hint: "The whole channel", accent: "orange" },
+  { id: "catch-up", label: "Catch up", hint: "What you missed", accent: "amber" },
+  { id: "ask", label: "Ask", hint: "About this channel", accent: "lime" },
+  { id: "draft", label: "Draft reply", hint: "You review and send", accent: "coral" },
 ] as const
 
-export type SamewardAiAccent = (typeof samewardAiActions)[number]["accent"]
+/** The action whose result is showing in the thread */
+export const samewardActiveAiAction = "catch-up"
 
-export const samewardAiActionTone: Record<SamewardAiAccent, string> = {
-  orange: "text-[#ff9f4a]",
-  amber: "text-[#ffe066]",
-  lime: "text-[#c8ff63]",
-  coral: "text-[#ff7a7a]",
-}
+
 
 export const samewardMockTiming = {
   aiSummary:
