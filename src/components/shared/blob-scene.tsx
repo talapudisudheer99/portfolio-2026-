@@ -94,7 +94,10 @@ export function AmbientAtmosphere() {
     /** Props need landscape room beside the content column. */
     const propsAllowed = () =>
       window.innerWidth >= 1024 && window.innerHeight < window.innerWidth * 0.95
-    const dpr = Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.75)
+    // Safari / Firefox (html.fx-lite): fewer pixels and no MSAA — WebGL there
+    // shares more of the main thread with scrolling.
+    const lite = document.documentElement.classList.contains("fx-lite")
+    const dpr = Math.min(window.devicePixelRatio, isMobile || lite ? 1.25 : 1.75)
     const segments = isMobile ? 96 : 160
 
     let renderer: THREE.WebGLRenderer
@@ -102,7 +105,7 @@ export function AmbientAtmosphere() {
       renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
-        antialias: !isMobile,
+        antialias: !isMobile && !lite,
         powerPreference: isMobile ? "default" : "high-performance",
         failIfMajorPerformanceCaveat: false,
       })
@@ -394,6 +397,8 @@ export function AmbientAtmosphere() {
     let lastScroll = window.scrollY
     let velocity = 0
     let drewSomething = false
+    let still = 0
+    let frameNo = 0
 
     /** One frame. Runs on the GSAP ticker, after Lenis has moved the page. */
     function frame() {
@@ -482,7 +487,12 @@ export function AmbientAtmosphere() {
         }
       }
 
-      const animating = !reduced || dirty
+      // While the page is still (no scroll for ~0.25s), the idle drift is
+      // slow enough to draw at half rate — frees the GPU for scrolling.
+      still = scrollDelta === 0 && introStart >= 0 && t - introStart > 2 ? still + dt : 0
+      frameNo += 1
+      const halfRate = still > 0.25 && frameNo % 2 === 1
+      const animating = (!reduced && !halfRate) || dirty
       if (moonVisible || propsVisible) {
         if (animating) {
           renderer.render(scene, camera)
