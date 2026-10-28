@@ -57,12 +57,13 @@ export default function RootLayout({
     >
       <head>
         <PaletteInitScript />
-        {/* Reload always starts at the hero (deep links with #hash still work). */}
+        {/* Reload always starts at the hero (deep links with #hash still work).
+            Also flags Safari / Firefox / iOS with html.fx-lite (lighter effects). */}
         <script
           id="portfolio-scroll-top"
           dangerouslySetInnerHTML={{
             __html:
-              "try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)window.scrollTo(0,0)}catch(e){}",
+              "try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)window.scrollTo(0,0);var u=navigator.userAgent;if(/firefox|fxios/i.test(u)||(/safari/i.test(u)&&!/chrome|chromium|crios|edg|opr|android/i.test(u))||/iphone|ipad|ipod/i.test(u))document.documentElement.classList.add('fx-lite')}catch(e){}",
           }}
         />
         {/* crossOrigin matches three.js TextureLoader — otherwise the browser downloads it twice. */}

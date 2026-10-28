@@ -38,8 +38,10 @@ export function SamewardLine({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      // Opacity only — runs on the compositor (WAAPI); a JS-driven y here
+      // repaints the tablet every frame in Safari/Firefox.
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{
         duration: duration.trace,
@@ -99,12 +101,15 @@ export function SamewardAiReply({ still }: Readonly<{ still: boolean }>) {
     let step: ReturnType<typeof setTimeout>
     let index = 0
 
+    // Word by word (not per character): ~4x fewer repaints of the tablet.
+    const text = samewardMockTiming.aiSummary
     const type = () => {
       if (cancelled) return
-      index += 1
+      const next = text.indexOf(" ", index + 1)
+      index = next === -1 ? text.length : next
       setCount(index)
-      if (index < samewardMockTiming.aiSummary.length) {
-        step = setTimeout(type, 34)
+      if (index < text.length) {
+        step = setTimeout(type, 110)
       } else {
         step = setTimeout(() => {
           if (!cancelled) setDone(true)

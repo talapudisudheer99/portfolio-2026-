@@ -339,11 +339,10 @@
     z-index: 0;
     background: radial-gradient(
       58% 72% at 50% 48%,
-      color-mix(in srgb, var(--primary) 16%, transparent) 0%,
-      color-mix(in srgb, var(--primary) 6%, transparent) 42%,
-      transparent 100%
+      color-mix(in srgb, var(--primary) 12%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 5%, transparent) 45%,
+      transparent 78%
     );
-    filter: blur(28px);
     opacity: 0.45;
   }
 
@@ -1512,8 +1511,7 @@
         color-mix(in srgb, var(--primary) 12%, transparent) 0%,
         transparent 70%
       ),
-      color-mix(in srgb, var(--background) 72%, transparent);
-    backdrop-filter: blur(6px);
+      color-mix(in srgb, var(--background) 90%, transparent);
   }
 
   .about-proof-value {
@@ -1838,6 +1836,8 @@
     width: 100%;
     border-radius: 0.88rem;
     overflow: hidden;
+    /* Repaints inside the mock (typing, pulses) stay inside the screen */
+    contain: layout paint;
     background: var(--card);
     box-shadow:
       inset 0 0 0 1.5px rgb(0 0 0 / 0.72),
@@ -1863,8 +1863,8 @@
     position: absolute;
     left: 8%;
     right: 8%;
-    bottom: -0.35rem;
-    height: 0.75rem;
+    bottom: -1.2rem;
+    height: 2.4rem;
     border-radius: 999px;
     pointer-events: none;
     z-index: 0;
@@ -1874,7 +1874,6 @@
       rgb(0 0 0 / 0.16) 55%,
       transparent 100%
     );
-    filter: blur(14px);
   }
 
   .fd-tablet-screen .sameward-app {
@@ -2853,15 +2852,16 @@
 }
 
 /* Soft cosmic gas — balanced, not a left-edge vignette */
+/* No filter/blend here: a blur(80px) layer that moves with scroll is
+   re-rendered every frame in Safari and Firefox. The gradients fade to
+   transparent on their own, so the look stays soft. */
 .space-field-nebula {
   position: absolute;
   width: 68vmax;
   height: 68vmax;
   border-radius: 50%;
-  filter: blur(80px);
   opacity: 0.22;
-  will-change: transform, opacity;
-  mix-blend-mode: screen;
+  will-change: translate;
 }
 
 .space-field-nebula--a {
@@ -2915,47 +2915,20 @@
   will-change: transform, opacity;
 }
 
-.space-field:not(.is-still) .space-field-nebula--a {
-  animation: space-nebula-drift-a 48s ease-in-out infinite alternate;
-}
 
-.space-field:not(.is-still) .space-field-nebula--b {
-  animation: space-nebula-drift-b 62s ease-in-out infinite alternate;
-}
 
-.space-field:not(.is-still) .space-field-dust {
-  animation: space-dust-breathe 28s ease-in-out infinite alternate;
-}
-
-@keyframes space-nebula-drift-a {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(6%, 4%, 0) scale(1.08); }
-}
-
-@keyframes space-nebula-drift-b {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(-5%, -6%, 0) scale(1.1); }
-}
-
-@keyframes space-dust-breathe {
-  from { opacity: 0.22; transform: translate3d(0, 0, 0); }
-  to { opacity: 0.34; transform: translate3d(0, -2%, 0); }
-}
 
 /* Section mood gently recolors the universe wash */
 html[data-section-mood="projects"] .space-field-nebula--a {
   opacity: 0.28;
-  filter: blur(80px) hue-rotate(-8deg);
 }
 
 html[data-section-mood="skills"] .space-field-nebula--b {
   opacity: 0.26;
-  filter: blur(80px) hue-rotate(18deg);
 }
 
 html[data-section-mood="experience"] .space-field-nebula--a {
   opacity: 0.2;
-  filter: blur(84px) hue-rotate(-14deg);
 }
 
 html[data-section-mood="experience"] .space-field-nebula--b {
@@ -3014,7 +2987,6 @@ html[data-section-mood="contact"] .space-field-nebula--a {
   width: 2px;
   height: 2px;
   background: rgb(255 252 240 / 0.95);
-  filter: drop-shadow(0 0 3px rgb(255 255 255 / 0.45));
 }
 
 .space-field-dots--ember {
@@ -3022,40 +2994,6 @@ html[data-section-mood="contact"] .space-field-nebula--a {
   width: 2px;
   height: 2px;
   background: color-mix(in srgb, var(--primary) 70%, white);
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--primary) 40%, transparent));
-}
-
-@media (min-width: 901px) {
-  .space-field:not(.is-still) .space-field-dots--far {
-    animation: space-field-drift-a 90s linear infinite;
-  }
-
-  .space-field:not(.is-still) .space-field-dots--mid {
-    animation: space-field-drift-b 60s linear infinite;
-  }
-
-  .space-field:not(.is-still) .space-field-dots--near,
-  .space-field:not(.is-still) .space-field-dots--glow {
-    animation: space-field-drift-c 42s linear infinite;
-  }
-
-  .space-field:not(.is-still) .space-field-dots--ember {
-    animation: space-field-drift-b 70s linear infinite reverse;
-  }}
-
-@keyframes space-field-drift-a {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(0.4%, -3.5%, 0); }
-}
-
-@keyframes space-field-drift-b {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(1.4%, -4.5%, 0); }
-}
-
-@keyframes space-field-drift-c {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-1.1%, -5.5%, 0); }
 }
 
 @media (max-width: 900px) {
@@ -3065,7 +3003,6 @@ html[data-section-mood="contact"] .space-field-nebula--a {
 
   .space-field-nebula {
     opacity: 0.24;
-    filter: blur(56px);
   }
 
   .space-field-dots--far {
@@ -4003,11 +3940,10 @@ html[data-section-mood="contact"] .blob-scene-fixed {
       color-mix(in srgb, var(--primary) 12%, transparent) 0%,
       transparent 55%
     ),
-    color-mix(in srgb, var(--background) 72%, #0a0907);
+    color-mix(in srgb, var(--background) 90%, #0a0907);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--primary) 6%, transparent),
     0 24px 60px -28px rgb(0 0 0 / 0.65);
-  backdrop-filter: blur(14px) saturate(1.08);
 }
 
 .contact-field {
@@ -4231,8 +4167,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
       color-mix(in srgb, var(--primary) 12%, transparent) 0%,
       transparent 55%
     ),
-    color-mix(in srgb, var(--background) 74%, transparent);
-  backdrop-filter: blur(6px);
+    color-mix(in srgb, var(--background) 90%, transparent);
   transition:
     border-color var(--motion-micro) var(--motion-ease-out),
     transform var(--motion-micro) var(--motion-ease-out);
@@ -4508,8 +4443,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   border: 1px solid color-mix(in srgb, var(--primary) 20%, rgb(255 255 255 / 0.08));
   background:
     radial-gradient(90% 70% at 100% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 60%),
-    color-mix(in srgb, var(--background) 78%, transparent);
-  backdrop-filter: blur(8px);
+    color-mix(in srgb, var(--background) 90%, transparent);
 }
 
 .xp-panel-meta {
@@ -4799,8 +4733,7 @@ html[data-section-mood="contact"] .blob-scene-fixed {
   border: 1px solid color-mix(in srgb, var(--primary) 20%, rgb(255 255 255 / 0.08));
   background:
     radial-gradient(80% 70% at 0% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 60%),
-    color-mix(in srgb, var(--background) 78%, transparent);
-  backdrop-filter: blur(8px);
+    color-mix(in srgb, var(--background) 90%, transparent);
   min-height: 19rem;
 }
 
@@ -5037,4 +4970,24 @@ html[data-section-mood="contact"] .blob-scene-fixed {
 
 .contact-quick-link:hover {
   border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+}
+/* ---------- Lighter effects for Safari / Firefox / iOS ----------
+   html.fx-lite is set in <head> for WebKit and Gecko. Their compositors
+   re-render backdrop blurs and film grain over the live WebGL layer on
+   every scroll frame, which is what made scrolling stutter there. */
+.fx-lite .nav-pill {
+  backdrop-filter: none;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+}
+
+.fx-lite .scroll-grain {
+  display: none;
+}
+
+/* The Sameward stage animates in with translate + opacity: keep it on its
+   own compositor layer so Safari/Firefox move a bitmap, not re-paint it. */
+@media (min-width: 768px) {
+  .projects-sameward-showcase .fd-showcase-stages {
+    will-change: transform, opacity;
+  }
 }
