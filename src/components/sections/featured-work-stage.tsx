@@ -74,24 +74,21 @@ export function FeaturedWorkStage() {
         })
       })
 
-      // Tablet / desktop — a calm rise: the tablet floats up a short way,
-      // grows the last few percent and fades in, easing out so it has
-      // settled well before the reader reaches it. The chat inside then
-      // fills in line by line (see SamewardLine).
+      // Tablet / desktop — a calm rise: the tablet floats up a short way and
+      // fades in, easing out so it has settled well before the reader
+      // reaches it. Translate + opacity only: scaling a layer this full of
+      // text makes Safari/Firefox re-rasterize it on every scroll frame.
       mmEnter.add("(min-width: 768px)", () => {
         gsap.fromTo(
           enter,
           {
-            autoAlpha: 0,
+            opacity: 0,
             y: 72,
-            scale: 0.94,
-            transformOrigin: "50% 100%",
             force3D: true,
           },
           {
-            autoAlpha: 1,
+            opacity: 1,
             y: 0,
-            scale: 1,
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
@@ -136,10 +133,13 @@ export function FeaturedWorkStage() {
         "(hover: hover) and (pointer: fine)"
       ).matches
       const desktopLayout = window.matchMedia("(min-width: 1024px)").matches
+      // 3D pointer tilt flattens/re-rasterizes the whole tablet in Safari and
+      // Firefox (html.fx-lite) — Chromium only.
+      const lite = document.documentElement.classList.contains("fx-lite")
 
       let detachTilt: (() => void) | undefined
 
-      if (chassis && stageShell && finePointer && desktopLayout) {
+      if (chassis && stageShell && finePointer && desktopLayout && !lite) {
         gsap.set(stageShell, { perspective: 1200 })
         gsap.set(chassis, {
           transformStyle: "preserve-3d",
